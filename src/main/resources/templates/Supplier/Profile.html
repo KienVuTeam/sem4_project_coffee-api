@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+</head>
+    <link rel="stylesheet" href="/supplier/css/alert.css">
+    <script type="text/javascript">
+    document.getElementById("title_supplier").textContent="Supplier - Profile management ";
+    </script>
+
+<body>           
+    <style>
+        .wrap-img-account{
+            height: 10rem;
+            width: 10rem;
+            position: relative;
+            margin: 10px auto 5px auto;
+        }
+        .img-account-profile {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pre-upload-avatar{
+            display: none;
+        }
+        .overlay{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+        .wrap-pre-avatar{
+            height: 10rem;
+            width: 10rem;
+            margin: auto;
+            position: relative;
+            border: 1px dashed #999;
+            border-radius: 3px;
+        }
+        .wrap-pre-avatar:hover .active{
+        	display: flex;
+        }
+        .new-avatar{
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+        }
+        .pre-avatar-default{
+            width: 80%;
+            height: 80%;
+            margin-top: 15px;
+        }
+        .pre-avatar{
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            display: none;
+        }
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+        .card {
+            box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+        }
+        .card .card-header {
+            font-weight: 500;
+        }
+        .card-header:first-child {
+            border-radius: 0.35rem 0.35rem 0 0;
+        }
+        .card-header {
+            padding: 1rem 1.35rem;
+            margin-bottom: 0;
+            background-color: rgba(33, 40, 50, 0.03);
+            border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+        }
+        .form-control, .dataTable-input {
+            display: block;
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1;
+            color: #69707a;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #c5ccd6;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.35rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .nav-borders .nav-link.active {
+            color: #0061f2;
+            border-bottom-color: #0061f2;
+        }
+        .nav-borders .nav-link {
+            color: #69707a;
+            border-bottom-width: 0.125rem;
+            border-bottom-style: solid;
+            border-bottom-color: transparent;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+        .cookiesContent {
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            border-radius: 20px;
+            padding: 30px 30px 70px;
+        }
+
+        button.close {
+            width: 30px;
+            font-size: 20px;
+            color: #c0c5cb;
+            align-self: flex-end;
+            background-color: transparent;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        .imgModal {
+            width: 82px;
+            margin-bottom: 15px;
+        }
+
+        .msgModal {
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+
+        button.accept {
+            background-color: #ed6755;
+            border: none;
+            border-radius: 5px;
+            width: 200px;
+            padding: 14px;
+            font-size: 16px;
+            color: white;
+            box-shadow: 0px 6px 18px -5px rgba(237, 103, 85, 1);
+            cursor: pointer;
+        }
+
+        .container {
+            font-family: "Roboto", sans-serif;
+            padding: 0;
+            margin: 0;
+            background-color: #f5f5f5;
+            justify-content: center;
+            align-items: center;
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        #closeModal {
+            cursor: pointer;
+        }
+    </style>
+
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+        
+        <div class="main-content container-fluid">
+            <div class="row">
+                <div class="col-xl-4">
+                    <!-- Profile picture card-->
+                    <div class="card mb-4 mb-xl-0">
+                        <div class="card-header">Profile Picture</div>
+                        <div class="card-body text-center">
+                            <!-- Profile picture image-->
+                            <div class="wrap-img-account">
+                                <img class="img-account-profile rounded-circle" th:src="${ProfileSupplier.avatar}"
+                                onerror="this.src='http://bootdey.com/img/Content/avatar/avatar1.png'" alt=""> 
+                            </div>
+                            
+
+                            <form class="pre-upload-avatar mb-3">
+                                <hr>
+                                <!-- Profile picture help block-->
+                                <div class="small font-italic text-muted mb-2">Image File no larger than 5 MB</div>
+                                <div class="wrap-pre-avatar mt-2">
+                                    <div class="overlay">
+                                    	<button title="remove" onclick="RemoveImage()"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                    <input type="file" name="" onchange="UploadPreviewAvt(this)" class="new-avatar upload-input" required accept="image/jpeg, image/png">
+                                    <img src="https://100dayscss.com/codepen/upload.svg" class="pre-avatar-default">
+                                    <img src="" alt="" class="pre-avatar">
+                                </div>
+
+                                <input type="hidden" id="returnNewAvt">
+                                
+                                <div class="row mt-3">
+                                    <button class="btn btn-outline-light col-6" onclick="CloseChangeAvt()" type="button">Close</button>
+                                    <button class="btn btn-primary col-6" id="uploadNewAvt" type="submit">Save Change</button>
+                                </div>
+                            </form>
+                             
+                            <!-- Profile picture upload button-->
+                            <button class="btn btn-primary mt-2 btnChangeAvt" onclick="ChangeAvatar()" type="button">Change Avatar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-8">
+                    <!-- Account details card-->
+                    <div class="card mb-4">
+                        <div class="card-header">Account Details</div>
+                        <div class="card-body">
+                            <form action="/Supplier/UpdateProfile" method="post" class="formUpdateProfile">
+                                    <!-- Form Group (organization name)-->
+                                <div class="mb-3">
+                                    <label class="small mb-1 mt-2" for="inputOrgName">Organization name (how your name will appear to other users on the site)</label>
+                                    <input class="form-control validateSpecialChar" id="inputOrgName" type="text" placeholder="Enter your organization name" 
+                                    th:value="${ProfileSupplier.title}" name="title" maxlength="50" required autocomplete="off">
+                                </div>
+                                <input type="hidden" th:value="${ProfileSupplier.title}" id="checkChangeTitle">
+                                <!-- Form Row -->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (username)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputUsername">Username</label>
+                                        <input class="form-control validateSpecialChar" id="inputUsername" type="text" placeholder="Enter your username" 
+                                        th:value="${ProfileSupplier.username}" name="username" maxlength="20" required readonly autocomplete="off">
+                                    </div>
+                                    <input type="hidden" th:value="${ProfileSupplier.username}" id="checkChangeUsername">
+
+                                    <!-- Form Group (Password)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputPassword">Change Password</label>
+                                        <div class="col-12">
+                                            <button style="padding: 0.7552rem 1.125rem" type="button" class="btn btn-primary" 
+                                            data-bs-toggle="modal" data-bs-target="#ChangePassword" title="Change Password">Change Password</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Form Row-->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (email)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputemail">Email</label>
+                                        <input class="form-control validateEmail" id="inputemail" type="text" placeholder="Enter your email address" 
+                                        th:value="${ProfileSupplier.email}" name="email" maxlength="50" required readonly autocomplete="off">
+                                    </div>
+                                    <input type="hidden" th:value="${ProfileSupplier.email}" id="checkChangeEmail">
+
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputEmail">Change Email</label>
+                                        <div class="col-12">
+                                            <button style="padding: 0.7552rem 1.125rem" type="button" class="btn btn-primary" 
+                                            data-bs-toggle="modal" data-bs-target="#ChangeEmail" title="Change Email Address">Change Email</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Form Row-->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (phone number)-->
+                                    <div class="col-md-4">
+                                        <label class="small mb-1" for="inputPhone">Phone number</label> 
+                                        <input class="form-control validatePhoneNumberValue" id="inputPhone" type="text" placeholder="Enter your phone number" 
+                                        th:value="${ProfileSupplier.phone}" name="phone" min="10" required autocomplete="off">
+                                    </div>
+                                    <input type="hidden" th:value="${ProfileSupplier.phone}" id="checkChangePhone">
+                                    
+                                    <!-- Form Group (Location)-->
+                                    <div class="col-8 mb-3">
+                                        <label class="small mb-1" for="inputLocation">Location</label>
+                                        <input class="form-control validateLocation" id="inputLocation" type="text" placeholder="Enter your location" 
+                                        th:value="${ProfileSupplier.address}" name="address" maxlength="100" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <input type="hidden" id="idSupplier" name="idSupplier">
+                                
+                                <!-- Save changes button-->
+                                <button class="btn btn-primary updateProfile" style="display:none;" type="button">Save changes</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Modal Change Password -->
+                    <div class="modal fade text-left" id="ChangePassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel33">Change Password </h4>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                </div>
+                                <form action="/Supplier/ChangePassword" method="get">
+                                    <div class="modal-body">
+                                    	<label>Current Password: </label>
+                                        <div class="form-group">
+                                            <input type="password" placeholder="Current Password" class="form-control currentPassword validatePassword" 
+                                            name="oldPassword" max="50" autocomplete="off" required>
+                                        </div>
+                                        <label>New Password: </label>
+                                        <div class="form-group">
+                                            <input type="password" placeholder="New Password" readonly class="form-control newPassword validatePassword" 
+                                            max="50" autocomplete="off" required>
+                                        </div>
+                                        <label>Confirm Password: </label>
+                                        <div class="form-group">
+                                            <input type="password" placeholder="Confirm Password" readonly class="form-control confirmPassword validatePassword" 
+                                            name="newPassword" max="50" autocomplete="off" required>
+                                        </div>
+                                        <input type="hidden" name="idSupplier" value="1">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                                            <i class="bx bx-x d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">Close</span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary ml-1" onclick="checkNewPassword(event)">
+                                            <i class="bx bx-check d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">Submit</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Modal Change Password -->
+
+                    <!-- Modal Change Email -->
+                    <div class="modal fade text-left" id="ChangeEmail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel33">Change Email </h4>
+                                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                </div>
+                                <div class="modal-body row">
+                                    <div class="form-group col-8">
+                                        <input type="Email" placeholder="New Email Address" class="form-control validateEmail" 
+                                        max="50" autocomplete="off" required>
+                                    </div>
+                                    <div class="form-group col-4">
+                                        <button type="button" class="btn btn-primary h-100" onclick="checkNewEmail()">Check Email</button>
+                                    </div>
+                                    <div class="col-12">
+                                        <span class="message"></span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                                        <i class="bx bx-x d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Close</span>
+                                    </button>
+                                    <button type="button" class="btn btn-primary ml-1 d-none" id="submitChangeEmail" onclick="changeEmail()">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Modal Change Email -->
+                </div>
+            
+                <!-- Alert Profile -->
+                <div class="container" id="modalAlert">
+                    <div class="cookiesContent" id="cookiesPopup">
+                        <button class="close" id="closeModal">✖</button>
+                        <!-- 44cd55 -->
+                        <img src="https://cdn-icons-png.flaticon.com/128/738/738884.png" alt="cookies-img" class="imgModal"
+                            id="iconModal" />
+                        <p class="msgModal" id="messageModal">We use cookies for improving user experience, analytics and marketing.
+                        </p>
+                        <button class="accept" id="btnAccept">OK</button>
+                    </div>
+                </div>
+                <!-- End Alert Profile -->
+            </div>
+        </div>
+		<footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+		integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-storage.js"></script>
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+	<script th:inline="javascript">
+		const firebaseConfig = {
+            apiKey: "AIzaSyBGL7802ZHOkecG8gHEiZEz1qw4EVF2Ql0",
+            authDomain: "ilacoffeeproject.firebaseapp.com",
+            projectId: "ilacoffeeproject",
+            storageBucket: "ilacoffeeproject.appspot.com",
+            messagingSenderId: "726954147188",
+            appId: "1:726954147188:web:5c1846723f56d528f1c021"
+        };
+		//	
+		try {
+			firebase.initializeApp(firebaseConfig);
+		} catch (error) {
+			console.log('Error InitializeFirebase');
+		}	
+        
+	     // input autocomplete off
+	     $("input").attr("autocomplete", "off");
+
+	     /*<![CDATA[*/
+			var idSupplier = /*[[${idSupplier}]]*/ "";
+		 /*]]>*/
+	</script>
+    <!-- ================= Script Validate Fields ===================  -->
+    <script src="/supplier/js/Validation/validateFields.js"></script>
+
+    <script>
+        let preUpload = document.querySelector(".pre-upload-avatar");
+        let btnChangeAvt = document.querySelector(".btnChangeAvt");
+        let pre_default = document.querySelector(".pre-avatar-default");
+        let pre_avt = document.querySelector(".pre-avatar");
+        let new_avatar = document.querySelector(".new-avatar");
+        let overlay = document.querySelector(".overlay");
+
+        function ChangeAvatar(t){
+            btnChangeAvt.style.display = "none";
+            preUpload.style.display = "block"; 
+        }
+    
+        function CloseChangeAvt(){
+            btnChangeAvt.style.display = "inline-block";
+            preUpload.style.display = "none"; 
+            pre_avt.src = "";
+            pre_default.style.display = "inline-block";
+            pre_avt.style.display = "none";
+            new_avatar.value = "";
+            overlay.classList.remove("active");
+        }
+    
+        function RemoveImage(){
+            overlay.classList.remove("active");
+            new_avatar.value = "";
+            pre_default.style.display = "inline-block";
+            pre_avt.src = "";
+            pre_avt.style.display = "none";
+        }
+
+        function UploadPreviewAvt(t){
+            pre_default.style.display = "none";
+            pre_avt.style.display = "block";
+            pre_avt.src = URL.createObjectURL(t.files[0]);
+            overlay.classList.add("active");
+        }
+
+        function checkNewPassword(event){
+            let form = document.querySelector("#ChangePassword form");
+            let currentPass = document.querySelector("#ChangePassword .currentPassword");
+            let newPass = document.querySelector("#ChangePassword .newPassword");
+            let confirmPass = document.querySelector("#ChangePassword .confirmPassword");
+
+            if(currentPass.value == ""){
+                currentPass.setCustomValidity("Please fill out this field");
+                currentPass.reportValidity();
+            }else{
+                currentPass.setCustomValidity("");
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/CheckPassword",
+                    data: {
+                        idSupplier: Number(idSupplier),
+                        password: currentPass.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if (!data) {
+                            currentPass.setCustomValidity("Password is not correct");
+                            currentPass.reportValidity();
+
+                            currentPass.removeAttribute("readonly");
+                            newPass.setAttribute("readonly", true);
+                            confirmPass.setAttribute("readonly", true);
+                        } else {
+                            currentPass.setAttribute("readonly", true);
+                            newPass.removeAttribute("readonly");
+                            confirmPass.removeAttribute("readonly");
+
+                            currentPass.setCustomValidity("");
+                            let flag = true;
+
+                            if(newPass.value == ""){
+                                flag = false;
+                                newPass.setCustomValidity("Please fill out this field");
+                                newPass.reportValidity();
+                            }else{
+                                newPass.setCustomValidity("");
+                            }
+
+                            if(confirmPass.value == ""){
+                                flag = false;
+                                confirmPass.setCustomValidity("Please fill out this field");
+                                confirmPass.reportValidity();
+                            }else{
+                                confirmPass.setCustomValidity("");
+                            }
+
+                            if(flag){
+                                if(newPass.value === confirmPass.value){
+                                    confirmPass.setCustomValidity("");
+                                    event.preventDefault();
+
+                                    showModalDialog("success", "Your changes has been successful");
+
+                                    $('#closeModal').on('click', function (e) {
+                                        e.preventDefault();
+                                        eventUnDisplayModal();
+                                    });
+
+                                    $('#btnAccept').on('click', function (e) {
+                                        e.preventDefault();
+                                        eventUnDisplayModal();
+                                    });
+
+                                    window.onclick = function (e) {
+                                        if (e.target == modal) {
+                                            eventUnDisplayModal();
+                                        }
+                                    }
+
+                                    function eventUnDisplayModal() {
+                                        form.submit();
+                                    }
+                                }else{
+                                    confirmPass.setCustomValidity("Password does not match");
+                                    confirmPass.reportValidity();
+                                }
+                            }
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+        }
+
+        $("#ChangePassword").on("hidden.bs.modal", function(){
+            let currentPass = document.querySelector("#ChangePassword .currentPassword");
+            let newPass = document.querySelector("#ChangePassword .newPassword");
+            let confirmPass = document.querySelector("#ChangePassword .confirmPassword");
+            
+            document.querySelector("#ChangePassword form").reset();
+            
+            currentPass.removeAttribute("readonly");
+            newPass.setAttribute("readonly", true);
+            confirmPass.setAttribute("readonly", true);
+        });
+
+        function checkNewEmail(){
+            newEmail = document.querySelector("#ChangeEmail input[type='email']");
+            submitChangeEmail = document.querySelector("#ChangeEmail #submitChangeEmail");
+            message = document.querySelector("#ChangeEmail .message");
+            if(newEmail.value != "" && newEmail.checkValidity()){
+                newEmail.setCustomValidity("");
+
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/suppCheckEmailChange",
+                    data: {
+                        idSupplier: Number(idSupplier),
+                        newEmail: newEmail.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data.flagMessage){
+                            submitChangeEmail.classList.remove("d-none");
+                            message.innerHTML = "This email is valid";
+                            message.classList.remove("text-danger");
+                            message.classList.add("text-success");
+                        }else{
+                            submitChangeEmail.classList.add("d-none"); 
+                            message.innerHTML = data.message;
+                            message.classList.remove("text-success");
+                            message.classList.add("text-danger");
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }else{
+                newEmail.reportValidity();
+            }
+        }
+
+        function changeEmail(){
+            newEmail = document.querySelector("#ChangeEmail input[type='email']");
+            submitChangeEmail = document.querySelector("#ChangeEmail #submitChangeEmail");
+            message = document.querySelector("#ChangeEmail .message");
+            if(newEmail.value != "" && newEmail.checkValidity()){
+                newEmail.setCustomValidity("");
+
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/requestChangeEmail",
+                    data: {
+                        idSupplier: Number(idSupplier),
+                        newEmail: newEmail.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data.flagSendding && data.flagSuccess){
+                            message.innerHTML = "Your request to change email was successful, please check your email";
+                            message.classList.remove("text-danger");
+                            message.classList.add("text-success");
+
+                            setTimeout(() => {
+                                message.classList.remove("text-danger");
+                                message.classList.remove("text-success");
+                                message.innerHTML = "";
+                                newEmail.value = "";
+                                $("#ChangeEmail").modal("hide");
+                            }, 7000);
+                        }else{
+                            message.innerHTML = data.msgRecover;
+                            message.classList.remove("text-success");
+                            message.classList.add("text-danger");
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }else{
+                newEmail.reportValidity();
+            }
+        }
+
+        let checkChangeTitle = document.querySelector(".formUpdateProfile #checkChangeTitle");
+        let checkChangeUsername = document.querySelector(".formUpdateProfile #checkChangeUsername");
+        let checkChangeEmail = document.querySelector(".formUpdateProfile #checkChangeEmail");
+        let checkChangePhone = document.querySelector(".formUpdateProfile #checkChangePhone");
+        let id = document.querySelector(".formUpdateProfile #idSupplier");
+        let formUpdateProfile = document.querySelector(".formUpdateProfile");
+        let btnUpdateProfile = document.querySelector(".formUpdateProfile .updateProfile");
+        let title = document.querySelector(".formUpdateProfile input[name='title']");
+        let username = document.querySelector(".formUpdateProfile input[name='username']");
+        let email = document.querySelector(".formUpdateProfile input[name='email']");
+        let phone = document.querySelector(".formUpdateProfile input[name='phone']");
+        let inputs = document.querySelectorAll(".formUpdateProfile input");
+
+        id.value = idSupplier;
+
+        // model alert
+        var modal = document.getElementById("modalAlert");
+        var buttonAccept = document.getElementById("btnAccept");
+
+
+        inputs.forEach(function(input) {
+            input.addEventListener("change", function() {
+                btnUpdateProfile.style.display = "block";
+            });
+        })
+
+        btnUpdateProfile.addEventListener("click", function(e) {
+            let flag = true;
+
+            if(checkChangeTitle.value.localeCompare(title.value) != 0) {
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/CheckDuplicateOrgName",
+                    data: {
+                        title: title.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data){
+                            flag = false;
+                            title.setCustomValidity("Organization name already exists");
+                            title.reportValidity();
+                        }else{
+                            title.setCustomValidity("");
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+
+            if(checkChangeEmail.value.localeCompare(email.value) != 0) {
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/CheckDuplicateEmail",
+                    data: {
+                        email: email.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data){
+                            flag = false;
+                            email.setCustomValidity("Email address already exists");
+                            email.reportValidity();
+                        }else{
+                            email.setCustomValidity("");
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+
+            if(checkChangeUsername.value.localeCompare(username.value) != 0) {
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/CheckDuplicateUsername",
+                    data: {
+                        username: username.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data){
+                            flag = false;
+                            username.setCustomValidity("Username already exists");
+                            username.reportValidity();
+                        }else{
+                            username.setCustomValidity("");
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+
+            if(checkChangePhone.value.localeCompare(phone.value) != 0) {
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/CheckDuplicatePhone",
+                    data: {
+                        phone: phone.value
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data){
+                            flag = false;
+                            phone.setCustomValidity("Phone already exists");
+                            phone.reportValidity();
+                        }else{
+                            phone.setCustomValidity("");
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+            inputs.forEach(input => {
+                if(input.value === "" || !inputs[4].checkValidity()){
+                    input.setCustomValidity("Please fill out this field")
+                    input.reportValidity();
+                    flag = false;
+                }
+            });
+
+            setTimeout(function() {
+                if(flag){
+                    showModalDialog("success", "Your changes has been successful");
+
+                    $('#closeModal').on('click', function (e) {
+                        e.preventDefault();
+                        eventUnDisplayModal();
+                    });
+
+                    $('#btnAccept').on('click', function (e) {
+                        e.preventDefault();
+                        eventUnDisplayModal();
+                    });
+
+                    window.onclick = function (e) {
+                        if (e.target == modal) {
+                            eventUnDisplayModal();
+                        }
+                    }
+
+                    function eventUnDisplayModal() {
+                        formUpdateProfile.submit();
+                    }
+                }
+            }, 2000);
+        });
+
+        // Show modal notification
+        function showModalDialog(type, message) {
+            
+            buttonAccept.style.backgroundColor = "#ed6755";
+            if (type === "success") {
+                $('#iconModal').attr('src', "/images/users/iconSuccess.png");
+                $('#messageModal').text(message);
+                buttonAccept.style.backgroundColor = "#44cd55";
+
+            } else {
+                $('#iconModal').attr('src', "/images/users/errorIcon.png");
+                $('#messageModal').text(message);
+            }
+            $('#modalAlert').fadeIn(500);
+            modal.style.display = "flex";
+        }
+    </script>
+
+    <script>
+        var maxSIZE = 5 * 1024 * 1024;
+
+        $(document).ready(function () {
+            //Handle Image	
+            $('.upload-input').change(function () {
+                //Variable Common	
+                var mimeType = this.files[0].type;
+                var fileSize = this.files[0].size;
+                var flagCheck = false;
+                //	
+                if (!mimeType.match(/image.*/)) {
+                    this.setCustomValidity("Only Upload File As Image");
+                    this.reportValidity();
+                } // After Check Filter Need To Check Size Of Image	
+                else if (fileSize > maxSIZE) {
+                    this.setCustomValidity("Image Upload Must Not Exceed 5 MB");
+                    this.reportValidity();
+                } else {
+                    this.setCustomValidity("");
+                    flagCheck = true;
+                }
+                //Preview Set	
+                // if (flagCheck == true) {
+                //     var imageSrc = URL.createObjectURL(this.files[0]);
+                //     var currentSelect = $(this).attr('data-select');
+                //     if (currentSelect == 'selMain') {
+                //         document.getElementById("selMainImg").src = imageSrc;
+                //     } else if (currentSelect == 'imageNo1') {
+                //         document.getElementById("imageNo1Img").src = imageSrc;
+                //     } else if (currentSelect == 'imageNo2') {
+                //         document.getElementById("imageNo2Img").src = imageSrc;
+                //     } else if (currentSelect == 'imageNo3') {
+                //         document.getElementById("imageNo3Img").src = imageSrc;
+                //     };
+                // }
+            });
+
+
+            //Submit Button	
+            $('#uploadNewAvt').click(function (e) {
+                let flagValidate = true;
+
+                if (!new_avatar.checkValidity()) {
+                    flagValidate = false;
+                    new_avatar.reportValidity();
+                }
+                
+                if(flagValidate == true){
+                    e.preventDefault();
+
+                    // Upload To Firebase
+                    startUploadFirebase(new_avatar.files[0]);
+
+                    //Start Calling Ajax	
+                    setTimeout(() => {
+                        $.ajax({
+                            url: "/Supplier/ChangeAvatar",
+                            dataType: 'text',
+                            data: {
+                                avatar: document.getElementById("returnNewAvt").value,
+                                id: 1
+                            } 
+                        }).done(function (data) {
+                            window.location.reload();
+                        })
+                    }, 2000);
+                }
+            });
+
+            // UploadFirebase
+            function startUploadFirebase(fileUpload) {
+                let oldAvatar = document.querySelector(".img-account-profile");
+                try {
+                    const ref = firebase.storage().ref();
+                    const fileName = "avatar_" + Math.floor( Math.random() * 99999999999) + fileUpload.name;
+                    const metadata = {
+                        contentType: fileUpload.type
+                    };
+                    const firebaseUpload = ref.child(fileName).put(fileUpload, metadata)
+                        .then(snapshot => snapshot.ref.getDownloadURL())
+                        .then(url => {
+                            document.getElementById("returnNewAvt").value = url;
+                        })
+                    // Delete Old Avatar In Firebase 
+                    deleteFirebase(oldAvatar.src);
+                    
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+        });	
+
+        // DeleteFirebase
+        function deleteFirebase(image) {
+            const fileUrl = image;        		 
+                // Create a reference to the file to delete
+                const fileRef = firebase.storage().refFromURL(fileUrl);
+                
+                fileRef.delete().then(function () {
+                    console.log("File Deleted")
+                }).catch(function (error) {
+                    console.log("Error")
+                });
+        }
+    </script>
+</body>
+ 
+
+</html>

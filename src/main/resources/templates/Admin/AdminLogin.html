@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Administrator - iLa Coffee Shop</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <link href="/admin/css/adminLogin.css" rel="stylesheet" type="text/css">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1063/1063917.png" sizes="32x32" />
+    <script src="https://kit.fontawesome.com/99a0617376.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-gradient-primary">
+</body>
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 115px;">
+        <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="card o-hidden border-0 shadow-lg my-5" style="height: 500px;">
+                <div class="card-body p-0">
+                    <div class="row" style="height: 500px;">
+                        <div class="col-lg-6 d-none d-lg-block bg-login-image" ></div>
+                        <div class="col-lg-6">
+                            <div class="p-5" style="margin-top: 59px;">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4" style="margin-bottom: 38px !important;">Welcome Back!</h1>
+                                    <div class="alert alert-danger alert-dismissible" id="alertLogin" style="display: none;">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                        Incorrect UserName or Password
+                                    </div>
+                                </div>
+                                <form class="user" method="post">
+                                        <input class="form-control form-control-user" id="adminUserName" type="text" minlength="8" maxlength="50"
+                                               placeholder="UserName" autocomplete="off">
+                                               <span id="msgUserName" style="color: red;margin-left: 4px;margin-bottom: 5px;height: 20px;" 
+                                               data-validate="false"></span>
+                                        <input class="form-control form-control-user"
+                                               id="adminPassword" type="password" placeholder="Password" minlength="8" maxlength="50"
+                                               autocomplete="off">
+                                               <span id="msgPassword" style="color: red;margin-left: 4px;margin-bottom: 5px;height: 20px;" 
+                                               data-validate="false" ></span>       
+                                    <button class="btn btn-primary btn-user btn-block" type="submit" id="btnSubmitLogin">Login</button>
+                                </form>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="/js/errorFieldCheck.js"></script>
+<script>
+    const fieldCheck = new errorFieldCheck();
+    const alertLogin = document.getElementById('alertLogin');
+
+    $(document).ready(function () {
+
+        $('#btnSubmitLogin').on('click',function(e){
+            e.preventDefault();
+            multiCheckAdminLogin();
+            checkFieldForLogin();
+        });
+
+        function checkFieldForLogin() {
+                var objValidate = {
+                    userName: $('#msgUserName').attr('data-validate'),
+                    userPassword: $('#msgPassword').attr('data-validate'),
+                };
+                var flagSubmit = Object.values(objValidate).includes("false");
+                if (!flagSubmit) {
+                    $.ajax({
+                    cache: false,
+                    data: {
+                        userName : $('#adminUserName').val(),
+                        password : $('#adminPassword').val()
+                    },
+                    url: "/Admin/adminLoginToAccount",
+                    }).done(function (data) {
+                        if (data == false) {
+                            alertLogin.style.display = "block";
+                        } else {
+                            window.location.assign("/Admin/dashboard");
+                        }
+                    });
+                }
+                
+            }
+
+        function multiCheckAdminLogin(){
+            checkAdminIsUserNameInput();
+            checkAdminPasswordInput();
+        }
+
+        $('#adminUserName').on('input blur', function (e) {
+            e.preventDefault();
+            checkAdminIsUserNameInput();
+        });
+
+        $('#adminPassword').on('input blur', function (e) {
+            e.preventDefault();
+            checkAdminPasswordInput();
+        });
+
+        /**
+         * checkUserName
+         */
+        function checkAdminIsUserNameInput() {
+            var flagValiate = true;
+            fieldCheck.checkSpecialInputDsSpace($('#adminUserName'));
+            flagValiate == true ? flagValiate = fieldCheck.checkEmptyFields($('#adminUserName'), $('#msgUserName')) : flagValiate = false;
+        };
+        /**
+         * checkPassword
+         */
+        function checkAdminPasswordInput() {
+            fieldCheck.checkEmptyFields($('#adminPassword'), $('#msgPassword'));
+        };
+    });
+</script>
+
+</html>

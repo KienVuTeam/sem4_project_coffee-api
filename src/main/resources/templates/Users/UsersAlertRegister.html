@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Yinka Enoch Adedokun">
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" type="images/x-icon">
+    <title>Verify Link</title>
+    <link rel="stylesheet" href="/css/cssRecoverP.css">
+</head>
+
+<body>
+    <input type="hidden" name="" id="flagModal" th:data-flag="${flagVerify}">
+
+    <div class="container" id="modalAlert">
+        <div class="cookiesContent" id="cookiesPopup">
+            <button class="close" id="closeModal">✖</button>
+            <!-- 44cd55 -->
+            <img src="https://cdn-icons-png.flaticon.com/128/738/738884.png" alt="cookies-img" class="imgModal"
+                id="iconModal" />
+            <p class="msgModal" id="messageModal">We use cookies for improving user experience, analytics and marketing.
+            </p>
+            <button class="accept" id="btnAccept">OK</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="/js/errorFieldCheck.js"></script>
+    <script>
+        var modal = document.getElementById("modalAlert");
+        var buttonAccept = document.getElementById("btnAccept");
+        showModalDialog();
+        function showModalDialog() {
+            var flagModal = $('#flagModal').attr('data-flag');
+            buttonAccept.style.backgroundColor = "#ed6755";
+            if (flagModal == "true") {
+                $('#iconModal').attr('src', "/images/users/iconSuccess.png");
+                $('#messageModal').text("Congratulations, your account has been successfully created. Login Now");
+                buttonAccept.style.backgroundColor = "#44cd55";
+            } else {
+                $('#iconModal').attr('src', "/images/users/errorIcon.png");
+                $('#messageModal').text("There Are Some Errors Please Try Back");
+            }
+            $('#modalAlert').fadeIn(500);
+            modal.style.display = "flex";
+        }
+
+        $('#closeModal').on('click', function (e) {
+            e.preventDefault();
+            redirectOnCloseModal();
+        });
+
+        $('#btnAccept').on('click', function (e) {
+            e.preventDefault();
+            redirectOnCloseModal();
+        });
+
+        window.onclick = function (e) {
+            if (e.target == modal) {
+                redirectOnCloseModal();
+            }
+        }
+
+        function redirectOnCloseModal(){
+            window.location.assign("/UsersLogin");
+        }
+
+    </script>
+</body>
+
+</html>

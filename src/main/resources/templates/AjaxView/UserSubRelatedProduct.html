@@ -1,0 +1,54 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<th:block th:if="${!lsProducts.empty}">
+	<th:block th:each="item,index : ${lsProducts}">
+		<div class="col-xl-3 col-lg-6 col-md-6 mt-30" id="itemProduct">
+			<div class="pp__item pp__item--2 text-center pt-20 pb-20" style="height: 395px;">
+				<div class="pp__action pp__action--2 d-flex align-items-center justify-content-center">
+					<div class="cart d-flex align-items-center justify-content-center">
+						<a href="#0"><i class="fal fa-shopping-basket"></i></a>
+					</div>
+					<div class="wishlist d-flex align-items-center justify-content-center">
+						<a href="#0"><i class="fal fa-heart"></i></a>
+					</div>
+					<div class="view d-flex align-items-center justify-content-center">
+						<a href="#0"><i class="fal fa-eye" id="popupProduct" th:data-id="${item.id}"></i></a>
+					</div>
+				</div>
+				<div class="pp__thumb pp__thumb--2 mt-35">
+					<img class="default" th:src="${item.image}" alt="" style="max-width: 100%;margin-top: -28px;max-height: 128%;"  onerror="this.onerror=null;this.src='/error/blogImage.jpg'">
+				</div>
+				<div class="pp__content pp__content--2 mt-25">
+					<div class="pp__c-top d-flex align-items-center justify-content-center">
+						<div class="pp__cat pp__cat--2">
+							<a href="#0" th:text="${item.cateName}"></a>
+						</div>
+					</div>
+					<h4 class="pp__title pp__title--2">
+						<a th:href="${'/Products/ViewProductDetails/?idProduct=' + item.id}" th:text="${item.title}"></a>
+					</h4>
+					<div class="pp__price pp__price--2 d-flex align-items-center justify-content-center">
+						<h6 class="label">Price - </h6>
+						<th:block th:if="${item.finalPrice - item.price == 0}">
+							<span class="price">$<th:block th:text="${item.price}">
+								</th:block></span>
+						</th:block>
+						<th:block th:if="${item.finalPrice - item.price != 0}">
+							<span class="price">
+								$<th:block th:text="${item.finalPrice}"></th:block>
+								/
+								<span class="regular">
+									<del>$<th:block th:text="${item.price}">
+										</th:block></del>
+								</span>
+							</span>
+						</th:block>
+					</div>
+				</div>
+			</div>
+		</div>
+	</th:block>
+</th:block>

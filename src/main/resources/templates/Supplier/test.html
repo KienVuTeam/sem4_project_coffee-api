@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+
+</head>
+
+<link rel="stylesheet" href="/supplier/vendors/quill/quillBubble.css">
+<link rel="stylesheet" href="/supplier/vendors/quill/quillSnow.css">
+<link rel="stylesheet" href="/supplier/css/detailBlog.css">
+<!-- Add Jquery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--  <script th:src="@{/ckeditor/ckeditor.js}"></script> -->
+
+
+
+<body>
+
+	<div id="preloader"></div>
+
+	<style>
+	
+	/* Adjustments for toggleable comments */
+
+details.comment summary {
+	position: relative;
+	list-style: none;
+	cursor: pointer;
+}
+
+details.comment summary::-webkit-details-marker {
+	display: none;
+}
+
+details.comment:not([open]) .comment-heading {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.comment-heading::after {
+	display: inline-block;
+	position: absolute;
+	right: 5px;
+	align-self: center;
+	font-size: 12px;
+	color: rgba(0, 0, 0, 0.55);
+}
+
+details.comment[open] .comment-heading::after {
+	content: "Click to hide";
+}
+
+details.comment:not([open]) .comment-heading::after {
+	content: "Click to show";
+}
+
+/* Adjustment for Internet Explorer */
+
+@media screen and (-ms-high-contrast: active),
+(-ms-high-contrast: none) {
+
+	/* Resets cursor, and removes prompt text on Internet Explorer */
+	.comment-heading {
+		cursor: default;
+	}
+
+	details.comment[open] .comment-heading::after,
+	details.comment:not([open]) .comment-heading::after {
+		content: " ";
+	}
+}
+
+.reply-form textarea {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: 16px;
+	width: 100%;
+	max-width: 100%;
+	margin-top: 15px;
+	margin-bottom: 5px;
+}
+
+.d-none {
+	display: none;
+}
+
+.contentComment {
+	border: none;
+	height: 150px;
+	margin-bottom: 10px;
+	padding: 30px;
+	width: 100%;
+	color: #6c6c6c;
+	font-size: 14px;
+	background: #ffffff;
+	border-radius: 0px;
+	border: 1px solid #e2dfdd;
+}
+
+.submitComment {
+	background-color: #C7A17A;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	margin-right: 10px;
+	font-size: 15px;
+	line-height: 28px;
+	width: 70px;
+	border-radius: 4px;
+	color: white;
+}
+
+.clearComment {
+	background-color: #C7A17A;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	margin-right: 18px;
+	font-size: 15px;
+	line-height: 28px;
+	width: 70px;
+	border-radius: 4px;
+	color: white;
+}
+
+.submitComment:hover,
+.clearComment:hover {
+	cursor: pointer;
+	background-color: #010103;
+}
+
+.replyComment {
+	display: none;
+}
+	/*End*/
+	
+.txtComment {
+	margin-bottom: 2px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	color: black
+}
+
+.comment-border-link {
+	display: block;
+	position: absolute;
+	top: 50px;
+	left: 0;
+	width: 12px;
+	height: calc(100% - 50px);
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	background-color: rgba(0, 0, 0, 0.1);
+	background-clip: padding-box;
+}
+
+.comment-border-link:hover {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.comment-body {
+	padding: 0 20px;
+	padding-left: 28px;
+}
+
+.replies {
+	margin-left: 28px;
+}
+	
+	
+	
+#preloader {
+	background: #ccc url(/supplier/images/loader3.gif) no-repeat center;
+	opacity: 0.9;
+	background-size: 5%;
+	height: 100vh;
+	width: 100%;
+	position: fixed;
+	z-index: 100;
+}
+
+.error {
+	color: red !important;
+}
+
+.wrapImg {
+	width: 120px;
+	overflow: hidden;
+	border-radius: 6px;
+}
+
+.wrapImg>img {
+	width: 100%;
+	max-height: 90%;
+}
+
+.listImg {
+	display: flex;
+}
+
+.ml-15 {
+	margin-left: 15px;
+}
+
+.dropzone {
+	position: relative;
+	border: 1px dashed #999;
+	width: 150px;
+	height: 130px;
+	border-radius: 3px;
+	text-align: center;
+	overflow: hidden;
+	margin-right: 15px;
+}
+
+.dropzone:hover .active {
+	display: flex;
+}
+
+.overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	z-index: 2;
+	background-color: rgba(0, 0, 0, 0.5);
+	justify-content: center;
+	align-items: center;
+	display: none;
+}
+
+.overlay button {
+	background-color: transparent;
+	border: none;
+	color: cornsilk;
+	padding: 10px;
+}
+
+.overlay button i {
+	font-size: 17px;
+}
+
+.upload-icon {
+	object-fit: cover;
+	width: 150px;
+	height: 130px;
+	display: none;
+	position: absolute;
+	z-index: 1;
+}
+
+.default-upload {
+	width: 120px;
+	height: 100px;
+	margin-top: 15px;
+}
+
+.upload-input {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.ql-editor {
+	min-height: 200px;
+}
+
+.ql-editor p {
+	color: inherit;
+}
+</style>
+
+	<div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+	<div id="main">
+		<nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+		<!-- breadcrumb -->
+		<div class="page-title" style="margin: 4px 3% -22px">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Blogs  Management</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/Supplier/dashboard">Dashboard</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Blogs</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+	</div>
+		<!--  -->
+		<div class="main-content container-fluid">
+		
+		<!-- Modal Add Blog -->
+			<div class="modal fade" id="AddBlog" tabindex="-1" role="dialog"
+				aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content" style="border-radius: 25px;">
+						<form class="form form-vertical" id="formAdd" method="post"
+							enctype="application/x-www-form-urlencoded">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLongTitle">Create a
+									new Blog</h5>
+								<button type="button" class="close" data-bs-dismiss="modal"
+									onclick="btn_close_modalAdd(this);" aria-label="Close">
+									<i data-feather="x"></i>
+								</button>
+							</div>
+							<div class="modal-body" id ="body_addBlog">
+								<div class="form-body">
+									<div class="row">
+										<div class="col-12">
+											<div class="form-group">
+												<label for="first-name-vertical">Blog Title</label> <input
+													type="text" class="form-control inputField"  name="blogTitle"
+													placeholder="Enter Your Blog Title">
+												<!-- id="first-name-vertical" -->
+											</div>
+										</div>
+										<div class="col-8">
+											<div class="form-group">
+												<label for="email-id-vertical">Blog Thumbnail</label>
+												<div class="listImg">
+													<div class="dropzone">
+														<div class="overlay">
+															<button title="remove" onclick="removeImage(this)">
+																<i class="fas fa-trash"></i>
+															</button>
+														</div>
+														<img class="upload-icon" /> <img
+															src="https://100dayscss.com/codepen/upload.svg"
+															class="default-upload" /> <input id="photo"
+															name="blogImage" type="file" accept=".jpg, .jpeg, .png"
+															class="upload-input" onchange="upload(this)" /> <br>
+													</div>
+												</div>
+												<p id="photo-errorText" style="color: red;"></p>
+											</div>
+
+											<div class="form-group">
+												<input class="form-control" type="hidden" id="hdImage"
+													name="hdImage">
+											</div>
+
+										</div>
+
+										<div class="col-12">
+											<label for="email-id-vertical">Blog Content</label>
+											<!-- <div class="form-group">
+                                                    <div id="full" name="blogDescription">
+
+                                                    </div>
+                                                </div> -->
+
+											<!-- <textarea name="ckeditor1" id="ckeditor1" cols="30" rows="10">
+                                                   
+                                                </textarea>-->
+
+											<textarea class="form-control inputField" rows="7"
+												name="rePlaceDescription" id="rePlaceDescription" cols="30"
+												placeholder="Description"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="reset" onclick=reset_modalAddBlog();
+									class="btn btn-light-secondary">
+									<span class="d-none d-sm-block">Reset</span>
+								</button>
+
+								<button type="button" class="btn btn-primary ml-1">
+									<i class="bx bx-check d-block d-sm-none"></i> <span
+										class="d-none d-sm-block" onclick="CreateNewBlog();">Submit</span>
+								</button>
+
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!-- End Modal Add Blog -->
+		<!-- new 12/12 -->
+		<!--Extra Large Modal For Edit-->
+                    <div class="modal fade text-left w-100" id="xlarge" tabindex="-1" role="dialog"
+                        aria-labelledby="myModalLabel16" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" role="document">
+                        <div class="modal-content">
+                        <!--  -->
+                            <form class="form form-vertical" id="formEdit" method="post" style=" overflow: auto;"
+							enctype="application/x-www-form-urlencoded">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLongTitle">Edit
+									Blog</h5>
+								<button type="button" class="close" data-bs-dismiss="modal"
+									aria-label="Close">
+									<i data-feather="x"></i>
+								</button>
+							</div>
+							<div class="modal-body" id="body_edit">
+								<div class="form-body">
+									<div class="row">
+										<div class="col-6">
+											<div class="form-group">
+												<label for="first-name-vertical">Blog Title</label> <input
+													type="text" id="first-name-vertical" class="form-control inputField"
+													name="edit_blogTitle"  placeholder="Enter Your Blog Title"
+													required>
+											</div>
+										</div>
+										<div class="row">
+											<i style="font-size: 10px; color: red;">(Don't add a
+												photo if you want to keep the old photo)</i>
+											<div class="col-6">
+												<div class="form-group">
+													<label for="email-id-vertical">Blog Thumbnail </label>
+
+													<div class="listImg">
+														<div class="dropzone">
+															<div class="overlay">
+																<button title="remove" onclick="removeImageEdit(this)">
+																	<i class="fas fa-trash"></i>
+																</button>
+															</div>
+															<img class="upload-icon" /> <img
+																src="https://100dayscss.com/codepen/upload.svg"
+																class="default-upload" /> <input id="edit_photo"
+																name="edit_blogImage" type="file"
+																accept=".jpg, .jpeg, .png" class="upload-input"
+																onchange="uploadEdit(this)" /> <br>
+
+														</div>
+													</div>
+												</div>
+
+
+											</div>
+											<div class="col-6" style="width: 170px; line-height: 180px;">
+
+												<img
+													style="width: 100%; padding: 15px; border: 1px inset #ee6ecee1;"
+													id="old_blogImage" alt="err" src="" onerror="this.src='/supplier/images/defaultImageProduct.png';" >
+											</div>
+											<div class="col-0"
+												style="text-align: left; text-align: justify;"></div>
+											<div style="clear: both;"></div>
+										</div>
+
+										<input type="hidden" id="old_hdImage"> <input
+											type="hidden" id="edit_hdImage"> <input type="hidden"
+											id="idEdit">
+
+										<div class="col-12">
+											<label for="email-id-vertical">Blog Content</label>
+											<!-- <div class="form-group">
+                                                    <div id="full" name="blogDescription">
+
+                                                    </div>
+                                                </div> -->
+
+											<!--  <textarea name="edit_ckeditor2" id="edit_ckeditor2" cols="30" rows="10">
+
+                                                </textarea> -->
+											<div class="form-group">
+												<textarea rows="7" cols="" class="form-control inputField"
+													id="edit_rePlaceDescription" name="edit_rePlaceDescription"
+													placeholder="Description "></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer" style="padding-bottom: 40px;">
+								<button type="reset" class="btn btn-light-secondary">
+									<span class="d-none d-sm-block" onclick="reset_modalEdit();">Reset</span>
+								</button>
+
+								<button type="button" class="btn btn-primary ml-1">
+									<i class="bx bx-check d-block d-sm-none"></i> <span
+										class="d-none d-sm-block"  id="updateBlog">Submit</span>
+								</button>
+
+							</div>
+						</form>
+                            
+                            <!--  -->
+                        </div>
+                        </div>
+                    </div>
+		<!-- End -->
+			
+
+			<!-- Modal Of Blog Detail-->
+			<div class="modal fade" id="exampleModal" tabindex="-1"
+				aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" style="max-width: 1000px;" role="document" id="componentDetailSupp">
+					<!-- Detail here -->
+					<!--  -->
+				</div>
+			</div>
+			<!--  -->
+
+			<!--=================================== Manager Blogs ====================================-->
+			<section class="section">
+				<div class="card">
+					<!--  <div class="card-header">Manager Blogs</div>-->
+					<div class="card-body">
+						<button class="btn btn-primary m-2" data-bs-toggle="modal"
+							data-bs-target="#AddBlog">Create Blog</button>
+
+						<table id="tableBlogOfSupp" class="table table-hover dataTable">
+							<thead>
+								<tr>
+									<th>No.</th>
+									<th>Blog Name</th>
+									<th>Blog Thumbnail</th>
+									<th>Date Created</th>
+									<th>View detail</th>
+									<th>Edit</th>
+									<th>Action</th>
+
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item ,key: ${lBlog}">
+									<td th:text="${key.index+1}">1</td>
+									<td th:text="${item.blogTitle}">Tại Sao Nên Mua Cà Phê BMT</td>
+									<td>
+										<div class="wrapImg">
+											<!-- <img src="/supplier/images/blogpost1.jpg" alt="" srcset=""> -->
+											<!--  <p  th:text="${item.blogImage}"></p> -->
+											<img alt="err" th:src="${item.blogImage}" onerror="this.src='/supplier/images/defaultImageProduct.png';" >
+										</div>
+									</td>
+									<td>
+										<p th:text="${#dates.format(item.dateCreate, 'dd-MM-yyyy')}"></p>
+									</td>
+									<td>
+										<button type="button" class="btn btn-info"
+										    id ="btnDetailSupp" th:data="${item.id}"
+										    th:data-isStatus="${item.isStatus}"
+											data-bs-toggle="modal" data-bs-target="#exampleModal">
+											Detail</button>
+									</td>
+									
+									<td th:if="${item.isStatus eq 2}">
+									  <span></span>
+									</td>
+									<td th:unless="${item.isStatus eq 2}">
+										<button  class="btn btn-warning btn_editBlog icon icon-left" th:data="${item.id}"
+											data-bs-toggle="modal" data-bs-target="#xlarge"
+											><i data-feather="edit" width="20"></i>&nbsp;Edit</button>
+									</td>
+									
+									<!-- <td >
+										<button  th:case="" class="btn btn-warning btn_editBlog icon icon-left" th:data="${item.id}"
+											data-bs-toggle="modal" data-bs-target="#xlarge"
+											><i data-feather="edit" width="20"></i>&nbsp;Edit</button>
+									</td> -->
+									<td th:switch="${item.isStatus}">
+										<button style="min-width: 110px; cursor: none;" th:case="0" class="btn icon icon-left btn-light"><i data-feather="clock" width="20"></i>&nbsp;Watting</button>
+										<button style="min-width: 110px; cursor: none; " th:case="1" class="btn icon icon-left btn-success"><i data-feather="eye" width="20"></i>&nbsp;Active</button>
+										<button style="min-width: 110px; cursor: none;" th:case="2" class="btn icon icon-left btn-danger"><i data-feather="eye-off" width="20"></i>&nbsp;Ignore</button>
+									</td>
+									<!-- data-bs-toggle="modal"
+									onclick="editBlog(this);"
+											data-bs-target="#EditBlog" -->	
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+			<!-- End Manager Blogs -->
+
+
+			
+			<!-- =============================Script=================================================== -->
+
+			
+
+			<script
+				src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+			<script
+				src="https://www.gstatic.com/firebasejs/7.13.1/firebase-storage.js"></script>
+			<script type="text/javascript">
+
+
+				/// Import the functions you need from the SDKs you need
+				//import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+
+				//import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-storage.js";
+				// TODO: Add SDKs for Firebase products that you want to use
+				// https://firebase.google.com/docs/web/setup#available-libraries
+
+				// Your web app's Firebase configuration
+				// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+				//firabase ilacoffee
+				//const firebaseConfig = {
+					//apiKey: "AIzaSyBGL7802ZHOkecG8gHEiZEz1qw4EVF2Ql0",
+					//authDomain: "ilacoffeeproject.firebaseapp.com",
+					//projectId: "ilacoffeeproject",
+					//storageBucket: "ilacoffeeproject.appspot.com",
+					//messagingSenderId: "726954147188",
+					//appId: "1:726954147188:web:5c1846723f56d528f1c021"
+				//};
+				//
+				
+				//
+				const firebaseConfig = {
+				  apiKey: "AIzaSyBGL7802ZHOkecG8gHEiZEz1qw4EVF2Ql0",
+				  authDomain: "ilacoffeeproject.firebaseapp.com",
+				  projectId: "ilacoffeeproject",
+				  storageBucket: "ilacoffeeproject.appspot.com",
+				  messagingSenderId: "726954147188",
+				  appId: "1:726954147188:web:5c1846723f56d528f1c021"
+				};
+
+				// Initialize Firebase
+
+				//const analytics = getAnalytics(app);
+				try {
+					//const app = initializeApp(firebaseConfig);
+					firebase.initializeApp(firebaseConfig);
+				} catch (e) {
+					// TODO: handle exception
+					console.log("err: " + e);
+				}
+
+
+			</script>
+			<!--  -->
+			<script type="text/javascript" th:src="@{/supplier/js/upsender.js}">
+
+			</script>
+			<!-- ??? -->
+
+		</div>
+
+		<footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+	</div>
+
+	<div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+	<script src="/supplier/vendors/quill/quill_min.js"></script>
+	<script src="/supplier/js/form_editor.js"></script>
+	<!-- ====================================================================Script====================================================== -->
+	<script>
+	let statusOfBlogDetail_partial =null;
+	//document.getElementById("icon_supplier").setAttribute("href", "/supplier/images/coffee3.png");
+	document.getElementById("title_supplier").textContent="Supplier - Blog management ";
+	
+	function preLoaderFx(sd){
+    	////debugger
+    	var loader = document.getElementById("preloader");
+        window.addEventListener("load", function () {
+        	setTimeout(function(){
+                loader.style.display = "none";
+            },sd);                    
+        });
+    };
+    //
+	//new
+		$.validator.addMethod("threeSpaces", function(value, element) {
+            return !/\s{3}/.test(value);
+        }, "Please enter at least 3 consecutive spaces.");
+		//
+		$.validator.addMethod("noSpecialChars", function(value, element) {
+			//let regex = /^[!@#$%^&*(),.?":{}|<>]+{2}$/;
+		    //return /^[a-zA-Z0-9]+$/.test(value);
+		    // /^[!@#$%^&*(),.?":{}|<>]+$/
+		    return /^[a-zA-Z0-9 .,]+$/.test(value);
+		  }, "Special characters are not allowed!");
+		//
+		$("#formAdd").validate({
+			rules: {
+				blogTitle: {
+					required: true,
+					minlength: 4,
+					threeSpaces: true  ,
+					maxlength: 50,
+					noSpecialChars: true
+				},
+				//blogImage: "required",
+				//hdImage: "required",
+				//ckeditor1: "required",
+				rePlaceDescription: {
+					required: true,
+					minlength: 50,
+					maxlength: 2000,
+					threeSpaces: true,
+					noSpecialChars: true
+					
+				}
+
+			},
+			messages: {
+				blogTitle: {
+					required: "Required to enter!",
+					minlength: "You must enter more than 4 characters!",
+					maxlength: "Enter up to 50 characters!",
+					noSpecialChars : "Special characters are not allowed!"
+					
+				},
+				rePlaceDescription: {
+					required: "Required to enter!",
+					minlength: "You must enter more than 50 characters!",
+					maxlength: "Enter up to 2000 characters!",
+					noSpecialChars : "Special characters are not allowed!"
+				}
+			}
+		});
+		//
+		
+		$("#formEdit").validate({
+			rules:{
+				edit_blogTitle:{
+					required: true,
+					minlength: 4,
+					maxlength: 50,
+					threeSpaces: true ,
+					noSpecialChars: true
+				},
+				edit_rePlaceDescription:{
+					required: true,
+					minlength: 50,
+					maxlength: 2000,
+					threeSpaces: true ,
+					noSpecialChars: true
+				}
+				
+			},
+			messages:{
+				edit_blogTitle:{
+					required: "Required to enter!",
+					minlength: "You must enter more than 15 characters!",
+					maxlength: "Enter up to 50 characters!",
+					noSpecialChars : "Special characters are not allowed!"
+				},
+				edit_rePlaceDescription:{
+					required: "Required to enter!",
+					minlength: "You must enter more than 50 characters!",
+					maxlength: "Enter up to 2000 characters!",
+					noSpecialChars : "Special characters are not allowed!"
+				}
+			}
+		});
+	
+    //
+    function validateFileType(e) {
+    	////debugger
+            const input = document.getElementById('photo');
+            const errorText = document.getElementById(e);
+
+            
+            const files = input.files;
+
+            
+            if (files.length > 0) {
+                
+                const fileType = files[0].type;
+
+                if (fileType !== 'image/jpeg' && fileType !== 'image/png') {
+                    errorText.textContent = 'Only JPG or PNG files are accepted!!!';
+                    input.value = '';
+                    return false;
+                } else {
+                    errorText.textContent = ''; 
+                    return true;
+                }
+            }
+        }
+    //
+  function test_a(cb){
+	 let flagCheck = false;
+	 //let flagCheck = await 
+	 ////debugger
+	 cb();
+	 
+	 return flagCheck;
+ }
+
+	
+    preLoaderFx(1);
+		// Simple Datatable
+		let table1 = document.querySelector('.dataTable');
+		let dataTable = new simpleDatatables.DataTable(table1);
+		
+		//----------------------------------------------------------------------------------EDIT
+		//get data for edit blog
+
+		//c2
+		$(".btn_editBlog").on("click",  function() {
+		    $("#edit_hdImage").text("");
+		    //alert("running");
+		    
+		    //reset_modalEdit();
+		    function bb(){
+		    	
+		    $("#formEdit").validate().resetForm();
+		    console.log("1");
+		    }
+		    //$("[name='edit_blogTitle']").removeAttr("error");
+		    //$("#edit_rePlaceDescription").removeAttr("error");
+		    bb();
+		    console.log("2");
+			test();
+			back();
+			
+		    let dataIdValue = $(this).attr("data");
+		    console.log("Edit button clicked ");
+
+		    $.ajax({
+				url: `/Supplier/edit-blog?id=${dataIdValue}`,
+				type: "get",
+				success: (res) => {
+					$("[name='edit_blogTitle']").val(res.title);
+					$("#old_blogImage").attr("src", res.image);
+					$("#old_hdImage").val(res.image);
+					$('#idEdit').val(res.id);
+					$("#edit_rePlaceDescription").val(res.description);
+					//editorEdit.setData(res.description);
+				},
+				error: (e) => {
+					console.log("get data for edit failed: " + e);
+				}
+			});
+		    //$("[name='edit_blogTitle']").css("color", "black");
+			//$("#edit_rePlaceDescription").css("color", "black");
+			$("#edit_rePlaceDescription").removeClass("error");
+		    $("#first-name-vertical").removeClass("error");
+		    
+		  });
+		//
+		function editBlog(element) {
+			alert("don't running");
+			//debugger
+			$("#edit_hdImage").text("");
+			//$("#EditBlog-fix2").modal('show');
+			test();
+			back();
+			//reLoad();
+			////debugger
+			var idEditBlog = element.getAttribute('data');
+			
+			console.log("1");
+			
+			$.ajax({
+				url: `/Supplier/edit-blog?id=${idEditBlog}`,
+				type: "get",
+				success: (res) => {
+					$("[name='edit_blogTitle']").val(res.title);
+					$("#old_blogImage").attr("src", res.image);
+					$("#old_hdImage").val(res.image);
+					$('#idEdit').val(res.id);
+					$("#edit_rePlaceDescription").val(res.description);
+					//editorEdit.setData(res.description);
+				},
+				error: (e) => {
+					alert("get data for edit failed: " + e);
+				}
+			});
+		}
+        //
+		$("#updateBlog").on("click", function() {
+			//alert("");
+			updateBlog();
+		});
+		//
+		async function updateBlog() {			
+			let flagCheckEdit ="";
+			//debugger
+			if ($("#formEdit").valid()) {
+				flagCheckEdit = await uploadImageForEdit();
+				//
+				let e_blogImg;
+				let img_new = document.getElementById('edit_hdImage').value;
+				let img_old = document.getElementById('old_hdImage').value;
+				if (img_new == "") {
+					e_blogImg = img_old;
+				} else {
+					e_blogImg = img_new;
+				}
+				//
+				
+				//debugger
+				
+					try {
+						let idUpdate = document.getElementById('idEdit').value;
+						let e_blogTitle = $("[name='edit_blogTitle']").val();
+						
+						
+						//var e_desc = CKEDITOR.instances['edit_ckeditor2'].getData();
+						let e_desc = $("#edit_rePlaceDescription").val();
+						
+						let dataEdit = {
+							blogTitle: e_blogTitle,
+							blogImg: e_blogImg,
+							blogDescription: e_desc
+						};
+
+						$.ajax({
+							url: `/Supplier/update-blog?id=${idUpdate}`,
+							type: "Post",
+							data: dataEdit,
+							success: (res) => {
+								//$("#EditBlog-fix2").modal("hide");
+								//document.getElementById('#EditBlog-fix2').style.display = 'none';
+								 Swal.fire({
+						    		  position: 'center',
+						    		  icon: 'success',
+						    		  title: 'Update Blog success',
+						    		  showConfirmButton: false,
+						    		  timer: 1500
+						    		});
+								 setTimeout(function() {
+									 let url ="http://localhost:8080/Supplier/getAll-blog";
+										window.location.href = url;					
+									  }, 2000);
+								
+								//alert('update success');
+								
+							},
+							error: (err) => {
+								alert('update failed !!! ');
+								console.log("err: " + err);
+								
+							}
+
+						});
+					} catch (e) {
+						// TODO: handle exception
+						//Swal.fire('Update blog failed');
+						console.log("update blog failed: "+e);
+					}
+				
+				
+				
+			}else{
+				Swal.fire('Update blog failed');
+			}
+			
+		}
+
+
+		//---Close-------------------------------------------------
+		//btn_close_modalAdd
+		function btn_close_modalAdd(){
+			let title = document.querySelector('[name="blogTitle"]').value = "";
+			//let desc = CKEDITOR.instances['ckeditor1'].setData("");//
+			let desc = document.querySelector("#rePlaceDescription").value ="";
+			$("#photo-errorText").text("");
+			$("#blogTitle-error").hide();
+			$("#rePlaceDescription-error").hide();
+			let temp = document.querySelector(".listImg .dropzone button");
+			removeImage(temp);
+
+			$("#AddBlog").modal("hide");
+		}
+		//reload
+		function reLoad() {
+			let url = "http://localhost:8080/Supplier/getAll-blog";
+			window.location.href = url;
+		}
+		
+		function reset_modalAddBlog() {
+			//debugger
+			let title = document.querySelector('[name="blogTitle"]').value = "";
+			//let desc = CKEDITOR.instances['ckeditor1'].setData("");//
+			let desc = document.querySelector("#rePlaceDescription").value ="";
+			$("#photo-errorText").text("");
+			$("#blogTitle-error").hide();
+			$("#rePlaceDescription-error").hide();
+			let temp = document.querySelector(".listImg .dropzone button");
+			removeImage(temp);
+
+			//$("#AddBlog").modal("hide");
+		}
+		function reset_modalEdit(){
+			//debugger
+			//$("[name='edit_rePlaceDescription']").val("");
+			//$("[name='first-name-vertical']").val("");
+			$("#first-name-vertical").val("");
+			$("#edit_rePlaceDescription").val("");
+			$("#edit_rePlaceDescription-error").hide();
+			$("#first-name-vertical-error").hide();
+			//
+			$("#formEdit").validate({
+			  errorPlacement: function() {
+			    return false;
+			  }
+			});
+			//let temp = document.querySelector(" .listImg .dropzone button");
+			//removeImageEdit(temp);
+		}
+		//-----
+		async function CreateNewBlog() {
+			
+			 //debugger
+			if ( $("#formAdd").valid()) {
+				let flagCheck ="";
+				//debugger
+					//test_a(uploadImage);
+				 let dccm = await uploadImage();
+				 flagCheck = dccm;
+				
+				if(flagCheck != null){
+					//
+					var title = document.querySelector('[name="blogTitle"]').value;
+					//var desc = CKEDITOR.instances['ckeditor1'].getData();
+					let desc = document.getElementById("rePlaceDescription").value;
+					try {
+						var linkImage = document.getElementById('hdImage').value;
+						var dataBlog = {
+							blogTitle: title,
+							blogImage: linkImage,
+							blogDescription: desc
+						}
+						$.ajax({
+							url: `/Supplier/create-blog`,
+							type: "POST",
+							data: dataBlog,
+							success: (res) => {
+								reset_modalAddBlog();
+								 Swal.fire({
+						    		  position: 'top-center',
+						    		  icon: 'success',
+						    		  title: 'Create new blog success',
+						    		  showConfirmButton: false,
+						    		  timer: 1500
+						    		});
+								 setTimeout(function() {						
+										reLoad();
+									  }, 2000);
+								//alert('Create new blog success: ' + res);
+							},
+							error: (r) => {
+								alert("create new blog failed: " + r);
+								console.log("err: " + r)
+							}
+						});
+
+					} catch (e) {
+						// TODO: handle exception
+						alert('Create new blog failed: ' + e)
+					}
+				} else {
+					Swal.fire('Upload image null or failed')
+					//alert('upload image failed');
+				}
+					//
+					
+				}else{
+					Swal.fire('Check again ... Add new blog failed')
+					//alert("add new blog failed!!!");
+				}
+				
+			reset_modalAddBlog();
+
+		}
+		//---------------------------
+		// get detail blog
+		function getDetailBlogById(element) {
+			//debugger
+			var idBlog = element.getAttribute("data");
+			//
+			//getAllCmtBlog(idBlog);
+			var temp = document.getElementById('D_image');
+			console.log(idBlog);
+			try {
+				$.ajax({
+					url: `/Supplier/get-detail-blog?id=${idBlog}`,
+					type: "GET",
+					success: (res) => {
+						console.log(res.image);
+					    $("#D_blogDescription").text(res.description);
+						$("#D_blogTitle").text(res.title);
+						$("#D_image").attr("src", res.image);
+						//$("#D_image").attr("onerror", "this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" );
+						$("#D_blogCreateAt").text(res.createDate);
+					},
+					error: () => {
+						alert("get blof detail failed");
+					}
+				});
+			} catch (e) {
+				// TODO: handle exception
+				console.log('err: ' + e);
+			}
+		}
+		
+		//---------------------------------------------------CMT blog
+		
+		//---------
+		function reply(e) {
+			////debugger
+			var nodeCmt = e.parentElement.parentElement.querySelector('.reply');
+			let data = nodeCmt.getAttribute("data-boxcmt");
+			console.log("out: " + data);
+
+			if (data == 0) {
+				nodeCmt.setAttribute('data-boxcmt', 1);
+				let text = `<br> <li class="chilred">
+    				<textarea name="stringReply" rows="5" class="form-control" placeholder="Comments..."></textarea>
+    				</li> <div class="mt-2 text-right" style="float: right;"> <button class="btn btn-primary" onclick="submitReply(this);">comment</button> <button class="btn btn-outline-danger" onclick="deleteBoxCmt(this);">Cacel</button> </div> <div style="clear:both;"></div> `;
+
+				let parentNode = e.parentNode.parentNode.parentNode;
+				let test = e.parentElement.parentElement;
+				let aa = document.createElement("div");
+
+				aa.innerHTML = text;
+				parentNode.appendChild(aa);
+			}
+
+		}
+		//
+		function submitReply(e) {
+			//debugger
+			console.log(e);
+			let nodeDataIdBlog = e.parentElement.parentElement.parentElement.parentElement.querySelector('.idBlog-hd');
+			let data = nodeDataIdBlog.getAttribute('data-idhd-blog');
+			console.log(data);
+			let contentReply = e.parentElement.parentElement.querySelector('textarea[name="stringReply"]').value;
+			let dataSubmitReply = {
+				id: data,
+				reply: contentReply
+			}
+			console.log(dataSubmitReply);
+
+			$.ajax({
+				url: 'reply-cmt-blog',
+				type: "POST",
+				data: dataSubmitReply,
+				success: (res) => {
+					alert("reply successfuly");
+
+				},
+				error: (e) => {
+					alert("reply errorfuly");
+				}
+
+
+			});
+
+		}
+
+
+		//---
+		function deleteBoxCmt(e) {
+			////debugger
+			let parentNode = e.parentElement.parentElement;
+			let countBoxCmt = parentNode.parentElement.querySelector('.reply');
+			countBoxCmt.setAttribute('data-boxcmt', 0);
+			console.log('inra: ' + { 'e': +parentNode });
+			parentNode.remove();
+		}
+
+
+	</script>
+	
+	<script>
+		let file = document.querySelector(".upload-input");
+		let listImg = document.querySelector(".listImg");
+
+		function upload(e) {
+			let flagCheck =false;
+			flagCheck = validateFileType('photo-errorText');
+			if(flagCheck){
+				let dropzone = e.parentNode;
+				let overlays = dropzone.children[0];
+				let imgs = dropzone.children[1];
+				let defaultImgs = dropzone.children[2];
+
+				imgs.src = URL.createObjectURL(e.files[0]);
+				defaultImgs.style.display = "none";
+				overlays.classList.add("active");
+				imgs.style.display = "block";
+			}else{
+				alert("failed");
+			}
+			
+			//call
+			//uploadImage();
+
+		}
+
+		function removeImage(e) {
+			//debugger
+			document.querySelector("#body_addBlog .listImg .dropzone").remove();
+			backImageAdd();
+		}
+		//edit
+		function uploadEdit(e) {
+			validateFileType('photo-errorText');
+			let dropzone = e.parentNode;
+			let overlays = dropzone.children[0];
+			let imgs = dropzone.children[1];
+			let defaultImgs = dropzone.children[2];
+
+			imgs.src = URL.createObjectURL(e.files[0]);
+			defaultImgs.style.display = "none";
+			overlays.classList.add("active");
+			imgs.style.display = "block";
+			//call
+			//uploadImageForEdit();
+
+		}
+
+		function removeImageEdit(e) {
+			
+			
+			//
+			//debugger
+			test();
+			back();
+
+
+		}
+		function test(){
+			//debugger
+			let temp = document.querySelector("#body_edit .listImg .dropzone").remove();
+		}
+		function back(){
+			    let nextItem = `<div class="overlay"><button title="remove" onclick="removeImageEdit(this)"><i class="fas fa-trash"></i></button></div>
+			    <img class="upload-icon" />
+	            <img src="https://100dayscss.com/codepen/upload.svg"
+	            class="default-upload" />
+	            <input type="file" id="edit_photo"   name="edit_blogImage" class="upload-input" accept=".jpg, .jpeg, .png" onchange="uploadEdit(this)" />`;
+	            
+	            //
+	            let nextNode = document.createElement("div");
+				nextNode.classList.add("dropzone");
+				nextNode.innerHTML = nextItem;
+	            let temp = document.querySelector("#body_edit .listImg ").appendChild(nextNode);
+	            
+		}
+		function backImageAdd(){
+			//e.parentNode.parentNode.remove();
+			let nextItem = `<div class="overlay"><button title="remove" onclick="removeImage(this)"><i class="fas fa-trash"></i></button></div>
+            <img class="upload-icon" />
+            <img src="https://100dayscss.com/codepen/upload.svg"
+            class="default-upload" />
+            <input type="file" id="photo"   name="blogImage" class="upload-input" accept=".jpg, .jpeg, .png" onchange="upload(this)" />`;
+            
+            //
+			let nextNode = document.createElement("div");
+			nextNode.classList.add("dropzone");
+			nextNode.innerHTML = nextItem;
+			
+			document.querySelector("#body_addBlog .listImg ").appendChild(nextNode);
+		}
+	</script>
+	
+	<!--  Blog-->
+	<script type="text/javascript">
+	$("#tableBlogOfSupp").on('click', '#btnDetailSupp', function () {
+		////debugger //step 1
+		var currentRow = $(this).closest("tr");
+		let dataIdBlog = $(this).attr("data");
+		let statusOfBlogDetail = $(this).attr("data-isStatus");
+		//alert(statusOfBlogDetail);
+		//alert("id: "+dataIdBlog);
+
+		//var id = currentRow.find("td:eq(0)").text();
+		$.ajax({
+			type: "Get",///Admin/blog-management/detailBlogSupp?id=" + id
+			url: `/Supplier/blog-management/detailBlogSupp?id=${dataIdBlog}&statusOfBlogDetail=${statusOfBlogDetail} `,  //remember change the controller to your owns.
+			success: function (data) {
+				//console.log("first");
+				//console.log(data);
+				//$("#componentDetail").html("");
+				//alert("1");
+				$("#componentDetailSupp").html("");
+				$("#componentDetailSupp").html(data);
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+	});
+	</script>
+
+</body>
+
+</html>

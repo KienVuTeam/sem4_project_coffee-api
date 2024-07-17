@@ -1,0 +1,430 @@
+<div id="componentComment">
+	<th:block th:each="item:${lstBlogDetail}">
+
+		<hr>
+
+		<div class="comments__form">
+			<div class="flex flex-column">
+				<div>
+					<h2 class="title">Leave a Reply</h2>
+				</div>
+				<div class="contact-icon contacts-message">
+					<textarea id="comment" name="comment" cols="60" style="width: 90%"
+						rows="5" placeholder="Type your comments..." aria-required="true"
+						class="contentComment"></textarea>
+				</div>
+				<div>
+					<button class="submitComment" id="btnSubmitCmt">Submit</button>
+					<button class="clearComment" id="btnClear">Clear</button>
+				</div>
+			</div>
+			<div id="contentComment" data-idBlog="0"></div>
+		</div>
+	</th:block>
+
+	<!-- <div class="modal-footer">
+		<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+			<i class="bx bx-x d-block d-sm-none"></i>
+			<span class="d-none d-sm-block">Close</span>
+		</button>
+	</div> -->
+</div>
+
+
+
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+	integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
+	crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+<script th:inline="javascript">
+	$(document).ready(function () {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+
+		var blogId = /*[[@{${idBlog}}]]*/ null;
+		let countCMT = /*[[@{${quantityCMT}}]]*/ null; 
+		if(countCMT == null){
+			countCMT =0;
+		}
+		$("#count_CMT").text(countCMT+" Comments");
+		debugger
+		idBlog = blogId;
+		onloadCommentBlog(idBlog)
+		replyButtonSubmit(idBlog);
+
+		$("#btnSubmitCmt").on('click', function (e) {
+			debugger
+			//e.stopPropagation();
+			e.preventDefault();
+			
+			
+			var contentComment = $("textarea#comment").val();
+			if (contentComment.trim().length == 0) {
+				$("textarea#comment").get(0).setCustomValidity('Please Input This Field');
+				$("textarea#comment").get(0).reportValidity();
+			} else {
+				var contentC = $("textarea#comment").val();
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/blog-management/addMainComment",
+					data: {
+						idBlog: idBlog,
+						content: contentC,
+					}
+				}).done(function (data) {
+					onloadCommentBlog(idBlog);
+					clearCommentArea();
+				});
+			}
+		})
+
+		$("#btnClear").on('click', function (e) {
+			e.preventDefault();
+			clearCommentArea();
+		})
+	});
+    
+	/*
+	function replyButtonSubmit(idBlog) {
+		//debuger here
+		$(document).on('click', function (e) {
+			
+			//e.stopPropagation();
+			e.preventDefault();
+		debugger
+			if (e.target.className == "submitReply") {
+				e.preventDefault();
+				var dataTarget = e.target.getAttribute("data-target");
+				var currentTAComment = $(`textarea#${dataTarget}`);
+				var contentComment = $(currentTAComment).val();
+				var idMain = e.target.getAttribute("data-idm");
+				if (contentComment.trim().length == 0) {
+					$(currentTAComment).get(0).setCustomValidity('Please Input This Field');
+					$(currentTAComment).get(0).reportValidity();
+				} else {
+					debugger
+					var idMnC = e.target.getAttribute('data-idr');
+					if (e.target.getAttribute('data-edit') == "false") {
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/blog-management/addSubComment",
+							data: {
+								idBlog: idBlog,
+								idReply: idMnC,
+								content: contentComment,
+								idMainB: idMain
+							}
+						}).done(function (data) {
+							$(`div.replies[data-id=${idMain}]`).append(data);
+							closeAllReplyForm("");
+						});
+					} else if (e.target.getAttribute("data-edit") == "true") {
+						var idCEdit = $(currentTAComment).attr('data-id');
+						var pComment = $(`p.txtComment[data-id=${idCEdit}]`).attr('data-ureply');
+						var setHTML = "";
+						if (pComment.trim().length != 0) {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="${pComment}"><span style="color:chocolate;">
+                                    ${pComment}</span> ${contentComment}</p>`
+						} else {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="">${contentComment}</p>`;
+						}
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/blog-management/editComment",
+							data: {
+								idCM: idCEdit,
+								content: contentComment
+							}
+						}).done(function (data) {
+							$(`div[id="contentEdit"][data-id=${idCEdit}]`).html(setHTML);
+							//
+							closeAllReplyForm("");
+						});
+					}
+				}
+			} else if (e.target.className == "cancelButton") {
+				e.preventDefault();
+				closeAllReplyForm(" ");
+			} else if (e.target.id == "btnDeleteS") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`div[id="idReply"][data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/supplier/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			} else if (e.target.id == "btnDeleteM") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`details[data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			}
+			
+			
+		})
+	}
+
+	function onloadCommentBlog(idBlog) {
+		//console.log("run gan cuoi ")
+		debugger
+		$.ajax({
+			async: false,
+			cache: false, ///Admin/blog-management/loadCommentBlog
+			url: "/blog-management/loadCommentBlog",
+			data: {
+				idBlog: idBlog
+			}
+		}).done(function (data) {
+			console.log("---------------------GAN CUOI -------------------------------------------------------------------");
+			//console.log("form controller blog-management/loadCommentBlog: "+data);
+			$('#contentComment').html(data);
+		});
+	}
+
+	//
+	document.addEventListener(
+		"click",
+		function (event) {
+			debugger
+			var target = event.target;
+			var replyForm;
+			if (target.matches("[data-toggle='reply-form']")) {
+				//
+				debugger
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				//
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', false);
+				$(`textarea#${target.getAttribute("data-target")}`).val(" ");
+
+			} else if (target.matches("[data-toggle='edit-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', true);
+				$(`textarea#${target.getAttribute("data-target")}`).val(target.getAttribute("data-cm"));
+			}
+		},
+		false
+	);
+	//
+	/*
+	document.addEventListener(
+		"click",
+		function (event) {
+			//$(document).on("click", ".card-body", function () {
+			 //if (event.target.classList.contains("card-body")) {
+			var target = event.target;
+			var replyForm;
+			if (target.matches("[data-toggle='reply-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				//
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', false);
+				$(`textarea#${target.getAttribute("data-target")}`).val(" ");
+
+			} else if (target.matches("[data-toggle='edit-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', true);
+				$(`textarea#${target.getAttribute("data-target")}`).val(target.getAttribute("data-cm"));
+			}
+		//}
+		},
+		false
+	);
+
+	function closeAllReplyForm(dataTarget) {
+		$('form.reply-form').each(function (e) {
+			var currentTarget = $(this).attr('id');
+			$(`textarea[id=${currentTarget}]`).val(" ");
+			if ($(this).attr("data-target") != dataTarget) {
+				if (!$(this).hasClass('d-none')) {
+					$(this).addClass('d-none');
+				}
+			}
+		})
+	}
+
+	function clearCommentArea() {
+		$("textarea#comment").attr('placeholder', "Type your comments...").val("").focus().blur();
+	}
+	 */
+	//New
+	function replyButtonSubmit(idBlog) {
+		$(document).on('click', function (e) {
+			if (e.target.className == "submitReply") {
+				e.preventDefault();
+				var dataTarget = e.target.getAttribute("data-target");
+				var currentTAComment = $(`textarea#${dataTarget}`);
+				var contentComment = $(currentTAComment).val();
+				var idMain = e.target.getAttribute("data-idm");
+				if (contentComment.trim().length == 0) {
+					$(currentTAComment).get(0).setCustomValidity('Please Input This Field');
+					$(currentTAComment).get(0).reportValidity();
+				} else {
+					var idMnC = e.target.getAttribute('data-idr');
+					if (e.target.getAttribute('data-edit') == "false") {
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/blog-management/addSubComment",
+							data: {
+								idBlog: idBlog,
+								idReply: idMnC,
+								content: contentComment,
+								idMainB: idMain
+							}
+						}).done(function (data) {
+							$(`div.replies[data-id=${idMain}]`).append(data);
+							closeAllReplyForm("");
+						});
+					} else if (e.target.getAttribute("data-edit") == "true") {
+						var idCEdit = $(currentTAComment).attr('data-id');
+						var pComment = $(`p.txtComment[data-id=${idCEdit}]`).attr('data-ureply');
+						var setHTML = "";
+						if (pComment.trim().length != 0) {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="${pComment}"><span style="color:chocolate;">
+                                    ${pComment}</span> ${contentComment}</p>`
+						} else {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="">${contentComment}</p>`;
+						}
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/blog-management/editComment",
+							data: {
+								idCM: idCEdit,
+								content: contentComment
+							}
+						}).done(function (data) {
+							$(`div[id="contentEdit"][data-id=${idCEdit}]`).html(setHTML);
+							//
+							closeAllReplyForm("");
+						});
+					}
+				}
+			} else if (e.target.className == "cancelButton") {
+				e.preventDefault();
+				closeAllReplyForm(" ");
+			} else if (e.target.id == "btnDeleteS") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`div[id="idReply"][data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			} else if (e.target.id == "btnDeleteM") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`details[data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			}
+		})
+	}
+
+	function onloadCommentBlog(idBlog) {
+		
+		//$("#count_CMT").text(countCMT+" Comments");
+	
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/blog-management/loadCommentBlog",
+			data: {
+				idBlog: idBlog
+			}
+		}).done(function (data) {
+			$('#contentComment').html(data);
+		});
+		
+	}
+
+	document.addEventListener(
+		"click",
+		function (event) {
+			var target = event.target;
+			var replyForm;
+			if (target.matches("[data-toggle='reply-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				//
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', false);
+				$(`textarea#${target.getAttribute("data-target")}`).val(" ");
+
+			} else if (target.matches("[data-toggle='edit-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', true);
+				$(`textarea#${target.getAttribute("data-target")}`).val(target.getAttribute("data-cm"));
+			}
+		},
+		false
+	);
+
+	function closeAllReplyForm(dataTarget) {
+		$('form.reply-form').each(function (e) {
+			var currentTarget = $(this).attr('id');
+			$(`textarea[id=${currentTarget}]`).val(" ");
+			if ($(this).attr("data-target") != dataTarget) {
+				if (!$(this).hasClass('d-none')) {
+					$(this).addClass('d-none');
+				}
+			}
+		})
+	}
+
+	function clearCommentArea() {
+		$("textarea#comment").attr('placeholder', "Type your comments...").val("").focus().blur();
+	}
+</script>

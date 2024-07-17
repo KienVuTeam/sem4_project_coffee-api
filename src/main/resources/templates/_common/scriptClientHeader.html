@@ -1,0 +1,413 @@
+<head th:fragment="scriptClientHeader">
+
+	<!--========= Required meta tags =========-->
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!--====== Favicon ======-->
+	<link rel="shortcut icon" href="/images/logo/favicon.ico" type="images/x-icon">
+
+	<!--====== CSS Here ======-->
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/css/lightcase.css">
+	<link rel="stylesheet" href="/css/meanmenu.css">
+	<link rel="stylesheet" href="/css/nice-select.css">
+	<link rel="stylesheet" href="/css/owl.carousel.min.css">
+	<link rel="stylesheet" href="/css/animate.min.css">
+	<link rel="stylesheet" href="/css/jquery-ui.css">
+	<link rel="stylesheet" href="/css/main.css">
+	<script src="https://kit.fontawesome.com/99a0617376.js" crossorigin="anonymous"></script>
+</head>
+
+<div th:fragment="headerContent">
+	<div id="preloader">
+		<div id="ctn-preloader" class="ctn-preloader">
+			<div class="animation-preloader">
+				<div class="spinner"></div>
+				<div class="txt-loading">
+					<span data-text-preloader="C" class="letters-loading"> C </span> <span data-text-preloader="A"
+						class="letters-loading"> A </span> <span data-text-preloader="F" class="letters-loading"> F
+					</span> <span data-text-preloader="E" class="letters-loading"> E </span> <span
+						data-text-preloader="N" class="letters-loading"> N </span> <span data-text-preloader="A"
+						class="letters-loading"> A </span>
+				</div>
+			</div>
+			<div class="loader">
+				<div class="row">
+					<div class="col-3 loader-section section-left">
+						<div class="bg"></div>
+					</div>
+					<div class="col-3 loader-section section-left">
+						<div class="bg"></div>
+					</div>
+					<div class="col-3 loader-section section-right">
+						<div class="bg"></div>
+					</div>
+					<div class="col-3 loader-section section-right">
+						<div class="bg"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- preloader end -->
+
+	<!-- header start -->
+	<header class="site-header">
+		<div class="header-top header-top__2">
+			<div class="container-fluid custom-width">
+				<div class="row">
+					<div class="col-xl-6 col-lg-12 align-self-center">
+						<div class="header-top__left d-flex align-items-center">
+							<div class="logo">
+								<a href="http://localhost:8080"> <img src="/images/logo/logo-black.png" alt="img">
+								</a>
+							</div>
+							<ul class="header-top__infos pl-75 list-unstyled d-flex align-items-center mb-0">
+								<li><a href="tel:91800458568"><i class="fas fa-phone-square"></i> 91 800 458 568</a>
+								</li>
+								<li><i class="fa fa-map-marker-alt"></i> Wasington Baseben</li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-xl-6 col-lg-12  align-self-center">
+						<div
+							class="header-top__right header-top__right--2 d-flex justify-content-xl-end justify-content-center align-items-center">
+							<div
+								class="social-links social-links__2 d-flex align-items-center justify-content-md-start justify-content-center">
+								<a href="#0" target="_blank"><i class="fab fa-twitter"></i></a>
+								<a href="#0" target="_blank"><i class="fab fa-facebook-f"></i></a>
+								<a href="#0" target="_blank"><i class="fab fa-youtube"></i></a>
+								<a href="#0" target="_blank"><i class="fab fa-google-plus-g"></i></a>
+								<a href="#0" target="_blank"><i class="fab fa-instagram"></i></a>
+							</div>
+							<a href="/Products/" class="site-btn">testy Coffee</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="menu-area menu-area-2 custom-padding">
+			<div class="container-fluid custom-width">
+				<div class="row">
+					<div class="col-xl-8 col-lg-9 col-6">
+						<div class="logo mm-only d-md-block d-lg-none">
+							<a href=""> <img src="/images/logo/logo-black.png" alt="img">
+							</a>
+						</div>
+						<div class="main-menu main-menu__2">
+							<nav id="mobile-menu" style="width: 1050px;">
+								<ul>
+									<th:block th:if="${menuUsers.flagLogin} == true">
+										<!-- HomePage -->
+										<th:block th:if="${menuUsers.homePage == true}">
+											<li class="active"><a href="http://localhost:8080">Home</a></li>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.homePage == false}">
+											<li><a href="http://localhost:8080">Home</a></li>
+										</th:block>
+										<!-- Products Page -->
+										<th:block th:if="${menuUsers.productsPage == true}">
+											<li class="active"><a href="/Products/">Products</a></li>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.productsPage == false}">	
+											<li><a href="/Products/">Products</a></li>
+										</th:block>
+										<!-- Invoice Page -->
+										<th:block th:if="${menuUsers.invoicePage == true}">	
+											<li class="active"><a href="/Invoice/MyInvoice">Invoice</a></li>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.invoicePage == false}">	
+											<li><a href="/Invoice/MyInvoice">Invoice</a></li>
+										</th:block>
+										<!-- Blogs Page -->
+										<th:block th:if="${menuUsers.blogPage == true}">	
+											<li class="active"><a href="/Blogs/">Blogs</a>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.blogPage == false}">	
+											<li><a href="/Blogs/">Blogs</a>
+										</th:block>
+										<!-- Carts Page -->
+										<th:block th:if="${menuUsers.cartPage == true}">	
+											<li class="active"><a href="/Carts/">Carts</a>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.cartPage == false}">	
+											<li><a href="/Carts/">Carts</a>
+										</th:block>
+										<!-- WatchList Page -->
+										<th:block th:if="${menuUsers.watchlistPage == true}">	
+											<li class="active"><a href="/WatchList/">WatchList</a>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.watchlistPage == false}">	
+											<li><a href="/WatchList/">WatchList</a>
+										</th:block>
+										<li><a href="/LogOutAccount">Sign Out</a></li>
+									</th:block>
+									<th:block th:if="${menuUsers.flagLogin == false}">
+										<!-- HomePage -->
+										<th:block th:if="${menuUsers.homePage == true}">
+											<li class="active"><a href="http://localhost:8080">Home</a></li>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.homePage == false}">
+											<li><a href="http://localhost:8080">Home</a></li>
+										</th:block>
+										<!-- Products Page -->
+										<th:block th:if="${menuUsers.productsPage == true}">
+											<li class="active"><a href="/Products/">Products</a></li>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.productsPage == false}">	
+											<li><a href="/Products/">Products</a></li>
+										</th:block>
+										<!-- Invoice Page -->
+										<th:block th:if="${menuUsers.invoicePage == true}">	
+											<li class="active"><a href="/Invoice/MyInvoice">Invoice</a></li>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.invoicePage == false}">	
+											<li><a href="/Invoice/MyInvoice">Invoice</a></li>
+										</th:block>
+										<!-- Blogs Page -->
+										<th:block th:if="${menuUsers.blogPage == true}">	
+											<li class="active"><a href="/Blogs/">Blogs</a>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.blogPage == false}">	
+											<li><a href="/Blogs/">Blogs</a>
+										</th:block>
+										<!-- Carts Page -->
+										<th:block th:if="${menuUsers.cartPage == true}">	
+											<li class="active"><a href="/Carts/">Carts</a>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.cartPage == false}">	
+											<li><a href="/Carts/">Carts</a>
+										</th:block>
+										<!-- WatchList Page -->
+										<th:block th:if="${menuUsers.watchlistPage == true}">	
+											<li class="active"><a href="/WatchList/">WatchList</a>
+										</th:block>
+										<!-- -->
+										<th:block th:if="${menuUsers.watchlistPage == false}">	
+											<li><a href="/WatchList/">WatchList</a>
+										</th:block>
+										<li><a href="/UsersRegister">Sign Up</a></li>
+									</th:block>
+									<li><a href="/Supplier/Register">Become Supplier</a>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<div class="col-xl-4 col-lg-3 col-6 align-self-center">
+						<div class="menu-area__right menu-area__right--2 d-flex justify-content-end align-items-center">
+							<div class="search">
+								<div class="search__trigger item">
+									<span class="open"><i class="fa-solid fa-magnifying-glass"></i><span class="close"><i
+											class="fal fa-times"></i></span>
+								</div>
+								<div class="search__form">
+									<form role="search" method="get"
+										action="/">
+										<input type="search" name="s" value="" placeholder="Search Keywords">
+										<button type="submit">
+											<i class="fa-solid fa-magnifying-glass"></i>
+										</button>
+									</form>
+								</div>
+							</div>
+							<div class="hamburger-trigger item">
+								<i class="fa-solid fa-bars"></i>
+							</div>
+							<div class="cart cart-trigger item position-relative">
+								<i class="fa fa-shopping-basket"></i> <!-- <span class="cart__count"></span> -->
+
+							</div>
+							<th:block th:if="${menuUsers.flagLogin  == true}">
+								<div style="margin:20px"><a href="/Profile/" class="site-btn">Profile</a></div>
+							</th:block>
+							<th:block th:if="${menuUsers.flagLogin  == false}">
+								<div style="margin:20px"><a href="/UsersLogin" class="site-btn">Login</a></div>
+							</th:block>
+						</div>
+					</div>
+
+				</div>
+	</header>
+	<!-- header end -->
+
+	<!-- side info for mobile view -->
+	<aside class="side-info-wrapper mm-only">
+		<nav>
+			<div class="nav" id="nav-tab" role="tablist">
+				<a class="nav-link active" id="menu-tab-1-tab" data-bs-toggle="tab" href="#menu-tab-1" role="tab"
+					aria-controls="menu-tab-1" aria-selected="true">Menu</a> <a class="nav-link" id="menu-tab-2-tab"
+					data-bs-toggle="tab" href="#menu-tab-2" role="tab" aria-controls="menu-tab-2"
+					aria-selected="false">Info</a>
+			</div>
+		</nav>
+		<div class="side-info__wrapper d-flex align-items-center justify-content-between">
+			<div class="side-info__logo">
+				<a href="#"> <img src="/images/logo/logo-black.png" alt="logo">
+				</a>
+			</div>
+			<div class="side-info__close">
+				<a href="javascript:void(0);"><i class="fal fa-times"></i></a>
+			</div>
+		</div>
+		<div class="tab-content" id="nav-tabContent">
+			<div class="tab-pane fade show active" id="menu-tab-1" role="tabpanel" aria-labelledby="menu-tab-1-tab">
+				<div class="mobile-menu"></div>
+			</div>
+			<div class="tab-pane fade" id="menu-tab-2" role="tabpanel" aria-labelledby="menu-tab-2-tab">
+				<div class="side-info">
+					<div class="side-info__content mb-35">
+						<h4 class="title mb-5">About us</h4>
+						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+							sed do eiusmod tempor incididunt ut labore et dolore magna
+							aliqua. Ut enim ad minim veniam, quis nostrud nisi ut aliquip ex
+							ea commodo consequat.</p>
+						<a class="site-btn mt-20" href="/Contact">Contact us</a>
+					</div>
+					<div class="contact__info--wrapper mt-15">
+						<h4 class="title mb-10">Contact us</h4>
+						<ul class="contact__info list-unstyled">
+							<li><span><i class="fas fa-map-marker-alt"></i></span>
+								<p>Bowery St., New York, NY 10013, USA</p>
+							</li>
+							<li><span><i class="fas fa-phone"></i></span>
+								<p>+1255-568-6523</p>
+							</li>
+							<li><span><i class="fas fa-envelope-open-text"></i></span>
+								<p>information@gmail.com</p>
+							</li>
+						</ul>
+					</div>
+					<div class="social-links mt-20 d-flex justify-content-start align-items-center">
+						<a href="#0"><i class="fab fa-facebook-f"></i></a> <a href="#0"><i
+								class="fab fa-twitter"></i></a> <a href="#0"><i class="fab fa-google-plus-g"></i></a> <a
+							href="#0"><i class="fab fa-instagram"></i></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</aside>
+
+	<!-- side info for desktop view -->
+	<aside class="side-info-wrapper show-all">
+		<div class="side-info__wrapper d-flex align-items-center justify-content-between">
+			<div class="side-info__logo">
+				<a href="http://localhost:8080"> <img src="/images/logo/logo-black.png" alt="logo">
+				</a>
+			</div>
+			<div class="side-info__close">
+				<a href="javascript:void(0);"><i class="fal fa-times"></i></a>
+			</div>
+		</div>
+		<div class="side-info">
+			<div class="side-info__content mb-35">
+				<h4 class="title mb-5">About us</h4>
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
+					do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+					enim ad minim veniam, quis nostrud nisi ut aliquip ex ea commodo
+					consequat.</p>
+				<a class="site-btn mt-20" href="/Contact">Contact us</a>
+			</div>
+			<div class="contact__info--wrapper mt-15">
+				<h4 class="title mb-10">Contact us</h4>
+				<ul class="contact__info list-unstyled">
+					<li><span><i class="fas fa-map-marker-alt"></i></span>
+						<p>Bowery St., New York, NY 10013, USA</p>
+					</li>
+					<li><span><i class="fas fa-phone"></i></span>
+						<p>+1255-568-6523</p>
+					</li>
+					<li><span><i class="fas fa-envelope-open-text"></i></span>
+						<p>information@gmail.com</p>
+					</li>
+				</ul>
+			</div>
+			<div class="social-links mt-20 d-flex justify-content-start align-items-center">
+				<a href="#0"><i class="fab fa-facebook-f"></i></a> <a href="#0"><i class="fab fa-twitter"></i></a> <a
+					href="#0"><i class="fab fa-google-plus-g"></i></a> <a href="#0"><i class="fab fa-instagram"></i></a>
+			</div>
+		</div>
+	</aside>
+
+	<!-- cart list -->
+	<aside class="cart-bar-wrapper">
+		<div class="cart-bar__close">
+			<a class="d-flex align-items-center justify-content-center" href="javascript:void(0);"><i
+					class="fal fa-times"></i></a>
+		</div>
+		<div class="cart-bar">
+			<h4 class="cart-bar__title">
+				Cart Items - <span>4</span>
+			</h4>
+			<div class="cart-bar__lists">
+				<div class="cart-bar__item position-relative d-flex">
+					<div class="thumb">
+						<img src="/images/top-grade/tg-1.png" alt="image_not_found">
+					</div>
+					<div class="content">
+						<h4 class="title">
+							<a href="/Productdetail">Rorem ipsum dolor sit amet.</a>
+						</h4>
+						<span class="price">$19.00</span> <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+					</div>
+				</div>
+				<div class="cart-bar__item position-relative d-flex">
+					<div class="thumb">
+						<img src="/images/top-grade/tg-2.png" alt="image_not_found">
+					</div>
+					<div class="content">
+						<h4 class="title">
+							<a href="/Productdetail">Rorem ipsum dolor sit amet.</a>
+						</h4>
+						<span class="price">$36.00</span> <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+					</div>
+				</div>
+				<div class="cart-bar__item position-relative d-flex">
+					<div class="thumb">
+						<img src="/images/top-grade/tg-3.png" alt="image_not_found">
+					</div>
+					<div class="content">
+						<h4 class="title">
+							<a href="/Productdetail">Rorem ipsum dolor sit amet.</a>
+						</h4>
+						<span class="price">$20.00</span> <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+					</div>
+				</div>
+				<div class="cart-bar__item position-relative d-flex">
+					<div class="thumb">
+						<img src="/images/top-grade/tg-4.png" alt="image_not_found">
+					</div>
+					<div class="content">
+						<h4 class="title">
+							<a href="/Productdetail">Rorem ipsum dolor sit amet.</a>
+						</h4>
+						<span class="price">$20.00</span> <a href="#0" class="remove"><i class="fal fa-times"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="cart-bar__subtotal d-flex align-items-center justify-content-between">
+				<span>Sub Total:</span> <span>$87.00</span>
+			</div>
+			<div class="btns d-flex align-items-center justify-content-center">
+				<a href="/Cart" class="site-btn">View Cart</a> <a href="/Checkout"
+					class="site-btn site-btn__borderd">Checkout</a>
+			</div>
+		</div>
+	</aside>
+	<div class="overlay"></div>
+
+</div>

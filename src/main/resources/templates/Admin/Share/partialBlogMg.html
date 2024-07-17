@@ -1,0 +1,42 @@
+<tr th:each="item, key: ${lstBlog}">
+	<td hidden th:text="${item.id}"></td>
+	<td th:text="${key.index+1}"></td>
+	<td style="max-width: 200px;" th:text="${item.title}"></td>
+	<td>
+		<div class="wrapImg">
+			<!-- <img src="/supplier/images/blogpost1.jpg" alt="" srcset=""> -->
+			<!--  <p  th:text="${item.blogImage}"></p> -->
+			<img alt="err" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+				th:src="${item.image}">
+		</div>
+	</td>
+	<td hidden th:text="${item.description}"></td>
+	<td hidden th:text="${item.image}"></td>
+	<td th:text="${item.createDate}"></td>
+	<td>
+		<th:block th:if="${item.isStatus==1}">
+			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#EditBlog"
+				id="btnEditBlog">Edit</button>
+			<button class="btn btn-warning" id="btnInactiveBlog">Inactive</button>
+		</th:block>
+
+		<th:block th:if="${item.isStatus==3}">
+			<span style="color: red;">Inactived</span>
+		</th:block>
+	</td>
+	<td>
+		<button type="button" class="btn btn-info" id="btnDetail" data-bs-toggle="modal"
+			data-bs-target="#exampleModalLong">
+			Detail</button>
+		<!--scrollbar Modal -->
+		<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog"
+			aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+			<div class="modal-dialog" style="max-width: 1000px;" role="document" id="componentDetail">
+
+			</div>
+		</div>
+	</td>
+	<td hidden th:text="${item.isStatus}"></td>
+	<!-- data-bs-toggle="modal"
+											data-bs-target="#EditBlog" -->
+</tr>

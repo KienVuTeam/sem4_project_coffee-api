@@ -1,0 +1,271 @@
+<div class="modal-content" id="componentComment">
+	<th:block th:each="item:${lstBlogDetail}">
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLongTitle" th:text="${item.title}">title demo</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+				<i data-feather="x"></i>
+			</button>
+		</div>
+		<div class="modal-body">
+			<!--  -->
+			<div class="modal-body">
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<div class="blog__wrapper blog__wrapper--single">
+								<article class="blog__post blog__post--single format format-image">
+									<div class="thumb">
+										<img style="width: 100%;" alt="" th:src="${item.image}" onerror="this.src='/supplier/images/defaultImageProduct.png';">
+									</div>
+
+									<ul class="meta mt-20 list-unstyled d-flex align-items-center">
+										<li><a href="#0"><i class="fas fa-file"></i>
+												Coffee</a></li>
+										<li><a href="#0"><i class="fas fa-comments"></i>
+												<span style="font-family: 'Jost', sans-serif;"
+													th:text="${quantityCMT}"></span> Comments</a></li>
+										<li><a href="#0"><i class="fas fa-calendar-alt"></i>
+												<span id="D_blogCreateAt" th:text="${item.createDate}"></span> </a></li>
+									</ul>
+									<div id="D_blogDescription" class="content mt-10" th:text="${item.description}">
+									</div>
+									<hr>
+
+									<br>
+									<div class="comments__form" id="cmt_master">
+										<div class="flex flex-column">
+											<div>
+												<h2 class="title">Leave a Reply </h2>
+											</div>
+											<div class="contact-icon contacts-message">
+												<textarea id="comment" name="comment" cols="60" rows="4"
+													placeholder="Type your comments..." aria-required="true"
+													class="contentComment"></textarea>
+											</div>
+											<div>
+												<button class="submitComment" id="btnSubmitCmt">Submit</button>
+												<button class="clearComment" id="btnClear">Clear</button>
+											</div>
+										</div>
+										<div id="contentComment">
+
+										</div>
+									</div>
+								</article>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  -->
+		</div>
+	</th:block>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+			<i class="bx bx-x d-block d-sm-none"></i>
+			<span class="d-none d-sm-block">Close</span>
+		</button>
+	</div>
+</div>
+
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>-->
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" integrity="sha512-WMEKGZ7L5LWgaPeJtw9MBM4i5w5OSBlSjTjCtSnvFJGSVD26gE5+Td12qN5pvWXhuWaWcVwF++F7aqu9cvqP0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+-->
+<script type="text/javascript" th:src="@{/supplier/js/upsender.js}"></script>
+<script th:inline="javascript">
+        //debugger
+        /*<![CDATA[*/
+        statusOfBlogDetail_partial = /*[[${statusOfBlogDetail}]]*/ null;
+        /*]]>*/
+        if(statusOfBlogDetail_partial ==0 ||statusOfBlogDetail_partial ==2){
+        	$("#cmt_master").remove();
+        }
+    </script>
+<script th:inline="javascript">
+	$(document).ready(function () {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+				/*<![CDATA[*/
+		var idBlog = /*[[${idBlog}]]*/"";
+		/*]]>*/
+		//const idBlog = urlParams.get('idBlog');
+		onloadCommentBlog(idBlog)
+		replyButtonSubmit(idBlog);
+
+		$("#btnSubmitCmt").on('click', function (e) {
+			e.preventDefault();
+			var contentComment = $("textarea#comment").val();
+			if (contentComment.trim().length == 0) {
+				$("textarea#comment").get(0).setCustomValidity('Please Input This Field');
+				$("textarea#comment").get(0).reportValidity();
+			} else {
+				var contentC = $("textarea#comment").val();
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Supplier/blog-management/addMainComment",
+					data: {
+						idBlog: idBlog,
+						content: contentC,
+					}
+				}).done(function (data) {
+					onloadCommentBlog(idBlog);
+					clearCommentArea();
+				});
+			}
+		})
+
+		$("#btnClear").on('click', function (e) {
+			e.preventDefault();
+			clearCommentArea();
+		})
+	});
+
+	function replyButtonSubmit(idBlog) {
+		$(document).on('click', function (e) {
+			if (e.target.className == "submitReply") {
+				e.preventDefault();
+				var dataTarget = e.target.getAttribute("data-target");
+				var currentTAComment = $(`textarea#${dataTarget}`);
+				var contentComment = $(currentTAComment).val();
+				var idMain = e.target.getAttribute("data-idm");
+				if (contentComment.trim().length == 0) {
+					$(currentTAComment).get(0).setCustomValidity('Please Input This Field');
+					$(currentTAComment).get(0).reportValidity();
+				} else {
+					var idMnC = e.target.getAttribute('data-idr');
+					if (e.target.getAttribute('data-edit') == "false") {
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/Supplier/blog-management/addSubComment",
+							data: {
+								idBlog: idBlog,
+								idReply: idMnC,
+								content: contentComment,
+								idMainB: idMain
+							}
+						}).done(function (data) {
+							$(`div.replies[data-id=${idMain}]`).append(data);
+							closeAllReplyForm("");
+						});
+					} else if (e.target.getAttribute("data-edit") == "true") {
+						var idCEdit = $(currentTAComment).attr('data-id');
+						var pComment = $(`p.txtComment[data-id=${idCEdit}]`).attr('data-ureply');
+						var setHTML = "";
+						if (pComment.trim().length != 0) {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="${pComment}"><span style="color:chocolate;">
+                                    ${pComment}</span> ${contentComment}</p>`
+						} else {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="">${contentComment}</p>`;
+						}
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/Supplier/blog-management/editComment",
+							data: {
+								idCM: idCEdit,
+								content: contentComment
+							}
+						}).done(function (data) {
+							$(`div[id="contentEdit"][data-id=${idCEdit}]`).html(setHTML);
+							//
+							closeAllReplyForm("");
+						});
+					}
+				}
+			} else if (e.target.className == "cancelButton") {
+				e.preventDefault();
+				closeAllReplyForm(" ");
+			} else if (e.target.id == "btnDeleteS") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`div[id="idReply"][data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Supplier/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			} else if (e.target.id == "btnDeleteM") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`details[data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Supplier/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			}
+		})
+	}
+
+	function onloadCommentBlog(idBlog) {
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Supplier/blog-management/loadCommentBlog",
+			data: {
+				idBlog: idBlog
+			}
+		}).done(function (data) {
+			$('#contentComment').html(data);
+		});
+	}
+
+	document.addEventListener(
+		"click",
+		function (event) {
+			var target = event.target;
+			var replyForm;
+			if (target.matches("[data-toggle='reply-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				//
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', false);
+				$(`textarea#${target.getAttribute("data-target")}`).val(" ");
+
+			} else if (target.matches("[data-toggle='edit-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', true);
+				$(`textarea#${target.getAttribute("data-target")}`).val(target.getAttribute("data-cm"));
+			}
+		},
+		false
+	);
+
+	function closeAllReplyForm(dataTarget) {
+		$('form.reply-form').each(function (e) {
+			var currentTarget = $(this).attr('id');
+			$(`textarea[id=${currentTarget}]`).val(" ");
+			if ($(this).attr("data-target") != dataTarget) {
+				if (!$(this).hasClass('d-none')) {
+					$(this).addClass('d-none');
+				}
+			}
+		})
+	}
+
+	function clearCommentArea() {
+		$("textarea#comment").attr('placeholder', "Type your comments...").val("").focus().blur();
+	}
+</script>

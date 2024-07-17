@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/admin/css/outPDFBaseBoot.css">
+    <title>Descriptive Statistics Statement Profits</title>
+
+</head>
+
+<body style="font-family: brawler;">
+    <!-- Report -->
+    <div style="width: 100%!important;margin-top: 40px;margin-right: auto;margin-left: auto;">
+        <div style="display: inline-block;width: 100%;">
+            <!-- Header -->
+            <div class="colHeader">
+                <h2>Descriptive Statistics Statement Profits</h2>
+            </div>
+            <!-- GroupHeader A -->
+            <div class="groupHeaderA" style="margin-top: 40px;font-size: 16px;">
+                <div class="contentGroupHeaderA">
+                    <div style="width: 20%;display: inline-block;">Invoice Code.</div>
+                    <div style="width: 20%;display: inline-block">Supplier Name</div>
+                    <div style="width: 20%;display: inline-block">Order Date</div>
+                </div>
+            </div>
+
+            <!-- GroupHeader B -->
+            <div class="groupHeaderB" style="margin-top: 5px;display: inline-block;width: 100%;font-size: 16px;">
+                <div class="contentGroupHeaderB" style="width: 96%;display: inline-block">
+                    <div style="width: 4%;display: inline-block"></div>
+                    <div style="width: 25%;display: inline-block">Product Name</div>
+                    <div style="width: 15%;display: inline-block">Price</div>
+                    <div style="width: 10%;display: inline-block;text-align: left;">Quantity</div>
+                    <div style="width: 18%;display: inline-block">Total Price</div>
+                    <div style="width: 10%;display: inline-block" padding-left:5px>Profits</div>
+                    <div style="width: 10%;display: inline-block">Status</div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="groupBody" style="font-size: 16px;">
+                <th:block th:each="item,index : ${lsWorkData}">
+                    <div class="itemData">
+                        <!-- GroupBody A -->
+                        <div class="lineCol"></div>
+                        <div class="groupBodyA">
+                            <div style="width: 20%;display: inline-block;" th:text="${item.codeInvoice}"></div>
+                            <div style="width: 20%;display: inline-block;" th:text="${item.supplierName}"></div>
+                            <div style="width: 20%;display: inline-block;" th:text="${item.orderDate}"></div>
+                        </div>
+                        <!-- GroupBody B -->
+                        <!-- Loop Supplier -->
+                        <div class="groupBodyB d-flex flex-row" style="margin-top: 5px">
+                            <div class="contentGroupHeaderB d-flex flex-column" style="width: 100%;">
+                                <div class="lineCol" style="display: inline-block;width: 100%;margin-left: 40px;"></div>
+                                <!-- Body Supplier -->
+                                <div style="width: 96%;">
+                                    <div style="width: 4%;display: inline-block;"></div>
+                                    <div style="width: 100%;display: inline-block;">
+                                        <th:block th:each="itemW,indexW : ${item.lsWorkSub}">
+                                            <div>
+                                                <div style="width: 25%;display: inline-block;" th:text="${itemW.productName}"></div>
+                                                <div style="width: 15%;display: inline-block;" th:text="${itemW.productPrice}"></div>
+                                                <div style="width: 10%;display: inline-block;padding-left:15px" th:text="${itemW.quanity}"></div>
+                                                <div style="width: 18%;display: inline-block;" th:text="${itemW.totalPrice}"></div>
+                                                <th:block th:if="${itemW.isStatus == 2 OR itemW.isStatus == 3}">
+                                                    <div style="width: 10%;display: inline-block;padding-left: -5px;" th:text="${'-' + itemW.profitS}"></div>
+                                                    <div style="width: 10%;display: inline-block;">UnConfirm</div>
+                                                </th:block>
+                                                <th:block th:if="${itemW.isStatus != 2 AND itemW.isStatus != 3}">
+                                                    <div style="width: 10%;display: inline-block;" th:text="${itemW.profitS}"></div>
+                                                    <div style="width: 10%;display: inline-block;">Confirm</div>
+                                                </th:block>
+                                            </div>         
+                                         </th:block>                            
+                                        <div class="lineCol" style="display: inline-block;width: 100%;">
+                                        </div>
+                                        <div style="display: block;width: 100%;">
+                                            <div style="width: 69%;display:inline-block">Sum Profit From Supplier :</div>
+                                            <th:block th:if="${item.sumProfitsS < 0}">
+                                                <div style="width: 20%;display:inline-block;padding-left: -5px;" th:text="${item.sumProfitsS}"></div>
+                                            </th:block>
+                                            <th:block th:if="${item.sumProfitsS > 0}">
+                                                <div style="width: 20%;display:inline-block;" th:text="${item.sumProfitsS}"></div>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <div class="groupFooter" style="font-size: 16px;width: 100%;">
+                <div class="lineCol"></div>
+                <div style="display: block;">
+                    <div style="display: inline-block;">
+                    </div>
+                    <div class="" style="width: 100%;display: inline-block;">
+                        <div style="width: 69%;display: inline-block;">Total Profit :</div>
+                        <div style="width: 20%;display: inline-block;" th:text="${sumProfits}"></div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</body>
+
+</html>

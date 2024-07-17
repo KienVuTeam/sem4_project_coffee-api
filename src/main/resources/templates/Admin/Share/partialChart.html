@@ -1,0 +1,65 @@
+<h4 class="card-title" id="nameRevenue">Revenue by year 2024</h4>
+<div class="card-body">
+	<canvas id="barChange"></canvas>
+</div>
+
+
+
+<script th:inline="javascript">
+	var theListC = /*[[${lstChartChange}]]*/"";
+	if (theListC != null) {
+		const dataC = {
+			//labels: labels,
+			datasets: [{
+				label: 'My Revenue ($)',
+				//data: values,
+				backgroundColor: [
+					'rgba(255, 99, 132, 0.2)',
+					'rgba(255, 159, 64, 0.2)',
+					'rgba(255, 205, 86, 0.2)',
+					'rgba(75, 192, 192, 0.2)',
+					'rgba(54, 162, 235, 0.2)',
+					'rgba(153, 102, 255, 0.2)',
+					'rgba(201, 203, 207, 0.2)'
+				],
+				borderColor: [
+					'rgb(255, 99, 132)',
+					'rgb(255, 159, 64)',
+					'rgb(255, 205, 86)',
+					'rgb(75, 192, 192)',
+					'rgb(54, 162, 235)',
+					'rgb(153, 102, 255)',
+					'rgb(201, 203, 207)'
+				],
+				borderWidth: 1,
+				//parsing:{
+				//	xAxisKey:'year',
+				//	yAxisKey: 'financials.cost'
+				//}
+			}]
+		};
+		const configC = {
+			type: 'bar',
+			data: dataC,
+			options: {
+				scales: {
+					y: {
+						beginAtZero: true
+					}
+				}
+			},
+		};
+		const myChartC = new Chart(document.getElementById('barChange'), configC);
+
+		/*<![CDATA[*/
+		for (i = 0; i < theListC.length; i++) {
+			dataC.labels[i] = theListC[i].createDate;
+			myChartC.data.datasets[0].data[i] = theListC[i].profitsAdmin;
+		}
+		myChartC.update();
+		/*]]>*/
+
+		// --- old
+
+	}
+</script>

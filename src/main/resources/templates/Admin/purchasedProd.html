@@ -1,0 +1,417 @@
+<table class='table table-striped' id="tablePurchasedProduct">
+	<thead>
+		<tr>
+			<th data-sortable="false">No.</th>
+			<th data-sortable="false">Product</th>
+			<th data-sortable="false">Unit Price</th>
+			<th data-sortable="false">Amount</th>
+			<th data-sortable="false">Sub-Price</th>
+			<th data-sortable="false">Confirm</th>
+			<th data-sortable="false">No Confirm</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item,iter : ${listCusOrderProd}">
+			<tr>
+				<!--<td hidden th:text="${item.id}"></td>-->
+				<td th:text="${iter.index+1}"></td>
+				<td th:text="${item.nameProduct}"></td>
+				<td style="min-width: 135px;"><span th:id="'tdUnitPrice'+${iter.index}"
+						th:text="${item.unitPrice}"></span><span>.00</span></td>
+				<td th:text="${item.AmountCart}"></td>
+				<td style="min-width: 135px;"><span th:text="${item.priceCart}"></span><span>.00</span></td>
+				<th:block th:switch="${item.sttInvDetail}">
+					<th:block th:case="'0'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'1'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled checked>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'2'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled checked>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'3'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled checked>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'4'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled checked>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+				</th:block>
+
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+<div style="margin-left: 700px;margin-right: 40px;">
+	<p hidden id="idSupplier" th:text="${idSupplier}"></p>
+	<p hidden id="idInvoice" th:text="${idInvoice}"></p>
+	<p hidden id="idInvSupp" th:text="${idInvSupp}"></p>
+	<p hidden id="sttInv"></p>
+	<h6 style="display: flex;justify-content: space-between;">Total Price($):
+		<strong><span id="totalPrice" th:text="${totalAmount}"></span><span>.00</span></strong>
+	</h6>
+
+	<h6 style="display: flex;justify-content: space-between;" id="divPriceVoucherS">Price Voucher($) (if any): <span>-
+			<strong><span id="priceVoucherS" th:text="${priceVoucherS}"></span><span>.00</span></strong></span></h6>
+
+	<h6 style="display: flex;justify-content: space-between;" id="divPriceVoucherA">Price Voucher iLA($) (if any):
+		<span>-
+			<strong><span id="priceVoucherA"></span><span id="string00priceVouA">.00</span></strong></span>
+	</h6>
+
+	<h6 style="display: flex;justify-content: space-between;" id="divFeeService">Fee Service($):
+		<strong><span id="feeService">0</span><span id="string00fee">.00</span></strong>
+	</h6>
+	<h6 style="display: flex;justify-content: space-between;" id="divRefundCus">Refund to
+		customers($) (if any): <span>- <strong><span id="refundCus" th:text="${refund}">0</span><span>.00</span>
+				<th:block th:switch="${sttRefund}">
+					<span th:case="'2'">(No refund yet)</span>
+					<span th:case="'3'">(Refunded)</span>
+				</th:block>
+			</strong></span></h6>
+	<hr>
+	<h6 style="display: flex;justify-content: space-between;" id="divTotalPayment">Total payment($): <span><strong><span
+					id="totalPayment">0</span><span id="string00totalPayment">.00</span></strong></span></h6>
+
+
+
+
+	<!--<button type="button" id="btnRefundCus" style="margin-left: 330px;" class="btn btn-success">Refund money</button>-->
+</div>
+<p hidden id="idAccountPu" th:text="${idAccount}"></p>
+<script th:inline="javascript">
+	document.getElementById('backCusOrder').onclick = function () {
+		let timerInterval;
+		Swal.fire({
+			title: "Please wait a moment!",
+			timer: 1500,
+			timerProgressBar: true,
+			didOpen: () => {
+				Swal.showLoading();
+			},
+			willClose: () => {
+				clearInterval(timerInterval);
+			}
+		}).then((result) => {
+			/* Read more about handling dismissals below */
+			if (result.dismiss === Swal.DismissReason.timer) {
+				console.log("I was closed by the timer");
+			}
+		});
+		$.ajax({
+			type: "Get",
+			url: "/Admin/customer-management/customerOrder?idAccount=" + $("#idAccountPu").text(),  //remember change the controller to your owns.
+			success: function (res) {
+
+				$("#mbodyCusOrder").html("");
+				$("#cusOrderTitle").text("Customer Orders");
+				$("#backCusOrder").hide();
+				$("#btnRefundCus").hide();
+				$("#mbodyCusOrder").html(res);
+
+				let tableCusOrder = document.querySelector('#tableCusOrder');
+				let dataTableCusOrder = new simpleDatatables.DataTable(tableCusOrder);
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+	};
+
+
+	/*<![CDATA[*/
+	$("#btnRefundCus").click(function () {
+		$.ajax({
+			type: "Get",
+			url: "/Admin/customer-management/refundToCus",  //remember change the controller to your owns.
+			data: {
+				idInv: $("#idInvoice").text(),
+				idSupplier: $("#idSupplier").text(),
+				idAccount: $("#idAccountPu").text(),
+				idInvSupp: $("#idInvSupp").text(),
+				priceVouA: /*[[${priceVouA}]]*/"",
+				sttInv:/*[[${sttInv}]]*/"",
+				sttInvSupp:/*[[${sttInvSupp}]]*/"",
+			},
+			success: function (res) {
+				$("#mbodyCusOrder").html("");
+				$("#cusOrderTitle").text("Customer Orders - Purchased Product");
+				$("#backCusOrder").show();
+				$("#mbodyCusOrder").html(res);
+				checkInvAfterRefundCus();
+				Swal.fire({
+					title: "Successfully!",
+					text: "Refund for customer successfully!",
+					icon: "success"
+				});
+				let tablePurchasedProduct = document.querySelector('#tablePurchasedProduct');
+				let dataTablePurchasedProduct = new simpleDatatables.DataTable(tablePurchasedProduct);
+
+				
+
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+
+	});
+	function checkInvAfterRefundCus() {
+		$.ajax({
+			type: "Get",
+			url: "/Admin/customer-management/checkInvAfterRefundCus",  //remember change the controller to your owns.
+			data: {
+				idAccount: $("#idAccountPu").text(),
+				idInvSupp: $("#idInvSupp").text(),
+			},
+			success: function (res) {
+				if (res == 9) {
+					$("#divFeeService").hide();
+					$("#string00totalPayment").show();
+					$("#totalPayment").text(0);
+				}
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+	}
+/*]]>*/
+</script>
+<script th:inline="javascript">
+	function roundToTwo(num) {
+		return +(Math.round(num + "e+2") + "e-2");
+	}
+	$("#divRefundCus").hide();
+	$("#divPriceVoucherS").hide();
+	$("#divPriceVoucherA").hide();
+	var temp = 0;
+	/*<![CDATA[*/
+	var theList = /*[[${listCusOrderProd}]]*/"";
+	var priceVouA =/*[[${priceVouA}]]*/"";
+	var priceVoucherS = /*[[${priceVoucherS}]]*/"";
+	var quantity =/*[[${quantity}]]*/"";
+	var refundCus = /*[[${refund}]]*/"";
+	var sttInv = /*[[${sttInv}]]*/"";
+	var sttInvSupp = /*[[${sttInvSupp}]]*/"";
+	if (priceVoucherS != 0) {
+		$("#divPriceVoucherS").show();
+	}
+	var amount = /*[[${totalAmount}]]*/"";
+	var fee = 0.02 * (amount - priceVoucherS);
+	$("#feeService").text(roundToTwo(fee));
+	if (Number.isInteger(fee) == true) {
+		$("#string00fee").show();
+	} else {
+		$("#string00fee").hide();
+	}
+
+
+
+	var i = 0;
+	for (i = 0; i < theList.length; i++) {
+		temp += (0.1 * (theList[i].priceCart));
+		$("#tdUnitPrice" + i).text(parseFloat(theList[i].unitPrice));
+	}
+	if (refundCus != null) {
+		$("#divRefundCus").show();
+		if ($("#divRefundCus").text().includes("(No refund yet)") == true) {
+			$("#btnRefundCus").show();
+		} else {
+			$("#btnRefundCus").hide();
+		}
+	}
+
+
+	if (sttInv == 9 & sttInvSupp == 9) {
+		$("#divFeeService").hide();
+		$("#string00totalPayment").show();
+		$("#totalPayment").text(0);
+	} else if (sttInv != 9 & sttInvSupp == 9) {
+		var totalPayment = amount - refundCus + fee;
+		if (Number.isInteger(totalPayment)) {
+			$("#string00totalPayment").show();
+			$("#totalPayment").text(totalPayment);
+		} else {
+			$("#string00totalPayment").hide();
+			$("#totalPayment").text(roundToTwo(totalPayment));
+		}
+	} else {
+		if ((amount - refundCus) == 0) {
+			var totalPayment = amount - refundCus + fee;
+			if (Number.isInteger(totalPayment)) {
+				$("#string00totalPayment").show();
+				$("#totalPayment").text(totalPayment);
+			} else {
+				$("#string00totalPayment").hide();
+				$("#totalPayment").text(roundToTwo(totalPayment));
+			}
+		} else {
+			if (priceVouA != 0) {
+				$("#divPriceVoucherA").show();
+				var priceVouAofSupp = (priceVouA / quantity) * i;
+				if (Number.isInteger(priceVouAofSupp) == true) {
+					$("#string00priceVouA").show();
+					$("#priceVoucherA").text(priceVouAofSupp);
+
+					if (refundCus != null) {
+						var totalPayment = amount - priceVoucherS - priceVouAofSupp + fee - refundCus;
+					} else {
+						var totalPayment = amount - priceVoucherS - priceVouAofSupp + fee;
+					}
+
+					if (Number.isInteger(totalPayment) == true) {
+						$("#string00totalPayment").show();
+						$("#totalPayment").text(totalPayment);
+					} else {
+						$("#string00totalPayment").hide();
+						$("#totalPayment").text(roundToTwo(totalPayment));
+					}
+
+				} else {
+					$("#string00priceVouA").hide();
+					$("#priceVoucherA").text(roundToTwo(priceVouAofSupp));
+
+					if (refundCus != null) {
+						var totalPayment = amount - priceVoucherS - roundToTwo(priceVouAofSupp) + fee - refundCus;
+					} else {
+						var totalPayment = amount - priceVoucherS - roundToTwo(priceVouAofSupp) + fee;
+					}
+
+
+					if (Number.isInteger(totalPayment) == true) {
+						$("#string00totalPayment").show();
+						$("#totalPayment").text(totalPayment);
+					} else {
+						$("#string00totalPayment").hide();
+						$("#totalPayment").text(roundToTwo(totalPayment));
+					}
+
+				}
+			} else {
+				if (refundCus != null) {
+					var totalPayment = amount - priceVoucherS + fee - refundCus;
+				} else {
+					var totalPayment = amount - priceVoucherS + fee;
+				}
+
+
+				if (Number.isInteger(totalPayment) == true) {
+					$("#string00totalPayment").show();
+				} else {
+					$("#string00totalPayment").hide();
+				}
+				$("#totalPayment").text(totalPayment);
+			}
+		}
+
+	}
+
+	//notepad
+
+
+
+
+
+
+
+
+
+	/*]]>*/
+
+</script>

@@ -1,0 +1,108 @@
+<div class="ratingPopup d-flex flex-column" style="width: 400px;background-color: #fff;height: 212px;">
+	<div class="d-flex container" style="border-bottom: 1px solid  rgba(0, 0, 0, 0.2);">
+		<div style="font-size: 16px;margin-top: 5px;margin-left: 4px;color: darkred;">Ratings <th:block
+				th:text="${productName}"></th:block>
+		</div>
+	</div>
+	<div>
+		<div class="containerStar" style="height: 100px;">
+			<div class="container__items">
+				<input type="radio" name="stars" id="st5">
+				<label for="st5" class="ratingsStar" data-rt="5">
+					<div class="star-stroke">
+						<div class="star-fill"></div>
+					</div>
+					<div class="label-description" data-content="Excellent"></div>
+				</label>
+				<input type="radio" name="stars" id="st4">
+				<label for="st4" class="ratingsStar" data-rt="4">
+					<div class="star-stroke">
+						<div class="star-fill"></div>
+					</div>
+					<div class="label-description" data-content="Good"></div>
+				</label>
+				<input type="radio" name="stars" id="st3">
+				<label for="st3" class="ratingsStar" data-rt="3">
+					<div class="star-stroke">
+						<div class="star-fill"></div>
+					</div>
+					<div class="label-description" data-content="OK"></div>
+				</label>
+				<input type="radio" name="stars" id="st2">
+				<label for="st2" class="ratingsStar" data-rt="2">
+					<div class="star-stroke">
+						<div class="star-fill"></div>
+					</div>
+					<div class="label-description" data-content="Bad"></div>
+				</label>
+				<input type="radio" name="stars" id="st1">
+				<label for="st1" class="ratingsStar" data-rt="1">
+					<div class="star-stroke">
+						<div class="star-fill"></div>
+					</div>
+
+					<div class="label-description" data-content="Terrible"></div>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div style="border-top:1px solid  rgba(0, 0, 0, 0.2);margin-top: 15px;" class="d-flex flex-row">
+		<div style="width: 55%;"></div>
+		<div class="d-flex flex-row">
+			<button th:data-idp="${productId}" th:data-ivd="${idInvoiceD}" class="backButton" th:data-pname="${dfProductName}">Back</button>
+			<button th:data-idp="${productId}" th:data-ivd="${idInvoiceD}" class="submitButton" th:data-pname="${dfProductName}">Submit</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	var idRatingS = parseInt(0);
+	$('.backButton').on('click', function (e) {
+		e.preventDefault();
+		var idProduct = $(this).attr('data-idp');
+		var idInvoiceD = $(this).attr('data-ivd');
+		var productName = $(this).attr('data-pname');
+		$(`div[id="ratingContent"][data-idv=${idInvoiceD}]`).html(`
+			<p class="rtingButton" data-id-details="${idInvoiceD}"
+                data-name="${productName}" data-idp="${idProduct}">Ratings Product</p>
+			`);
+		//
+		$('.overlay, .product-popup-1').removeClass('show-popup');
+	});
+
+	$('label.ratingsStar').on('click', function (e) {
+		idRatingS = parseInt($(this).attr('data-rt'));
+	})
+
+	$('.submitButton').on('click', function (e) {
+		e.preventDefault();
+		//
+		var idProduct = $(this).attr('data-idp');
+		var idInvoiceD = $(this).attr('data-ivd');
+		var productName = $(this).attr('data-pname');
+		if (idRatingS == 0) {
+			$('.overlay, .product-popup-1').removeClass('show-popup');
+			$(`div[id="ratingContent"][data-idv=${idInvoiceD}]`).html(`
+			<p class="rtingButton" data-id-details="${idInvoiceD}"
+                data-name="${productName}" data-idp="${idProduct}">Ratings Product</p>
+			`);
+		} else {
+			$.ajax({
+				async: false,
+				cache: false,
+				url: "/Rating/ajax/userRatingProducts",
+				data: {
+					idProduct: idProduct,
+					idInvoiceD: idInvoiceD,
+					idRatingS: idRatingS
+				}
+			}).done(function (data) {
+				$(`div[id="ratingContent"][data-idv=${idInvoiceD}]`).html(
+					`<span class="stars-container stars-${idRatingS}">★★★★★</span>`
+				);
+				//
+				$('.overlay, .product-popup-1').removeClass('show-popup');
+			});
+		}
+	})
+</script>

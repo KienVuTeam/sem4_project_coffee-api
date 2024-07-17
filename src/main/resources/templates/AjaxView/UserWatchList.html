@@ -1,0 +1,30 @@
+<th:block th:if="${!lsW.empty}">
+    <th:block th:each="item,iter : ${lsW}">
+        <div class="d-flex flex-row " id="itemWatchList">
+            <div class="itemWB" style="width: 5%;display: block;padding-left:4px" th:text="${iter.index + 1}"></div>
+            <div class="itemWB" style="width: 22%;display: block;" th:text="${item.productName}"></div>
+            <div class="itemWB" style="width: 15%;display: block;">
+                <img th:src="${item.productImage}" style="width: 75px; height: 80px;border-radius: 3px;"  onerror="this.onerror=null;this.src='/error/blogImage.jpg'">
+            </div>
+            <div class="itemWB" style="width: 10%;display: block;text-align: center;" th:text="${item.saleNumbers}"></div>
+            <div class="itemWB" style="width: 15%;display: block;text-align: center;"th:text="${'$' + item.productPrice + '.00'}"></div>
+            <!-- CDiscount -->
+            <th:block th:if="${item.discountPrice == 0}">
+                <div class="itemWB d-flex justify-content-center" style="width: 10%;display: block;">
+                    <span class="badge" style="background-color: red;color: white;height: 22px;">None</span>
+                </div>
+            </th:block>
+            <!-- CDiscount -->
+            <th:block th:if="${item.discountPrice != 0}">
+                <div class="itemWB d-flex justify-content-center" style="width: 10%;display: block;" th:text="${'$' + item.discountPrice + '.00'}"></div>
+            </th:block>
+            <!-- CDiscount -->
+            <div class="itemWB itemView" id="clickViewP"
+                style="width: 12%;display: block;color: cornflowerblue;text-align: center;"
+                th:data-idp="${item.idProduct}">
+                View</div>
+            <div class="itemWB itemView" id="clickRemoveW" style="width: 10%;display: block;color: red;text-align: center;"
+                th:data-idp="${item.idProduct}">Remove</div>
+        </div>
+    </th:block>
+</th:block>

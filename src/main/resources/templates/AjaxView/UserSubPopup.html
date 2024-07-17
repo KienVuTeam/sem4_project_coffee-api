@@ -1,0 +1,153 @@
+<th:block th:if="${Product != null}">
+		<div class="view-background">
+			<div class="row">
+				<div class="col-md-4 align-self-center">
+					<div class="quickview d-flex align-items-center justify-content-center">
+						<div class="quickview__thumb">
+							<img th:src="${Product.image}" alt=""  onerror="this.onerror=null;this.src='/error/blogImage.jpg'">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<div class="viewcontent">
+						<div class="viewcontent__header">
+							<h2 th:text="${Product.title}"></h2>
+							<a class="view_close product-p-close" href="javascript:void(0)"><i
+									class="fal fa-times"></i></a>
+						</div>
+						<div class="viewcontent__rating">
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fas fa-star"></i>
+							<i class="fal fa-star"></i>
+						</div>
+						<div class="viewcontent__price">
+							<h4>
+								<th:block th:if="${Product.finalPrice - Product.price == 0}">
+									<span class="price">$<th:block th:text="${Product.price + '.00'}">
+										</th:block></span>
+								</th:block>
+								<th:block th:if="${Product.finalPrice - Product.price != 0}">
+									<span class="price">
+										$<th:block th:text="${Product.finalPrice}"></th:block>
+										/
+										<span class="regular">
+											<del>$<th:block th:text="${Product.price}">
+												</th:block></del>
+										</span>
+									</span>
+								</th:block>
+							</h4>
+						</div>
+						<div class="viewcontent__stock">
+							<h4>Available</h4>
+						</div>
+						<div class="viewcontent__details">
+							<p th:text="${Product.description}"></p>
+						</div>
+						<div class="viewcontent__action">
+							<a class="site-btn" href="#" style="margin-left: -5px;" id="btnAddToCart"
+								th:data-id="${Product.id}">add to cart</a>
+						</div>
+						<div class="viewcontent__footer">
+							<ul class="list-unstyled">
+								<li>Category:</li>
+							</ul>
+							<ul class="list-unstyled">
+								<li th:text="${Product.cateName}"></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<script>
+		$('.overlay,.product-p-close').on('click', function () {
+			$('.overlay, .popup-coffe-mechine, .product-popup').removeClass('show-popup');
+		});
+
+		$('#btnAddToCart').on('click', function (e) {
+			e.preventDefault();
+			checkUsersLogin();
+			if (checkStatusOfAccount() == false) {
+                displayToastMessage(true,"Your Account Has Been Restricted");
+                $('.overlay, .popup-coffe-mechine, .product-popup').removeClass('show-popup');
+                return "";
+			}
+			var id = $(this).attr('data-id');
+			//
+			$.ajax({
+				async: false,
+				cache: false,
+				url: "/Carts/ajaxAddProductIntoCart",
+				data: {
+					idProduct: id,
+					Amount: 1
+				}
+			}).done(function (data) {
+				//$('.toast').toast('hide');
+				$('#toastText').toast('hide');
+				$('#toastText').text(data.message);
+				if (data.flagMessage == true) {
+					$('#toastBorder').addClass('bg-success');
+					$('#toastBorder').removeClass('bg-danger');
+				} else {
+					$('#toastBorder').addClass('bg-danger');
+					$('#toastBorder').removeClass('bg-success');
+				}
+				$('.toast').toast('show');
+				$('.overlay, .popup-coffe-mechine, .product-popup').removeClass('show-popup');
+
+			});
+		});
+		
+		function checkUsersLogin(){
+			$.ajax({
+				url: "/Login/checkExCookieUserLogin"
+			})
+			.done(function (data) {
+				if (data == false) {
+					window.location.assign("http://localhost:8080/UsersLogin");
+				}
+			});
+      	}
+		
+		function checkStatusOfAccount(){
+            var flagReturn = true;
+            $.ajax({
+                async: false,
+                cache: false,
+                url: "/Login/checkStatusOfAccount"
+            }).done(function (data) {
+                if (data == false) {
+                    flagReturn = false;
+                }
+            });
+            return flagReturn;
+		}
+		
+		function displayToastMessage(flagDanger, msgDisplay) {
+            $('#toastText').toast('hide');
+            $('#toastText').text(msgDisplay);
+            //
+            if (flagDanger == true) {
+                $('#toastBorder').addClass('bg-danger');
+                $('#toastBorder').removeClass('bg-success');
+            } else if (flagDanger == false) {
+                $('#toastBorder').addClass('bg-success');
+                $('#toastBorder').removeClass('bg-danger');
+            }
+            //
+            $('.toast').toast('show');
+		}
+
+
+
+
+
+
+
+	</script>
+
+</th:block>

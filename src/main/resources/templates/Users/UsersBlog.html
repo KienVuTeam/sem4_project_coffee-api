@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<head>
+    <title>Cafena - Blog Details</title>
+    <header th:replace="_common/scriptClientHeader :: scriptClientHeader">...</header>
+    <link rel="stylesheet" href="/css/blogdetails.css" />
+    <script src="https://kit.fontawesome.com/99a0617376.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div th:include="_common/scriptClientHeader :: headerContent" th:remove="tag"></div>
+    <main>
+        <!-- breadcrumb area start -->
+        <section class="breadcrumb-area pt-140 pb-140 bg_img" data-background="/images/bg/breadcrumb-bg-1.jpeg"
+            data-overlay="dark" data-opacity="5"
+            style="background-image: url(&quot;/images/bg/breadcrumb-bg-1.jpeg&quot;);">
+            <div class="shape shape__1"><img src="/images/shape/breadcrumb-shape-1.png" alt=""></div>
+            <div class="shape shape__2"><img src="/images/shape/breadcrumb-shape-2.png" alt=""></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 text-center">
+                        <h2 class="page-title">Cafena Blogs</h2>
+                        <div class="cafena-breadcrumb breadcrumbs">
+                            <ul class="list-unstyled d-flex align-items-center justify-content-center">
+                                <li class="cafenabcrumb-item duxinbcrumb-begin">
+                                    <a href="/"><span>Home</span></a>
+                                </li>
+                                <li class="cafenabcrumb-item duxinbcrumb-end">
+                                    <span>Faq</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- cart area start -->
+        <div class="blog-area pt-120 pb-120">
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+				<div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="toastBorder">
+					<div class="d-flex">
+						<div class="toast-body" style="color: #ffff;" id="toastText">
+							No Products Found,Please Try Back !
+						</div>
+						<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+							aria-label="Close"></button>
+					</div>
+				</div>
+			</div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="blog__wrapper blog__wrapper--single">
+
+                            <article id="post-136"
+                                class="blog__post blog__post--single format format-image post-136 post type-post status-publish format-standard has-post-thumbnail hentry category-coffee tag-desgin tag-popular tag-ux">
+
+                                <div class="thumb mb-20">
+                                    <img width="748" height="500" style="width: 100%;"
+                                        th:src="${viewBlog.image}"  onerror="this.onerror=null;this.src='/error/blogImage.jpg'"
+                                        class="img-responsive wp-post-image" alt="" decoding="async">
+                                </div>
+
+                                <ul class="meta list-unstyled d-flex align-items-center">
+
+                                    <li><a class="blog-cat" href="#"><i class="fal fa-file"></i><th:block th:text="${viewBlog.title}"></th:block></a></li>
+
+                                    <li><a href="#"><i class="fal fa-comments"></i><th:block th:text="${'Author :' + viewBlog.userType}"></th:block></a></li>
+
+                                    <li><a href="https://xpressrow.com/wp/cafena/ideal-cocktails-from-our-barmen-for-pefect-mood/"><i class="fal fa-calendar-alt"></i>
+                                           <th:block th:text="${viewBlog.createDate}"></th:block></a></li>
+                                </ul>
+
+                                <div class="content single-post-main-content mt-15">
+                                    <div>
+                                        <p th:text="${viewBlog.description}"></p>
+                                    </div>
+                                </div>
+                                <div class="tag-social-wrapper mb-45">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                        </div>
+                                        <div class="col-md-6 social-share-wrapper text-left text-md-end">
+                                            <h4>Social Share</h4>
+                                            <div class="social-share">
+                                                <a title="Facebook" target="_blank"
+                                                    href="https://www.facebook.com/sharer/sharer.php?u=https://xpressrow.com/wp/cafena/ideal-cocktails-from-our-barmen-for-pefect-mood/"><i
+                                                        class="fab fa-facebook-f"></i></a>
+
+                                                <a title="Twitter" target="_blank"
+                                                    href="https://twitter.com/intent/tweet?url=https://xpressrow.com/wp/cafena/ideal-cocktails-from-our-barmen-for-pefect-mood/&amp;text=IDEAL COCKTAILS FROM OUR BARMEN FOR PEFECT MOOD%20"><i
+                                                        class="fab fa-twitter"></i></a>
+
+                                                <a title="Pinterest" target="_blank"
+                                                    href="https://pinterest.com/pin/create/button/?url=https://xpressrow.com/wp/cafena/ideal-cocktails-from-our-barmen-for-pefect-mood/&amp;media=https://xpressrow.com/wp/cafena/wp-content/uploads/2022/05/blog-post-1.jpeg&amp;description=IDEAL COCKTAILS FROM OUR BARMEN FOR PEFECT MOOD%20"><i
+                                                        class="fab fa-pinterest"></i></a>
+
+                                                <a title="LinkedIn" target="_blank"
+                                                    href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://xpressrow.com/wp/cafena/ideal-cocktails-from-our-barmen-for-pefect-mood/&amp;title=IDEAL COCKTAILS FROM OUR BARMEN FOR PEFECT MOOD%20"><i
+                                                        class="fab fa-linkedin"></i></a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="post-page-wrapper">
+                                </div>
+
+                            </article>
+
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="navigation-border pt-45"></div>
+                                </div>
+                            </div>
+
+                            <div class="comments__form">
+                                <div class="flex flex-column">
+                                    <div>
+                                        <h2 class="title">Leave a Reply </h2>
+                                    </div>
+                                    <div class="contact-icon contacts-message">
+                                        <textarea id="comment" name="comment" cols="60" rows="4"
+                                            placeholder="Type your comments..." aria-required="true"
+                                            class="contentComment"></textarea>
+                                    </div>
+                                    <div>
+                                        <button class="submitComment" id="btnSubmit">Submit</button>
+                                        <button class="clearComment" id="btnClear">Clear</button>
+                                    </div>
+                                </div>
+                                <div id="contentComment">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mt-none-30">
+                        <div class="blog__sidebar">
+                            <div id="tc-latest-posts-2" class="widget mt-30 widget_tc-latest-posts">
+                                <h2 class="title"> Others Posts </h2>
+                                <div class="recent-posts">
+                                    <th:block th:if="${!lsBlogR.empty}">
+										<th:block th:each="item,index : ${lsBlogR}">
+                                            <div class="item d-flex align-items-center">
+                                                <div class="thumb">
+                                                    <img width="840" height="473" th:src="${item.image}" class="img-responsive wp-post-image"
+                                                        alt="" decoding="async" loading="lazy" onerror="this.onerror=null;this.src='/error/blogImage.jpg'"> 
+                                                </div>
+                                                <div class="content">
+                                                    <h5 class="rp-title border-effect">
+                                                        <a
+                                                            th:href="${'/Blogs/BlogDetails?idBlog=' + item.id}">
+                                                            <th:block th:text="${item.title}"></th:block>
+                                                        </a></h5>
+                                                    <a href="#" 
+                                                        class="date"><i class="fal fa-calendar-alt"></i><th:block th:text="${item.createDate}"></th:block></a>
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- cart area end -->
+
+
+
+
+    </main>
+    <div th:include="_common/scriptClientFooter :: scriptClientFooter" th:remove="tag"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+
+    <script>
+
+
+        $(document).ready(function () {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const idBlog = urlParams.get('idBlog');
+            onloadCommentBlog(idBlog)
+            replyButtonSubmit(idBlog);
+
+            $("#btnSubmit").on('click', function (e) {
+                e.preventDefault();
+                if(checkUsersLogin() == false) {
+					window.location.assign("http://localhost:8080/UsersLogin");
+					return "";
+				};
+                if (checkStatusOfAccount() == false) {
+                    displayToastMessage(true,"Your Account Has Been Restricted");
+                    return "";
+				}
+                var contentComment = $("textarea#comment").val();
+                if (contentComment.trim().length == 0) {
+                    $("textarea#comment").get(0).setCustomValidity('Please Input This Field');
+                    $("textarea#comment").get(0).reportValidity();
+                } else {
+                    var contentC = $("textarea#comment").val();
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        url: "/Blogs/ajax/addMainComment",
+                        data: {
+                            idBlog: idBlog,
+                            content: contentC,
+                        }
+                    }).done(function (data) {
+                        onloadCommentBlog(idBlog);
+                        clearCommentArea();
+                    });
+                }
+            })
+
+            $("#btnClear").on('click', function (e) {
+                e.preventDefault();
+                clearCommentArea();
+            })
+        });
+
+        function replyButtonSubmit(idBlog) {
+            $(document).on('click', function (e) {
+                if (e.target.className == "submitReply") {
+                    e.preventDefault();
+                    if(checkUsersLogin() == false) {
+					window.location.assign("http://localhost:8080/UsersLogin");
+					return "";
+					};
+                    if (checkStatusOfAccount() == false) {
+                        displayToastMessage(true,"Your Account Has Been Restricted");
+                        return "";
+				    }
+                    var dataTarget = e.target.getAttribute("data-target");
+                    var currentTAComment = $(`textarea#${dataTarget}`);
+                    var contentComment = $(currentTAComment).val();
+                    var idMain = e.target.getAttribute("data-idm");
+                    if (contentComment.trim().length == 0) {
+                        $(currentTAComment).get(0).setCustomValidity('Please Input This Field');
+                        $(currentTAComment).get(0).reportValidity();
+                    } else {
+                        var idMnC = e.target.getAttribute('data-idr');
+                        if (e.target.getAttribute('data-edit') == "false") {
+                            $.ajax({
+                                async: false,
+                                cache: false,
+                                url: "/Blogs/ajax/addSubComment",
+                                data: {
+                                    idBlog: idBlog,
+                                    idReply: idMnC,
+                                    content: contentComment,
+                                    idMainB: idMain
+                                }
+                            })
+                            .done(function (data) {
+                                $(`div.replies[data-id=${idMain}]`).append(data);
+                                closeAllReplyForm("");
+                            });
+                        } else if (e.target.getAttribute("data-edit") == "true") {
+                            var idCEdit = $(currentTAComment).attr('data-id');
+                            var pComment = $(`p.txtComment[data-id=${idCEdit}]`).attr('data-ureply');
+                            var setHTML = "";
+                            if (pComment.trim().length != 0) {
+                                setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="${pComment}"><span style="color:chocolate;">
+                                    ${pComment}</span> ${contentComment}</p>`
+                            } else{
+                                setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="">${contentComment}</p>`;
+                            }
+                            $.ajax({
+                                async: false,
+                                cache: false,
+                                url: "/Blogs/ajax/editComment",
+                                data: {
+                                    idCM : idCEdit,
+                                    content : contentComment
+                                }
+                            }).done(function (data) {
+                                $(`div[id="contentEdit"][data-id=${idCEdit}]`).html(setHTML);
+                                //
+                                closeAllReplyForm("");
+                            });
+                        }
+                    }
+                } else if (e.target.className == "cancelButton") {
+                    e.preventDefault();
+                    closeAllReplyForm(" ");
+                } else if (e.target.id == "btnDeleteS") {
+                    e.preventDefault();
+                    var dataID = e.target.getAttribute("data-id");
+                    var currentTag = $(`div[id="idReply"][data-id=${dataID}]`);
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        url: "/Blogs/ajax/deleteComment",
+                        data: {
+                            idBlog: idBlog,
+                            idComment: dataID
+                        }
+                    }).done(function (data) {
+                        closeAllReplyForm("");
+                    });
+                    currentTag.remove();
+                } else if (e.target.id == "btnDeleteM") {
+                    e.preventDefault();
+                    var dataID = e.target.getAttribute("data-id");
+                    var currentTag = $(`details[data-id=${dataID}]`);
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        url: "/Blogs/ajax/deleteComment",
+                        data: {
+                            idBlog: idBlog,
+                            idComment: dataID
+                        }
+                    }).done(function (data) {
+                        closeAllReplyForm("");
+                    });
+                    currentTag.remove();
+                } else if (e.target.id == "replyHandle") {
+                    checkUsersLogin();
+                }
+            })
+        }
+
+        function checkUsersLogin(){
+			var flagReturn = true;
+            $.ajax({
+			    async: false,
+                cache: false,
+                url: "/Login/checkExCookieUserLogin"
+            })
+            .done(function (data) {
+				console.log('DATA :' + data);
+                if (data == false) {
+                   flagReturn = data;
+                }
+            });
+            return flagReturn;
+        }
+
+        function checkStatusOfAccount(){
+            var flagReturn = true;
+            $.ajax({
+                async: false,
+                cache: false,
+                url: "/Login/checkStatusOfAccount"
+            }).done(function (data) {
+                if (data == false) {
+                    flagReturn = false;
+                }
+            });
+            return flagReturn;
+		}
+           
+        function onloadCommentBlog(idBlog) {
+            $.ajax({
+                async: false,
+                cache: false,
+                url: "/Blogs/ajax/loadCommentBlog",
+                data: {
+                    idBlog: idBlog
+                }
+            }).done(function (data) {
+                $('#contentComment').html(data);
+            });
+        }
+
+        function displayToastMessage(flagDanger, msgDisplay) {
+            $('#toastText').toast('hide');
+            $('#toastText').text(msgDisplay);
+            //
+            if (flagDanger == true) {
+                $('#toastBorder').addClass('bg-danger');
+                $('#toastBorder').removeClass('bg-success');
+            } else if (flagDanger == false) {
+                $('#toastBorder').addClass('bg-success');
+                $('#toastBorder').removeClass('bg-danger');
+            }
+            //
+            $('.toast').toast('show');
+		}
+
+        document.addEventListener(
+            "click",
+            function (event) {
+                var target = event.target;
+                var replyForm;
+                if (target.matches("[data-toggle='reply-form']")) {
+                    closeAllReplyForm(target.getAttribute("data-target"));
+                    replyForm = document.getElementById(target.getAttribute("data-target"));
+                    replyForm.classList.toggle("d-none");
+                    //
+                    $(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', false);
+                    $(`textarea#${target.getAttribute("data-target")}`).val(" ");
+
+                } else if (target.matches("[data-toggle='edit-form']")) {
+                    closeAllReplyForm(target.getAttribute("data-target"));
+                    replyForm = document.getElementById(target.getAttribute("data-target"));
+                    replyForm.classList.toggle("d-none");
+                    $(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', true);
+                    $(`textarea#${target.getAttribute("data-target")}`).val(target.getAttribute("data-cm"));
+                }
+            },
+            false
+        );
+
+        function closeAllReplyForm(dataTarget) {
+            $('form.reply-form').each(function (e) {
+                var currentTarget = $(this).attr('id');
+                $(`textarea[id=${currentTarget}]`).val(" ");
+                if ($(this).attr("data-target") != dataTarget) {
+                    if (!$(this).hasClass('d-none')) {
+                        $(this).addClass('d-none');
+                    }
+                }
+            })
+        }
+
+        function clearCommentArea() {
+            $("textarea#comment").attr('placeholder', "Type your comments...").val("").focus().blur();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,104 @@
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid #EE4D2D;
+        text-align : center;
+        height: 50px;
+    }
+</style>
+<div style="margin-top: 100px; margin-left: 200px;">
+    <table style="width: 90%;">
+        <tr>
+            <th style="width: 50px;"> Id Invoice</th>
+            <th style="width: 210px;"> Product Name</th>
+            <th style="width: 40px;"> Id Supplier</th>
+            <th style="width: 50px;"> Price</th>
+            <th style="width: 50px;"> Amount</th>
+            <th style="width: 50px;"> Confirm</th>
+            <th style="width: 50px;"> Unconfirm</th>
+            <th style="width: 70px;"> Others</th>
+        </tr>
+        <th:block th:each="item,iters : ${lsInvoice}">
+            <tr>
+                <td th:text="${'idInvoice :' + item.idInvoiceD}"></td>
+                <td th:text="${'Product Name: ' + item.pName}"></td>
+                <td th:text="${'Supplier Id: ' + item.idSupplier}"></td>
+                <td th:text="${'Price : ' + item.price}"></td>
+                <td th:text="${'Amount : ' + item.amount}"></td>
+                <td>
+                    <th:block th:if="${item.isStatus == 0}">
+                        <button style="color: #0BBE12;" th:data-ivd="${item.idInvoiceD}" th:data-supp="${item.idSupplier}" id="btnConfirm"
+                            th:data-id="${item.idInvoice}" th:data-iduser=${item.idUser}>Confirm</button>
+                    </th:block>
+                  
+                </td>
+                <td>
+                    <th:block th:if="${item.isStatus == 0}">
+                        <button style="color: red;" th:data-ivd="${item.idInvoiceD}" th:data-supp="${item.idSupplier}"
+                            th:data-id="${item.idInvoice}" th:data-iduser=${item.idUser} id="btnUnconfirm">Unconfirm</button>
+                    </th:block>
+                </td>
+                <td>
+                    <th:block th:if="${item.isStatus != 0}">
+                        <p style="color: plum;">Item Already Handle</p>
+                    </th:block>
+                </td>
+            </tr>
+        </th:block>
+
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"
+		integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function () {
+
+        $('button[id="btnConfirm"]').on('click',function(e){
+            e.preventDefault();
+            var idSupplier = $(this).attr('data-supp');
+            var idInvoice = $(this).attr('data-id');
+            var idInvoiceD = $(this).attr('data-ivd');
+            $.ajax({
+					async: false,
+					cache: false,
+					url: "/dll/typeStatus",
+					data: {
+						idSupplier : idSupplier,
+                        userCase : 1,
+                        statusType : 0,
+                        idInvoiceD : idInvoiceD,
+                        idInvoice : idInvoice,
+                        idUser : 0
+
+					}
+				}).done(function (data) {
+
+				});
+        })
+
+        $('button[id="btnUnconfirm"]').on('click',function(e){
+            e.preventDefault();
+            var idSupplier = $(this).attr('data-supp');
+            var idInvoice = $(this).attr('data-id');
+            var idInvoiceD = $(this).attr('data-ivd');
+            var idUser = $(this).attr('data-iduser');
+            $.ajax({
+					async: false,
+					cache: false,
+					url: "/dll/typeStatus",
+					data: {
+						idSupplier : idSupplier,
+                        userCase : 1,
+                        statusType : 1,
+                        idInvoiceD : idInvoiceD,
+                        idInvoice : idInvoice,
+                        idUser : idUser
+					}
+				}).done(function (data) {
+
+				});
+        })
+    })
+</script>

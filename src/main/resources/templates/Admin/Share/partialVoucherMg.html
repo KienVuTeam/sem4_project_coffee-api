@@ -1,0 +1,86 @@
+<table class='table table-striped' id="table1">
+	<thead>
+		<tr>
+			<th>Coupon Code</th>
+			<th>Name</th>
+			<th>Start Date</th>
+			<th>End Date</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item: ${lstVou}">
+			<tr>
+				<td th:text="${item.id}"></td>
+				<td hidden th:text="${item.condition}"></td>
+				<td hidden th:text="${item.discount}"></td>
+				<td>
+					Order enough <span th:text="${item.condition}"></span>$ to get <span
+						th:text="${item.discount}"></span>$ off
+				</td>
+				<td th:text="${item.startDate}"></td>
+				<td th:text="${item.endDate}"></td>
+				<td th:switch="${item.isActive}">
+					<th:block th:case="0">
+						<button type="button" id="btnEdit" class="btn btn-outline-success" data-bs-toggle="modal"
+							data-bs-target="#defaultEdit">
+							Edit
+						</button>
+						<button type="button" id="btnDlt" class="btn btn-outline-danger" data-bs-toggle="modal"
+							data-bs-target="#animation">
+							Delete
+						</button>
+					</th:block>
+					<button th:case="1" id="finishNow" type="button" class="btn btn-outline-danger"
+						data-bs-toggle="modal" data-bs-target="#animationEnd">
+						End immediately
+					</button>
+					<span th:case="2" style="color: darkblue;">Finished</span>
+				</td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$("#table1").on('click', '#btnDlt', function () {
+			var currentRow = $(this).closest("tr");
+
+			var idVou = currentRow.find("td:eq(0)").text();
+			$("#idVoucher").val(idVou);
+			$("#isActive").val(0);
+			$("#myModalLabelBtn").text("Delete Voucher");
+			$("#messBtn").text("Are you sure you want to delete this voucher?");
+			$("#btnSubmit").text("Delete");
+
+		});
+		$("#table1").on('click', '#btnEdit', function () {
+			var currentRow = $(this).closest("tr");
+
+			var idVou = currentRow.find("td:eq(0)").text();
+			var condition = currentRow.find("td:eq(1)").text();
+			var discount = currentRow.find("td:eq(2)").text();
+			var startDate = currentRow.find("td:eq(4)").text();
+			var endDate = currentRow.find("td:eq(5)").text();
+
+			$("#idEdit").val(idVou);
+			$("#conditionEdit").val(condition);
+			$("#discountEdit").val(discount);
+			$("#startDateEdit").val(startDate);
+			$("#endDateEdit").val(endDate);
+		});
+		$("#table1").on('click', '#finishNow', function () {
+			var currentRow = $(this).closest("tr");
+
+			var idVou = currentRow.find("td:eq(0)").text();
+			$("#idVoucherEnd").val(idVou);
+			$("#isActiveEnd").val(2);
+			$("#myModalLabelBtnEnd").text("End Immediately");
+			$("#messBtnEnd").text("Are you sure you want to end this voucher?");
+			$("#btnSubmitEnd").text("Finished");
+
+		});
+	});
+</script>

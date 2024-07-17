@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome To Our Website</title>
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" type="images/x-icon">
+
+</head>
+
+<body>
+
+    <div class="bodycontent">
+        <th:block th:if="${modeForm == 'Register'}">
+            <div class="container right-panel-active" id="container">
+        </th:block>
+        <th:block th:if="${modeForm == 'Login'}">
+            <div class="container" id="container">
+        </th:block>
+        <a href="/"><i class="fa-solid fa-arrow-left"
+                style=" top: 30px;left: 20px;z-index: 1000;position: absolute;"></i></a>
+
+        <div class="form-container sign-up-container">
+            <form action="#">
+                <h1>Sign up</h1>
+                <div class="social-container">
+
+                </div>
+                <span>Create New Account</span>
+                <input type="text" placeholder="Name" id="userFullName" minlength="8" maxlength="50"
+                    autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgFullName" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="text" placeholder="UserName" id="userName" minlength="8" maxlength="50"
+                    autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgUserName" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="email" placeholder="Email" id="userEmail" minlength="10" maxlength="50"
+                    autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgEmail" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="text" placeholder="Phone" id="userPhone" minlength="8" maxlength="10" autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgPhone" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="text" placeholder="Address" id="userAddress" minlength="10" maxlength="200" autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgAddress" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="password" placeholder="Password" id="userPassword" minlength="8" maxlength="100"
+                    autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgPassword" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="password" placeholder="Confirm Password" id="confirmPassword" minlength="8" maxlength="100"
+                    autocomplete="off" />
+                <div class="valiItem">
+                    <span id="msgConfirm" style="color: red;" data-validate="false"></span>
+                </div>
+                <div class="wrapButton">
+                    <button id="signUpButton">Sign Up</button>
+                </div>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#" class="loginForm" id="signInForm">
+                <h1>Sign in</h1>
+                <div class="social-container">
+
+                </div>
+                <span>Login To Your Account</span>
+                <div style="border-radius: 3px;height: 32px;background-color: #f8d7da;border-color: #f5c2c7;margin-top: 12px;width: 111%;display: none;color: #842029;" id="alertLogin">
+                    <span style="padding-left: 2px;height: 28px;font-size: 13px;width: 90%;line-height: 30px;">The username or password is incorrect.         </span>
+                    <span style="font-size: 22px;line-height: 33px;width: 5%;cursor: pointer;" class="closebtn" id="closeAlertLogin">×</span>
+                </div>
+                
+                <input type="text" placeholder="UserName"  style="width: 111%;margin-top: 20px;" minlength="8" maxlength="50" id="loginUserName" autocomplete="off"/>
+                <div class="valiItem" style="width: 109%;">
+                    <span id="msgLUserName" style="color: red;" data-validate="false"></span>
+                </div>
+                <input type="password" placeholder="Password" autocomplete="off" style="width: 111%;" minlength="8" maxlength="50" id="loginPassword"/>
+                <div class="valiItem" style="width: 109%;">
+                    <span id="msgLPassword" style="color: red;" data-validate="false"></span>
+                </div>
+                <a href="/Recover/Password">Forgot your password?</a>
+                <button id="btnSignIn">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <div class="cotainModal" id="modalAlert" style="z-index: 100;">
+        <div class="cookiesContent" id="cookiesPopup">
+            <button class="close" id="closeModal">✖</button>
+            <!-- 44cd55 -->
+            <img src="https://cdn-icons-png.flaticon.com/128/738/738884.png" alt="cookies-img" class="imgModal"
+                id="iconModal" />
+            <p class="msgModal" id="messageModal">We use cookies for improving user experience, analytics and marketing.
+            </p>
+            <button class="accept" id="btnAccept">OK</button>
+        </div>
+    </div>
+
+    <div class="cotainModal" id="modalLogin" style="z-index: 100;">
+        <div class="cookiesContent" id="cookiesPopup">
+            <button class="close" id="closeModalLogin">✖</button>
+            <!-- 44cd55 -->
+            <img src="/images/users/iconSuccess.png" alt="cookies-img" class="imgModal"
+                id="iconModalLogin" />
+            <p class="msgModal" id="msgModalLogin">Login Successfully !!! </p>
+            <button class="accept" id="btnAcceptLogin" style="background-color: #44cd55;">OK</button>
+        </div>
+    </div>
+
+    <div class="cotainModal" id="modalLoading" style="z-index: 100;">
+        <div class="cookiesContent" id="cookiesPopup">
+            <!-- 44cd55 -->
+            <p></p>
+            <img src="/images/users/loadingWaiting.gif" alt="cookies-img" class="imgModal"
+                id="iconModalLoading" />
+        </div>
+    </div>
+
+    
+    <script src="https://kit.fontawesome.com/26c19c3070.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="/js/errorFieldCheck.js"></script>
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+        const fieldCheck = new errorFieldCheck();
+        var buttonAccept = document.getElementById("btnAccept");
+        var modal = document.getElementById("modalAlert");
+        var alertLogin = document.getElementById('alertLogin');
+        var modalLogin = document.getElementById('modalLogin');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+        //
+
+
+        $(document).ready(function () {
+
+            $('#signUpButton').on('click', function (e) {
+                e.preventDefault();
+                multiCheckUserSignUp();
+                checkFieldForSignUp();
+            });
+
+            function checkFieldForSignUp() {
+                var objValidate = {
+                    userFName: $('#msgFullName').attr('data-validate'),
+                    userName: $('#msgUserName').attr('data-validate'),
+                    userEmail: $('#msgEmail').attr('data-validate'),
+                    userPhone: $('#msgPhone').attr('data-validate'),
+                    userAddress : $('#msgAddress').attr('data-validate'),
+                    userPassword: $('#msgPassword').attr('data-validate'),
+                    confirmPass: $('#msgConfirm').attr('data-validate')
+                };
+                var modalLoading = document.getElementById("modalLoading");
+                var flagSubmit = Object.values(objValidate).includes("false");
+                if (!flagSubmit) {
+                    $.ajax({
+                    cache: false,
+                    data: {
+                        userFName: $('#userFullName').val().trimEnd(),
+                        userName: $('#userName').val(),
+                        userEmail: $('#userEmail').val(),
+                        userPhone: $('#userPhone').val(),
+                        userAddress: $('#userAddress').val(),
+                        userPassword: $('#userPassword').val()
+                    },
+                    url: "/Register/userRegisterAccount",
+                    beforeSend: function(){
+                        modalLoading.style.display = "flex";
+                    }
+                    }).done(function (data) {
+                        showModalDialog(data);
+                        modalLoading.style.display = "none";
+                    });
+                }
+                
+            }
+
+            function showModalDialog(data) {
+                $('#messageModal').text(data.msgRecover);
+                buttonAccept.style.backgroundColor = "#ed6755";
+                if (data.flagSuccess) {
+                    if (data.flagSendding == true) {
+                        $('#iconModal').attr('src', "/images/users/iconEmail.png");
+                        buttonAccept.style.backgroundColor = "#44cd55";
+                    } else {
+                        $('#iconModal').attr('src', "/images/users/errorIcon.png");
+                    }
+                } else {
+                    $('#iconModal').attr('src', "/images/users/errorIcon.png");
+                    $('#messageModal').text("There Are Some Errors Please Try Back");
+                }
+                $('#modalAlert').fadeIn(500);
+                modal.style.display = "flex";
+            }
+
+            function multiCheckUserSignUp() {
+                checkUserFullNameInput();
+                checkUserIsUserNameInput();
+                checkUserEmailInput();
+                checkUserPhoneInput();
+                checkUserAddressInput();
+                checkUserPassword();
+                checkInputConfirmPassword();
+            }
+
+            $('#userFullName').on('input blur', function (e) {
+                e.preventDefault();
+                checkUserFullNameInput();
+            });
+
+            $('#userName').on('input blur', function (e) {
+                e.preventDefault();
+                checkUserIsUserNameInput();
+            });
+
+            $('#userEmail').on('input blur', function (e) {
+                e.preventDefault();
+                checkUserEmailInput();
+            });
+
+            $('#userPhone').on('input blur', function (e) {
+                e.preventDefault();
+                checkUserPhoneInput();
+            });
+
+            $('#userAddress').on('input blur', function (e) {
+                e.preventDefault();
+                checkUserAddressInput();
+            })
+
+            $('#userPassword').on('input blur', function (e) {
+                e.preventDefault();
+                var flagValidate = checkUserPassword();
+                var lengthConfirm = $('#confirmPassword').val().length;
+                //
+                if (flagValidate && lengthConfirm != 0) {
+                    checkInputConfirmPassword();
+                }
+            });
+
+            $('#confirmPassword').on('input blur', function (e) {
+                e.preventDefault();
+                checkInputConfirmPassword();
+            });
+
+
+        });
+
+        /**
+         * checkUserFullName
+         */
+        function checkUserFullNameInput() {
+            fieldCheck.checkEmptyFields($('#userFullName'), $('#msgFullName'));
+        }
+        /**
+         * checkUserName
+         */
+        function checkUserIsUserNameInput() {
+            var flagValiate = true;
+            fieldCheck.checkSpecialInputDsSpace($('#userName'));
+            flagValiate == true ? flagValiate = fieldCheck.checkEmptyFields($('#userName'), $('#msgUserName')) : flagValiate = false;
+            flagValiate == true ? checkExistsUserName() : flagValiate = false;
+        }
+
+        function checkExistsUserName() {
+            var userName = $('#userName').val();
+            $.ajax({
+                async: false,
+                cache: false,
+                data: {
+                    userName: userName
+                },
+                url: "/Register/checkExistsUserName",
+            }).done(function (data) {
+                if (data == true) {
+                    $('#msgUserName').attr('data-validate', false);
+                    $('#msgUserName').text('This username is already exists');
+                } else {
+                    $('#msgUserName').attr('data-validate', true);
+                    $('#msgUserName').text('');
+                }
+            });
+        }
+
+        /**
+         * checkUser Email
+         */
+        function checkUserEmailInput() {
+            var flagValiate = true;
+            flagValiate = fieldCheck.checkInputEmail($('#userEmail'), $('#msgEmail'));
+            flagValiate == true ? checkExistsUserEmail() : flagValiate = false;
+        }
+
+        function checkExistsUserEmail() {
+            var userEmail = $('#userEmail').val();
+            $.ajax({
+                async: false,
+                cache: false,
+                data: {
+                    userEmail: userEmail
+                },
+                url: "/Register/checkExistsUserEmail",
+            }).done(function (data) {
+                if (data == true) {
+                    $('#msgEmail').attr('data-validate', false);
+                    $('#msgEmail').text('This email has already been taken');
+                } else {
+                    $('#msgEmail').attr('data-validate', true);
+                    $('#msgEmail').text('');
+                }
+            });
+        }
+
+        /**
+         * checkUser Phone
+         */
+        function checkUserPhoneInput() {
+            var flagValiate = true;
+            fieldCheck.checkInputNumbers($('#userPhone'));
+            flagValiate == fieldCheck.checkEmptyFields($('#userPhone'), $('#msgPhone'));
+        }
+
+        /**
+         * 
+         */
+        function checkUserAddressInput(){
+            fieldCheck.checkEmptyFields($('#userAddress'), $('#msgAddress'));
+        }
+        /**
+         * checkUser Password
+         */
+        function checkUserPassword() {
+            const minLength = $('#userPassword').attr('minlength');
+            var valueOfItem = $('#userPassword').val();
+            var lengthItem = valueOfItem.length;
+            var flagValiate = true;
+            $("#msgPassword").attr('data-validate', false);
+            if (lengthItem == 0) {
+                $("#msgPassword").text("Please Input This Fields");
+                flagValiate = false;
+            } else if (lengthItem < minLength) {
+                $("#msgPassword").text(`Please Input At Least ${minLength} Chacracters`);
+                flagValiate = false;
+            } else {
+                $("#msgPassword").text("");
+                $("#msgPassword").attr('data-validate', true);
+            }
+            return flagValiate;
+        }
+
+        /**
+         * checkUser Confirm Password 
+         */
+
+        function checkInputConfirmPassword() {
+            var valueOfItem = $('#confirmPassword').val();
+            var valueOfPassword = $('#userPassword').val();
+            const minLength = $('#confirmPassword').attr('minlength');
+            var lengthItem = valueOfItem.length;
+            $("#msgConfirm").attr('data-validate', false);
+            if (lengthItem == 0) {
+                $("#msgConfirm").text("Please Input This Fields");
+            } else if (lengthItem < minLength) {
+                $("#msgConfirm").text(`Please Input At Least ${minLength} Chacracters`);
+            }
+            else if (valueOfItem != valueOfPassword) {
+                $("#msgConfirm").text(`Confirm Password Is Not Valid`);
+            } else {
+                $("#msgConfirm").text("");
+                $("#msgConfirm").attr('data-validate', true);
+            }
+        }
+
+        $('#closeModal').on('click', function (e) {
+            e.preventDefault();
+            eventUnDisplayModal();
+        });
+
+        $('#btnAccept').on('click', function (e) {
+            e.preventDefault();
+            eventUnDisplayModal();
+        });
+
+        window.onclick = function (e) {
+            if (e.target == modal) {
+                eventUnDisplayModal();
+            } else if (e.target == modalLogin) {
+                eventRedirectHomePage();
+            }
+        }
+
+        function eventUnDisplayModal() {
+            modal.style.display = "none";
+        }
+
+        $('#btnSignIn').on('click',function(e){
+            e.preventDefault();
+            multiCheckUserSignIn();
+            checkFieldForSignIn();
+        });
+
+        function checkFieldForSignIn(){
+            var objValidate = {
+                username : $('#msgLUserName').attr('data-validate'),
+                password : $('#msgLPassword').attr('data-validate')
+            };
+            var flagSubmit = Object.values(objValidate).includes("false");
+            if (!flagSubmit) {
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    data: {
+                        userName : $('#loginUserName').val(),
+                        userPassword : $('#loginPassword').val()
+                    },
+                    url: "/Login/userSubmitLogin",
+                }).done(function (data) {
+                    if (data == true) {
+                        handleSubmitLogin();
+                        showModalLogin();
+                    } else {
+                        alertLogin.style.display = "flex";
+                    }
+                });
+            }
+        }
+
+        $('#closeModalLogin').on('click', function (e) {
+            e.preventDefault();
+            eventRedirectHomePage();
+        });
+
+        $('#btnAcceptLogin').on('click', function (e) {
+            e.preventDefault();
+            eventRedirectHomePage();
+        });
+
+        function eventRedirectHomePage(){
+            window.location.assign("http://localhost:8080");
+        }
+
+        function showModalLogin() {
+            $('#modalLogin').fadeIn(500);
+            modalLogin.style.display = "flex";
+        }
+
+        function multiCheckUserSignIn(){
+            checkUserLoginUserName();
+            checkUserLoginPassword();
+        }
+
+        $('#closeAlertLogin').on('click', function(e){
+            e.preventDefault();
+            alertLogin.style.display = "none";
+        });
+
+        $('#loginUserName').on('input blur', function(e){
+            e.preventDefault();
+            checkUserLoginUserName();
+        });
+
+        $('#loginPassword').on('input blur', function(e){
+            e.preventDefault();
+            checkUserLoginPassword();
+        })
+
+        function checkUserLoginUserName(){
+            fieldCheck.checkSpecialInputDsSpace($('#loginUserName'));
+            fieldCheck.checkEmptyFields($('#loginUserName'), $('#msgLUserName'));
+        }
+
+        function checkUserLoginPassword(){
+            const minLength = $('#loginPassword').attr('minlength');
+            var valueOfItem = $('#loginPassword').val();
+            var lengthItem = valueOfItem.length;
+            var flagValiate = true;
+            $("#msgLPassword").attr('data-validate', false);
+            if (lengthItem == 0) {
+                $("#msgLPassword").text("Please Input This Fields");
+                flagValiate = false;
+            } else if (lengthItem < minLength) {
+                $("#msgLPassword").text(`Please Input At Least ${minLength} Chacracters`);
+                flagValiate = false;
+            } else {
+                $("#msgLPassword").text("");
+                $("#msgLPassword").attr('data-validate', true);
+            }
+        }
+
+        function handleSubmitLogin() {
+            let strWPKey = localStorage.getItem("wProduct");
+            $.ajax({
+                async: false,
+                cache: false,
+                data: {
+                    lsProducts: strWPKey
+                },
+                url: "/WatchList/userLoginAddWList",
+            }).done(function (data) {
+                localStorage.removeItem("wProduct");
+            });
+        }
+    </script>
+</body>
+
+</html>

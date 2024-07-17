@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Admin/Layout/admin_layout :: cssAdmin">
+
+</head>
+<link rel="stylesheet" href="/admin/vendors/simple-datatables/style.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9">
+</script>
+
+<body>
+	<div th:replace="Admin/Layout/admin_layout :: sidebarAdmin"></div>
+	<div id="main">
+		<nav th:replace="Admin/Layout/admin_layout :: navbarAdmin"></nav>
+		<div class="modal text-left" id="animation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myModalLabel6">Deactivate Customer</h4>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="alert bg-rgba-success" role="alert">
+							<span class="text-bold-600" id="messBtn"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Close</span>
+						</button>
+						<form method="post" action="/Admin/customer-management/update-customer">
+							<input hidden id="idEdit" name="idEdit">
+							<input hidden id="isActive" name="isActive">
+							<button type="submit" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+								<i class="bx bx-check d-block d-sm-none"></i>
+								<span class="d-none d-sm-block" id="btnSubmit"></span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="cusOrder" tabindex="-1" role="dialog" aria-labelledby="cusOrderTitle"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable" role="document" style="max-width: 1300px;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" id="backCusOrder" class="close" aria-label="Close">
+							<i data-feather="arrow-left"></i>
+						</button>
+						<h5 class="modal-title" id="cusOrderTitle" style="margin: auto;">Customer Orders</h5>
+						<button type="reset" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body" id="mbodyCusOrder">
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="btnRefundCus" class="btn btn-success">Refund money</button>
+						<button type="reset" class="btn btn-light-secondary" data-bs-dismiss="modal">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Close</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="main-content container-fluid">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Customer Management</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+								<li class="breadcrumb-item">User Management</li>
+								<li class="breadcrumb-item active" aria-current="page">Customer Management</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<div class="componentCus">
+				<section class="section">
+					<div class="card">
+						<div class="card-body">
+							<table class='table table-striped' id="table1">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Email</th>
+										<th>Phone</th>
+										<th>Address</th>
+										<th>Status</th>
+										<th>Orders</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="item : ${listCustomer}">
+										<tr>
+											<td hidden th:text="${item.id}" name="id" id="id"></td>
+											<td th:text="${item.name}"></td>
+											<td th:text="${item.email}"></td>
+											<td th:text="${item.phone}"></td>
+											<td style="max-width: 250px;" th:text="${item.address}"></td>
+											<td th:switch="${item.isActive}">
+												<button th:case="true" id="btnDeac" class="btn btn-outline-danger"
+													data-bs-toggle="modal" data-bs-target="#animation">
+													Deactivate
+												</button>
+												<!--<span style="color: red;" th:case="false">Inactive</span>-->
+												<button th:case="false" id="btnAct" class="btn btn-outline-primary"
+													data-bs-toggle="modal" data-bs-target="#animation">
+													Activate
+												</button>
+											</td>
+											<td>
+												<button type="button" id="btnViewCusOrder" data-bs-toggle="modal"
+													data-bs-target="#cusOrder" class="btn btn-primary">Customer
+													orders</button>
+											</td>
+
+										</tr>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</section>
+			</div>
+
+		</div>
+		<footer th:replace="Admin/Layout/admin_layout :: footerAdmin"></footer>
+	</div>
+
+	<div th:replace="Admin/Layout/admin_layout :: scriptAdmin"></div>
+
+	<script src="/admin/vendors/simple-datatables/simple-datatables.js"></script>
+	<script src="/admin/js/vendors.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$("#table1").on('click', '#btnViewCusOrder', function () {
+				$("#btnRefundCus").hide();
+				$("#backCusOrder").hide();
+				var currentRow = $(this).closest("tr");
+
+				var idCus = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+				let timerInterval;
+				Swal.fire({
+					title: "Please wait a moment!",
+					timer: 2000,
+					timerProgressBar: true,
+					didOpen: () => {
+						Swal.showLoading();
+					},
+					willClose: () => {
+						clearInterval(timerInterval);
+					}
+				}).then((result) => {
+					/* Read more about handling dismissals below */
+					if (result.dismiss === Swal.DismissReason.timer) {
+						console.log("I was closed by the timer");
+					}
+				});
+				$.ajax({
+					type: "Get",
+					url: "/Admin/customer-management/customerOrder",  //remember change the controller to your owns.
+					data: {
+						idAccount: idCus,
+					},
+					success: function (res) {
+						$("#mbodyCusOrder").html("");
+
+						$("#mbodyCusOrder").html(res);
+						let tableCusOrder = document.querySelector('#tableCusOrder');
+						let dataTableCusOrder = new simpleDatatables.DataTable(tableCusOrder);
+
+
+					},
+					error: function (response) {
+						console.log(response.responseText);
+					}
+				});
+			});
+
+
+			//==========
+			$("#table1").on('click', '#btnDeac', function () {
+				// get the current row
+				var currentRow = $(this).closest("tr");
+
+				var idCus = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+				$("#idEdit").val(idCus);
+				$("#isActive").val(0);
+
+				$("#myModalLabel6").text("Deactive Customer");
+				$("#messBtn").text("Are you sure you want to deactive this customer's account?");
+				$("#btnSubmit").text("Deactive");
+
+			});
+			$("#table1").on('click', '#btnAct', function () {
+				// get the current row
+				var currentRow = $(this).closest("tr");
+
+				var idCus = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+				$("#idEdit").val(idCus);
+				$("#isActive").val(1);
+
+				$("#myModalLabel6").text("Active Customer");
+				$("#messBtn").text("Are you sure you want to active this customer's account?");
+				$("#btnSubmit").text("Active");
+
+			});
+		});
+	</script>
+
+</body>
+
+</html>

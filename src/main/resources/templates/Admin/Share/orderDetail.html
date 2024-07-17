@@ -1,0 +1,385 @@
+<!--<h3>No.Invoice: 1 - Amount received:
+			<span style="color: red;">100$</span>
+		</h3>-->
+<p hidden id="textIdInv" th:text="${idInv}"></p>
+<p hidden id="lstVoucherS" th:text="${lstVoucherS}"></p>
+<p hidden id="priceVoucherA" th:text="${priceVoucherA}"></p>
+<p hidden id="idUser" th:text="${idUser}"></p>
+<table class='table table-striped' id="tableDetail">
+	<thead>
+		<tr>
+			<th>Title Supplier</th>
+			<th>Total Price Order of Supplier</th>
+			<!--<th>Total Price Product of Supplier</th>-->
+			<th>Refund to customers (if any)</th>
+			<th>Voucher Supplier (if any)</th>
+			<th>Total amount payable to supplier</th>
+			<th>Action</th>
+			<th>Details</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item,iter: ${lstViewSub}">
+			<tr>
+				<td hidden th:text="${item.idSupplier}"></td>
+				<td th:text="${item.titleSup}"></td>
+				<td><span th:text="${item.TotalOrderAmount}"></span><span>.00</span></td>
+				<!--<td>45$</td>-->
+
+				<th:block th:switch="${item.isStatus}">
+					<td th:case="'2'">
+						<span th:text="${item.RefundtoCustomers}"></span>
+						<span style="color: red;">(No refund yet)</span>
+					</td>
+					<td th:case="'3'">
+						<span th:text="${item.RefundtoCustomers}"></span>
+						<span style="color: darkgreen;">(Refunded)</span>
+					</td>
+					<td th:case="*"><span>0</span></td>
+				</th:block>
+				<td><span th:text="${item.VoucherS}"></span><span>.00</span></td>
+
+				<td>
+					<div style="display: flex;justify-content: space-between;align-items: center;">
+						<span th:text="${item.TotalPrice}"></span>
+					</div>
+				</td>
+				<th:block th:switch="${item.status}">
+					<td th:case="'0'" style="color: darkorange;">Pending</td>
+					<td th:case="'1'" style="color: blue;">Delivering</td>
+					<td th:case="'2'"><strong style="color: green;">Delivered</strong>/ Waiting to payment</td>
+					<td th:case="'3'"><strong style="color: green;">Delivered</strong>/ iLA has <strong
+							style="color: dodgerblue;">transferred money</strong></td>
+					<td th:case="'4'">The order was <strong style="color: darkgreen;">completely successful</strong>
+					</td>
+					<td th:case="'9'"><strong style="color: red;">Cancelled</strong></td>
+				</th:block>
+				<td>
+					<button type="button" id="detailOrderBySupp" class="btn btn-primary">
+						Detail
+					</button>
+				</td>
+				<td hidden th:text="${item.status}"></td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+<div style="margin-left: 670px;min-width: 500px;">
+	<p hidden id="textIdInv" th:text="${idInv}"></p>
+	<p hidden id="textIdSupp" th:text="${idSupp}"></p>
+	<p hidden id="lstVoucherS" th:text="${lstVoucherS}"></p>
+	<p hidden id="idUser" th:text="${idUser}"></p>
+	<div id="divRefundSuppV">
+		<th:block th:each="item:${lstViewSub}">
+			<h6 style="display: flex;justify-content: space-between;">Voucher refund for <th:block
+					th:text="${item.titleSup}"></th:block> ($):
+				<span><strong th:text="${item.priceRefundSuppV}">0</strong> <strong
+						th:id="'priceRefundS'+${item.idSupplier}"></strong></span>
+
+			</h6>
+		</th:block>
+		<hr>
+		<h6 style="display: flex;justify-content: space-between;">Total voucher refund for all supplier ($):
+			<strong id="totalPriceVR">0</strong>
+		</h6>
+		<h6 style="display: flex;justify-content: space-between;">The service fee of the order needs to be refunded ($):
+			<strong id="feeRefund">0</strong>
+		</h6>
+	</div>
+
+</div>
+
+<script th:inline="javascript">
+	function roundToTwo(num) {
+		return +(Math.round(num + "e+2") + "e-2");
+	}
+	//$("#divRefundSuppV").hide();
+	/*<![CDATA[*/
+	var theList = /*[[${lstViewSub}]]*/"";
+	var temp = 0;
+	var totalFee = 0;
+	for (i = 0; i < theList.length; i++) {
+		temp += theList[i].priceRefundSuppV;
+		totalFee += 0.02 * (theList[i].totalOrderAmount - theList[i].voucherS);
+
+	}
+	if (Number.isInteger(totalFee)) {
+		$("#feeRefund").text(totalFee + ".00");
+	} else {
+		$("#feeRefund").text(roundToTwo(totalFee));
+	}
+
+	if (Number.isInteger(temp)) {
+		$("#totalPriceVR").text(temp + ".00");
+	} else {
+		$("#totalPriceVR").text(roundToTwo(temp));
+	}
+
+
+
+	/*]]>*/
+
+
+	$("#tableDetail").on('click', '#detailOrderBySupp', function () {
+		var currentRow = $(this).closest("tr");
+
+		var idSupp = currentRow.find("td:eq(0)").text();
+		var titleSupp = currentRow.find("td:eq(1)").text();
+		var totalAmount = currentRow.find("td:eq(2)").text();
+		var refundCus = currentRow.find("td:eq(3)").text();
+		var priceVouS = currentRow.find("td:eq(4)").text();
+		var paymentSupp = currentRow.find("td:eq(5)").text();
+		var sttInvSupp = currentRow.find("td:eq(8)").text();
+		var priceVoucherA = $("#priceVoucherA").text();
+		var idUser = $("#idUser").text();
+		var totalPriceVR = $("#totalPriceVR").text();
+
+		$.ajax({
+			type: "Get",
+			url: "/Admin/order-management/detailOrderBySupp",  //remember change the controller to your owns.
+			data: {
+				idInv: $("#textIdInv").text(),
+				idSupplier: idSupp,
+				lstVoucherS: $("#lstVoucherS").text(),
+				priceVoucherA: priceVoucherA,
+				idUser: idUser,
+			},
+			success: function (res) {
+				$("#backOrder").show();
+				$("#btnRefundFeeCus").hide();
+				$("#exampleModalCenterTitle").text("Order Detail - Purchased Product");
+				$("#componentDetail").html("");
+				$("#componentDetail").html(res);
+
+				$("#totalPrice").text(totalAmount);
+				if (priceVouS != "0.00") {
+					$("#divPriceVoucherS").show();
+					$("#priceVoucherS").text(priceVouS);
+				} else {
+					$("#divPriceVoucherS").hide();
+				}
+
+				if (totalPriceVR != 0) {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/priceRefundWhenInv9",  //remember change the controller to your owns.
+						data: {
+							idInv: $("#textIdInv").text(),
+							idSupplier: idSupp,
+						},
+						success: function (res) {
+							if (res.priceRefund != 0) {
+								$("#divMoneyPaid").hide();
+								$("#divPriceRefundVSupp").show();
+								if (res.status == 0) {
+									$("#btnRefundSupp").show();
+								} else {
+									$("#btnRefundSupp").hide();
+								}
+								$("#btnRefundAllSupp").hide();
+
+								if (Number.isInteger(res.priceRefund)) {
+									if (res.status == 0) {
+										$("#priceRefundVSupp").text(res.priceRefund + ".00" + " (No refund yet)");
+									} else {
+										$("#priceRefundVSupp").text(res.priceRefund + ".00" + " (Refunded)");
+									}
+								} else {
+									if (res.status == 0) {
+										$("#priceRefundVSupp").text(roundToTwo(res.priceRefund) + " (No refund yet)");
+									} else {
+										$("#priceRefundVSupp").text(roundToTwo(res.priceRefund) + " (Refunded)");
+									}
+								}
+								$("#divPriceVoucherS").hide();
+								$("#profitILA").text(0);
+								$("#priceVoucherAofSupp").text("0.00");
+								$("#priceFeeService").text("0.00");
+								$("#profitReceive").text("0.00");
+							} else {
+								$("#divMoneyPaid").show();
+								$("#divPriceRefundVSupp").hide();
+
+								$("#btnRefundAllSupp").hide();
+								$("#btnRefundSupp").hide();
+								$("#divPriceVoucherS").show();
+
+							}
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				} else {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/checkRefundFee",  //remember change the controller to your owns.
+						data: {
+							idInvoice: $("#textIdInv").text(),
+						},
+						success: function (res) {
+							if (res) {
+								$("#priceFeeService").text($("#priceFeeService").text().concat(" (Refunded)"));
+							}
+							if ($("#priceFeeService").text().includes("(Refunded)")) {
+								$("#profitReceive").text("0.00");
+							}
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+
+					$("#divPriceRefundVSupp").hide();
+				}
+				document.getElementById('btnRefundSupp').onclick = function () {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/refundToSupp",
+						data: {
+							idInv: $("#textIdInv").text(),
+							idSupplier: $("#textIdSupp").text(),
+							idUser: $("#idUser").text(),
+							lstVoucherS: $("#lstVoucherS").text(),
+							priceVoucherA: priceVoucherA,
+						},
+						success: function (res) {
+							if (res) {
+								Swal.fire({
+									title: "Successfully!",
+									text: "Refund to supplier successfully!",
+									icon: "success"
+								});
+								if ($("#priceRefundVSupp").text().includes("(No refund yet)")) {
+									$("#priceRefundVSupp").text($("#priceRefundVSupp").text().replace("(No refund yet)", "(Refunded)"));
+								}
+								$("#btnRefundAllSupp").hide();
+								$("#btnRefundSupp").hide();
+							} else {
+								Swal.fire({
+									icon: "error",
+									title: "Oops...",
+									text: "An error occurred while refunding the supplier!"
+								});
+								$("#btnRefundAllSupp").hide();
+								$("#btnRefundSupp").show();
+							}
+
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+
+				};
+				document.getElementById('btnPaymentSupp').onclick = function () {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/paymentForSupp",
+						data: {
+							idInv: $("#textIdInv").text(),
+							idSupplier: $("#textIdSupp").text(),
+							idUser: $("#idUser").text(),
+							lstVoucherS: $("#lstVoucherS").text(),
+							priceVoucherA: priceVoucherA,
+						},
+						success: function (res) {
+							if (res) {
+								Swal.fire({
+									title: "Successfully!",
+									text: "Payment for supplier successfully!",
+									icon: "success"
+								});
+								$("#btnPaymentSupp").hide();
+								$("#msgPaid").text("(Paid)");
+							} else {
+								Swal.fire({
+									icon: "error",
+									title: "Oops...",
+									text: "An error occurred while paying the supplier!"
+								});
+								$("#btnPaymentSupp").show();
+							}
+
+
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				};
+				document.getElementById('btnRefundCus').onclick = function () {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/refundToCus",  //remember change the controller to your owns.
+						data: {
+							idInv: $("#textIdInv").text(),
+							idSupplier: $("#textIdSupp").text(),
+							idUser: $("#idUser").text(),
+							lstVoucherS: $("#lstVoucherS").text(),
+							priceVoucherA: priceVoucherA,
+						},
+						success: function (res) {
+							if (res.sttInvSup == 1) {
+								Swal.fire({
+									title: "Successfully!",
+									text: "Refund for customer successfully!",
+									icon: "success"
+								});
+
+								$("#btnRefundCus").hide();
+								$("#refundCus").text($("#refundCus").text().replace("(No refund yet)", "(Refunded)"));
+
+								if (Number.isInteger(res.priceInvSup)) {
+									$("#moneyReceived").text(res.priceInvSup + ".00");
+								} else {
+									$("#moneyReceived").text(roundToTwo(res.priceInvSup));
+								}
+							} else {
+								Swal.fire({
+									icon: "error",
+									title: "Oops...",
+									text: "An error occurred while refunding the customer!"
+								});
+							}
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				};
+
+
+				if (refundCus == 0) {
+					$("#divRefundCus").hide();
+					$("#refundCus").text(refundCus);
+				} else {
+					$("#refundCus").text(refundCus);
+					if (refundCus.includes("(Refunded)")) {
+						$("#btnRefundCus").hide();
+					} else {
+						$("#btnRefundCus").show();
+					}
+				}
+
+				if (sttInvSupp == 2) {
+					$("#btnPaymentSupp").show();
+				} else if (sttInvSupp == 9) {
+					$("#moneyReceived").text(0);
+				} else if (sttInvSupp == 3 || sttInvSupp == 4) {
+					$("#msgPaid").text("(Paid)");
+				}
+
+
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+
+
+
+
+	});
+
+</script>

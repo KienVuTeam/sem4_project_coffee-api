@@ -1,0 +1,165 @@
+<table class='table table-striped' id="table1">
+	<thead>
+		<tr>
+			<th>Product Name</th>
+			<th>Price</th>
+			<th>Description</th>
+			<th>Category</th>
+			<th>Status</th>
+			<th>Sold</th>
+			<th>Details</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item : ${listProdOfSupp}">
+			<tr>
+				<td hidden th:text="${item.id}"></td>
+				<td hidden th:text="${item.idSupplier}"></td>
+				<td th:text="${item.title}"></td>
+				<td th:text="${item.price}"></td>
+				<td th:text="${item.description}"></td>
+				<td th:text="${item.nameCate}"></td>
+
+				<td th:switch="${item.isActive}">
+					<th:block th:case="'0'">
+						<button type="button" id="btnAcceptProd" class="btn btn-outline-success" data-bs-toggle="modal"
+							data-bs-target="#animationProd">
+							Accept
+						</button>
+						<button type="button" id="btnRefuseProd" class="btn btn-outline-danger" data-bs-toggle="modal"
+							data-bs-target="#animationProd">
+							Refuse
+						</button>
+					</th:block>
+
+					<button th:case="'1'" id="btnDeacProd" type="button" class="btn btn-outline-danger"
+						data-bs-toggle="modal" data-bs-target="#animationProd">
+						Deactive
+					</button>
+					<span th:case="2" style="color: red;">Refused</span>
+					<span th:case="3" style="color: red;">Deactived</span>
+				</td>
+				<td th:text="${item.sold}">2</td>
+				<td>
+					<button class="btn btn-primary" id="btnDetailProd" data-bs-toggle="modal"
+						data-bs-target="#modalDetailProd">Detail</button>
+				</td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+
+<script>
+	$(document).ready(function () {
+		$("#table1").on('click', '#btnDetailProd', function () {
+			var currentRow = $(this).closest("tr");
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+			var idSupp = currentRow.find("td:eq(1)").text();
+			$.ajax({
+				type: "Get",
+				url: "/Admin/supplier-management/prodOfSupp/detail",  //remember change the controller to your owns.
+				data: {
+					idSupplier: idSupp,
+					idPro: idProd
+				},
+				success: function (res) {
+					$("#componentTableDetailProd").html("");
+					$("#componentTableDetailProd").html(res);
+					$("#btnAcceptProdDetail").click(function () {
+						$("#id").val(idProd);
+						$("#idSupplier").val(idSupp);
+						$("#isActive").val(1);
+						$("#myModalLabelBtnProd").text("Accept Product");
+						$("#messBtnProd").text("Are you sure you want to accept this product?");
+						$("#btnSubmitProd").text("Accept");
+
+					});
+					$("#btnRefuseProdDetail").click(function () {
+						$("#id").val(idProd);
+						$("#idSupplier").val(idSupp);
+						$("#isActive").val(2);
+						$("#myModalLabelBtnProd").text("Refuse Product");
+						$("#messBtnProd").text("Are you sure you want to refuse this product?");
+						$("#btnSubmitProd").text("Refuse");
+
+					});
+					$("#btnDeacProdDetail").click(function () {
+						$("#id").val(idProd);
+						$("#idSupplier").val(idSupp);
+						$("#isActive").val(3);
+						$("#myModalLabelBtnProd").text("Deactive Product");
+						$("#messBtnProd").text("Are you sure you want to deactive this product?");
+						$("#btnSubmitProd").text("Deactive");
+					});
+
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+
+		$("#table1").on('click', '#btnAcceptProd', function () {
+			// get the current row
+			var currentRow = $(this).closest("tr");
+
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+			var idSupp = currentRow.find("td:eq(1)").text();
+			$("#id").val(idProd);
+			$("#idSupplier").val(idSupp);
+			$("#isActive").val(1);
+			$("#myModalLabelBtnProd").text("Accept Product");
+			$("#messBtnProd").text("Are you sure you want to accept this product?");
+			$("#btnSubmitProd").text("Accept");
+
+		});
+		$("#table1").on('click', '#btnRefuseProd', function () {
+			// get the current row
+			var currentRow = $(this).closest("tr");
+
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+			var idSupp = currentRow.find("td:eq(1)").text();
+			$("#id").val(idProd);
+			$("#idSupplier").val(idSupp);
+			$("#isActive").val(2);
+			$("#myModalLabelBtnProd").text("Refuse Product");
+			$("#messBtnProd").text("Are you sure you want to refuse this product?");
+			$("#btnSubmitProd").text("Refuse");
+
+		});
+		$("#table1").on('click', '#btnDeacProd', function () {
+			// get the current row
+			var currentRow = $(this).closest("tr");
+
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+			var idSupp = currentRow.find("td:eq(1)").text();
+			$("#id").val(idProd);
+			$("#idSupplier").val(idSupp);
+			$("#isActive").val(3);
+			$("#myModalLabelBtnProd").text("Deactive Product");
+			$("#messBtnProd").text("Are you sure you want to deactive this product?");
+			$("#btnSubmitProd").text("Deactive");
+
+		});
+		$("#submitUpdateProd").click(function () {
+			$.ajax({
+				type: "Post",
+				url: "/Admin/supplier-management/update-product",  //remember change the controller to your owns.
+				data: {
+					id: $("#id").val(),
+					isActive: $("#isActive").val(),
+					idSupplier: $('#idSupplier').val()
+				},
+				success: function (res) {
+					$("#tableProduct").html("");
+					$("#tableProduct").html(res);
+					let tableProd = document.querySelector('#table1');
+					let dataTableProd = new simpleDatatables.DataTable(tableProd);
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+	});
+</script>

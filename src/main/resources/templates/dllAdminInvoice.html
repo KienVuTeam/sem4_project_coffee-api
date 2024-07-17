@@ -1,0 +1,73 @@
+<style>
+    table,
+    th,
+    td {
+        border: 1px solid #EE4D2D;
+        text-align: center;
+        height: 50px;
+    }
+</style>
+<div style="margin-top: 100px; margin-left: 200px;">
+    <table style="width: 90%;">
+        <tr>
+            <th style="width: 100px;">Id Invoice</th>
+            <th style="width: 300px;">Product Name</th>
+            <th style="width: 100px;"> Id Supplier</th>
+            <th style="width: 100px;"> Price</th>
+            <th style="width: 100px;"> Amount</th>
+            <th style="width: 200px;"> Status</th>
+        </tr>
+        <th:block th:each="item,iters : ${lsInvoice}">
+            <tr>
+                <td th:text="${'idInvoice :' + item.idInvoiceD}"></td>
+                <td th:text="${'Product Name: ' + item.pName}"></td>
+                <td th:text="${'Supplier Id: ' + item.idSupplier}"></td>
+                <td th:text="${'Price : ' + item.price}"></td>
+                <td th:text="${'Amount : ' + item.amount}"></td>
+                <td>
+                    <th:block th:if="${item.isStatus == 1}">
+                        <p style="color: #0BBE12;">Item Is Confirmed</p>
+                    </th:block>
+                    <th:block th:if="${item.isStatus == 0}">
+                        <p style="color: plum;">Waiting Supplier Confirm</p>
+                    </th:block>
+                    <th:block th:if="${item.isStatus == 2}">
+                        <button style="color: red;" th:data-ivd="${item.idInvoiceD}" th:data-supp="${item.idSupplier}"
+                            th:data-id="${item.idInvoice}" th:data-iduser=${item.idUser} id="btnConfirm">Confirm Refund</button>
+                    </th:block>
+                </td>
+            </tr>
+        </th:block>
+
+    </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js" integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+    crossorigin="anonymous"></script>
+<script>
+
+$(document).ready(function () {
+        $('button[id="btnConfirm"]').on('click', function (e) {
+            e.preventDefault();
+            var idSupplier = $(this).attr('data-supp');
+            var idInvoice = $(this).attr('data-id');
+            var idInvoiceD = $(this).attr('data-ivd');
+            $.ajax({
+                async: false,
+                cache: false,
+                url: "/dll/typeStatus",
+                data: {
+                    idSupplier: idSupplier,
+                    userCase: 0,
+                    statusType: 0,
+                    idInvoiceD: idInvoiceD,
+                    idInvoice: idInvoice,
+                    idUser: 1
+
+                }
+            }).done(function (data) {
+
+            });
+        })
+    })
+</script>

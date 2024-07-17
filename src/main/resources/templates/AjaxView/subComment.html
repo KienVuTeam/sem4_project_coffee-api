@@ -1,0 +1,66 @@
+<div id="idReply" th:data-id="${subC.id}">
+	<details open class="comment replyComment" th:id="${'comment-' + subC.id}" style="display: block;">
+		<a th:href="${'#comment-' + {subC.id}}" class="comment-border-link">
+			<span class="sr-only">Jump to comment-1</span>
+		</a>
+		<summary>
+			<div class="d-flex flex-row">
+				<div class="comment-heading col-10">
+					<div class="comment-info">
+						<a href="#" class="comment-author">
+							<th:block th:text="${subC.userName}"></th:block>
+						</a>
+						<th:block th:if="${subC.timeSpace == 0}">
+							<p class="m-0">
+								Today
+							</p>
+						</th:block>
+						<th:block th:if="${subC.timeSpace <= 7 AND subC.timeSpace >= 1}">
+							<p class="m-0">
+								<th:block th:text="${subC.timeSpace}"></th:block> days ago
+							</p>
+						</th:block>
+						<th:block th:if="${subC.timeSpace > 7}">
+							<p class="m-0">
+								<th:block th:text="${subC.dateCreate}"></th:block> days ago
+							</p>
+						</th:block>
+					</div>
+				</div>
+				<div class="col-2">
+					<th:block th:if="${crrUser == subC.idAccount}">
+						<p id="btnDeleteS" style="right: 21px;top: 27px;position: relative;text-decoration: underline;color: darkred;
+                            font-family: unset;display: flex;justify-content: end;font-size: 13.8px;"
+							th:data-id="${subC.id}">Delete</p>
+					</th:block>
+				</div>
+			</div>
+		</summary>
+
+		<div class="comment-body">
+			<div id="contentEdit" th:data-id="${subC.id}">
+				<p class="txtComment" th:data-id="${subC.id}" th:data-ureply="${subC.userReply}"><span
+						style="color:chocolate;" th:text="${subC.userReply}"></span>
+					<th:block th:text="${subC.comment}"></th:block>
+				</p>
+			</div>
+			<div class="d-flex flex-row">
+				<button type="button" data-toggle="reply-form" th:data-target="${'comment-' + subC.id + '-reply-form'}"
+					class="replyButton" id="replyHandle">Reply</button>
+				<th:block th:if="${crrUser == subC.idAccount}">
+					<button type="button" data-toggle="edit-form"
+						th:data-target="${'comment-' + subC.id + '-reply-form'}" class="editButton"
+						th:data-id="${subC.id}" th:data-cm="${subC.comment}">Edit</button>
+				</th:block>
+			</div>
+			<form method="POST" class="reply-form d-none" th:id="${'comment-' + subC.id + '-reply-form'}" action="#">
+				<textarea rows="4" th:id="${'comment-' + subC.id + '-reply-form'}" th:data-id="${subC.id}"
+					maxlength="200" class="contentComment"></textarea>
+				<button type="submit" class="submitReply" th:data-target="${'comment-' + subC.id + '-reply-form'}"
+					th:data-idr="${subC.id}" th:data-idm="${idMainB}" data-edit="false">Submit</button>
+				<button type="button" data-toggle="reply-form" th:data-target="${'comment-' + subC.id + '-reply-form'}"
+					class="cancelButton">Cancel</button>
+			</form>
+		</div>
+	</details>
+</div>

@@ -1,0 +1,80 @@
+<div class="d-flex flex-column" style="background-color: #ffffff; width: 500px;overflow-y: auto;">
+	<div class="p-2"
+		style="border-bottom: 1px solid rgba(0,0,0,.09);box-sizing: border-box;height: 56px;font-size: 1rem;font-weight: 500;line-height: 1.5rem;">
+		<p style="padding: 10px 8px;font-weight: 500;color: chocolate;">Add New Address</p>
+	</div>
+	<div class="p-2 d-flex flex-column">
+		<div class="p-2">
+			<div class="h-2SCr">New Address
+				<textarea class="IhsS75" rows="2" id="userAddress"
+					style="height: 110px;padding: 10px;background-color: aliceblue;width: 100%;"
+					placeholder="Your Address" maxlength="128"></textarea>
+			</div>
+
+		</div>
+		<div class="p-2">
+			<div class="checkbox-wrapper-4">
+				<input class="inp-cbx subCheckBox" id="ckDefaultIns" type="checkbox">
+				<label class="cbx" for="ckDefaultIns"><span>
+						<svg width="12px" height="10px">
+							<use xlink:href="#check-4"></use>
+						</svg></span></label> <span style="color: black;right: 8px;position: relative;bottom: 10px;">Set
+					As Default Address</span>
+				<svg class="inline-svg">
+					<symbol id="check-4" viewBox="0 0 12 10">
+						<polyline points="1.5 6 4.5 9 10.5 1">
+						</polyline>
+					</symbol>
+				</svg>
+			</div>
+		</div>
+	</div>
+	<div class="p-2 d-flex flex-row justify-content-end">
+		<div class="p-2">
+			<button class="LtBE+Z LkGLx9 _4aRllO" id="btnAddBack">Back</button>
+		</div>
+		<div class="p-2">
+			<button class="FKiInz _4aRllO h4w1PK" id="btnAddSubmit">Submit</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	$('#btnAddBack').on('click', function (e) {
+		e.preventDefault();
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Account/ajax/getUserAddress",
+		}).done(function (data) {
+			$('#contentPopup').html(data);
+		})
+	});
+
+	$('#btnAddSubmit').on('click',function(e){
+		e.preventDefault();
+		var userAddress = $('#userAddress').val();
+		if(userAddress.trim().length == 0) {
+			 $('#userAddress').get(0).setCustomValidity('Please Input This Field');
+             $('#userAddress').get(0).reportValidity();
+		}else{
+			var stCheck = false;
+		//
+		if($('#ckDefaultIns').is(":checked")){
+			stCheck = true;
+		}
+		//
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Account/ajax/InsertAddress",
+			data:{
+				Address : userAddress,
+				ckDefault : stCheck
+			}
+		}).done(function (data) {
+			$('#contentPopup').html(data);
+		})
+		}
+	})
+</script>

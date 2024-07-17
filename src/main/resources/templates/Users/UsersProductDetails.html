@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<head>
+	<title>Cafena - Ours Products</title>
+	<header th:replace="_common/scriptClientHeader :: scriptClientHeader">...</header>
+</head>
+
+<body>
+	<div th:include="_common/scriptClientHeader :: headerContent" th:remove="tag"></div>
+	<main>
+		<!-- breadcrumb area start -->
+		<section class="breadcrumb-area pt-140 pb-140 bg_img" data-background="/images/bg/breadcrumb-bg-1.jpeg"
+			data-overlay="dark" data-opacity="5"
+			style="background-image: url(&quot;/images/bg/breadcrumb-bg-1.jpeg&quot;);">
+			<div class="shape shape__1"><img src="/images/shape/breadcrumb-shape-1.png" alt=""></div>
+			<div class="shape shape__2"><img src="/images/shape/breadcrumb-shape-2.png" alt=""></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12 text-center">
+						<h2 class="page-title">Product Details</h2>
+						<div class="cafena-breadcrumb breadcrumbs">
+							<ul class="list-unstyled d-flex align-items-center justify-content-center">
+								<li class="cafenabcrumb-item duxinbcrumb-begin">
+									<a href="index.html"><span>Home</span></a>
+								</li>
+								<li class="cafenabcrumb-item duxinbcrumb-end">
+									<span>Product Details</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- breadcrumb area end -->
+
+		<!-- product popup start -->
+		<div class="product-popup product-popup-1">
+			<div class="view-background">
+				<div class="row">
+					<div class="col-md-4 align-self-center">
+						<div class="quickview d-flex align-items-center justify-content-center">
+							<div class="quickview__thumb">
+								<img th:src="${Product.image}" alt="" onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+							</div>
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="viewcontent">
+							<div class="viewcontent__header">
+								<h2 th:text="${Product.title}"></h2>
+								<a class="view_close product-p-close" href="javascript:void(0)"><i
+										class="fal fa-times"></i></a>
+							</div>
+							<div class="viewcontent__rating">
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fas fa-star"></i>
+								<i class="fal fa-star"></i>
+							</div>
+							<div class="viewcontent__price">
+								<h4><span>$</span>99.00</h4>
+							</div>
+							<div class="viewcontent__stock">
+								<h4>Available :<span> In stock</span></h4>
+							</div>
+							<div class="viewcontent__details">
+								<p>Anlor sit amet, consectetur adipiscing elit. Fusce condimentum est lacus, non pretium
+									risus lacinia vel. Fusce eget turpis orci.</p>
+							</div>
+							<div class="viewcontent__action">
+								<span>Qty</span>
+								<input type="number" placeholder="1">
+								<a class="site-btn" href="#">add to cart</a>
+							</div>
+							<div class="viewcontent__footer">
+								<ul class="list-unstyled">
+									<li>Category:</li>
+									<li>SKU:</li>
+									<li>Brand:</li>
+								</ul>
+								<ul class="list-unstyled">
+									<li>Watches</li>
+									<li>2584-MK63</li>
+									<li>Brenda</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- product popup end -->
+		<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+			<div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="toastBorder">
+				<div class="d-flex">
+					<div class="toast-body" style="color: #ffff;" id="toastText">
+						No Products Found,Please Try Back !
+					</div>
+					<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+						aria-label="Close"></button>
+				</div>
+			</div>
+		</div>
+		<!-- product details area start -->
+		<div class="product-details__area pt-120 pb-110">
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-6">
+						<div class="product-details__wrapper">
+							<div class="pd-img">
+								<div class="tab-content" id="pdContent">
+									<div class="tab-pane fade show active" id="pd-1" role="tabpanel"
+										aria-labelledby="pd-1-tab">
+										<div class="big-img">
+											<img th:src="${Product.image}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</div>
+									</div>
+									<div class="tab-pane fade" id="pd-2" role="tabpanel" aria-labelledby="pd-2-tab">
+										<div class="big-img">
+											<img th:src="${Product.image2}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</div>
+									</div>
+									<div class="tab-pane fade" id="pd-3" role="tabpanel" aria-labelledby="pd-3-tab">
+										<div class="big-img">
+											<img th:src="${Product.image3}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</div>
+									</div>
+									<div class="tab-pane fade" id="pd-4" role="tabpanel" aria-labelledby="pd-4-tab">
+										<div class="big-img">
+											<img th:src="${Product.image3}" alt=""   onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</div>
+									</div>
+									<div class="tab-pane fade" id="pd-5" role="tabpanel" aria-labelledby="pd-5-tab">
+										<div class="big-img">
+											<img src="/images/products/pp-2.png" alt=""   onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="pd-tab">
+								<nav>
+									<div class="nav" id="shop-filter-tab" role="tablist">
+										<a class="nav-link active" id="pd-1-tab" data-bs-toggle="tab" href="#pd-1"
+											role="tab" aria-controls="pd-1" aria-selected="true">
+											<img th:src="${Product.image}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</a>
+										<a class="nav-link" id="pd-2-tab" data-bs-toggle="tab" href="#pd-2" role="tab"
+											aria-controls="pd-2" aria-selected="true">
+											<img th:src="${Product.image2}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</a>
+										<a class="nav-link" id="pd-3-tab" data-bs-toggle="tab" href="#pd-3" role="tab"
+											aria-controls="pd-3" aria-selected="true">
+											<img th:src="${Product.image3}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'">
+										</a>
+									</div>
+								</nav>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-6">
+						<div class="product-details__content">
+							<div class="tr-wrapper d-flex align-items-center justify-content-between">
+								<h2 class="title" th:text="${Product.title}">Americano Coffee Beans</h2>
+							</div>
+							<div class="pd-social-wrapper" style="margin-bottom: 18px;">
+								<img th:src="${Product.supplierAvatar}" alt="" style="width: 75px;height: 75px;border-radius: 50%;margin-right: 15px;" 
+								onerror="this.onerror=null;this.src='/error/suppavatar.png'"> 
+								<span class="share">By:  <th:block th:text="${Product.supplierName}"></th:block></span>
+							</div>
+							<p style="margin-bottom: 18px;">The coffee is brewed by first roasting the green coffee beans over hot coals in
+								brazier.Once the beans are roasted each participant is given an opportunity to sample
+								The coffee is brewed.</p>
+							<th:block th:if="${Product.finalPrice - Product.price == 0}">
+								<h3 class="price">$<th:block th:text="${Product.price + '.00'}">
+									</th:block>
+								</h3>
+							</th:block>
+							<th:block th:if="${Product.finalPrice - Product.price != 0}">
+								<h3 class="price">
+									$<th:block th:text="${Product.finalPrice + '.00'}">
+
+									</th:block> /
+									<del> $<th:block th:text="${Product.price + '.00'}">
+										</th:block></del>
+								</h3>
+							</th:block>
+							<span style="text-decoration: underline;color: black;">Sale Numbers: <th:block
+									th:text="${Product.saleNumbers}"></th:block> </span>
+							<div class="product-quantity d-flex align-items-center" style="margin-top: 15px!important;">
+								<span>Quantity</span>
+								<input type="number" placeholder="1" min="1" max="50" step="1" id="inpQuantity"
+									value="1">
+								<a class="site-btn" href="#" id="btnAddToCart" th:data-id="${Product.id}">add to
+									cart</a>
+							</div>
+							<a th:href="${'/Products/ProductsOfSupplier/?idSupplier='+Product.idSupplier}"
+								class="wishlist" style="position: unset !important;"><i class="fa fa-info-circle"></i>
+								View Supplier Products</a>
+							<a href="#" class="wishlist" id="btnWatchList" th:data-id="${Product.id}"
+								th:data-idu="${idUsers}"><i class="fas fa-heart"></i> Add to watch list</a>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- product details area end -->
+
+		<!-- product info start -->
+		<div class="container">
+			<div class="row">
+				<div class="col-xl-12">
+					<div class="pinfo-tab">
+						<nav>
+							<div class="nav d-flex align-items-center justify-content-center" id="pinfo-tab"
+								role="tablist">
+								<a class="nav-link active" id="pinfo-1-tab" data-bs-toggle="tab" href="#pinfo-1"
+									role="tab" aria-controls="pinfo-1" aria-selected="true">
+									Product Details
+								</a>
+								<a class="nav-link" id="pinfo-3-tab" data-bs-toggle="tab" href="#pinfo-3" role="tab"
+									aria-controls="pinfo-3" aria-selected="true">
+									Reviews
+								</a>
+							</div>
+						</nav>
+					</div>
+					<div class="tab-content pinfo-content" id="pinfoContent">
+						<div class="tab-pane fade show active" id="pinfo-1" role="tabpanel"
+							aria-labelledby="pinfo-1-tab">
+							<p th:text="${Product.description}"></p>
+						</div>
+						<div class="tab-pane fade" id="pinfo-3" role="tabpanel" aria-labelledby="pinfo-3-tab">
+							<div class="pp-comments" id="subUserReview">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- product info end -->
+
+		<!-- releted products area start -->
+		<div class="releted-product__area pt-100 pb-120">
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12">
+						<h2 class="rp-title mb-30">
+							Reletad Product
+						</h2>
+					</div>
+				</div>
+				<div class="row mt-none-30" id="subRelatedProduct">
+
+				</div>
+			</div>
+		</div>
+		<!-- releted products area end -->
+
+	</main>
+	<div th:include="_common/scriptClientFooter :: scriptClientFooter" th:remove="tag"></div>
+	<script src="https://code.jquery.com/jquery-3.7.0.js"
+		integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+	<script>
+		//
+		var getUrlParameter = function getUrlParameter(sParam) {
+			var sPageURL = window.location.search.substring(1),
+				sURLVariables = sPageURL.split('&'),
+				sParameterName,
+				i;
+
+			for (i = 0; i < sURLVariables.length; i++) {
+				sParameterName = sURLVariables[i].split('=');
+
+				if (sParameterName[0] === sParam) {
+					return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+				}
+			}
+			return false;
+		};
+		//
+		$.ajax({
+			url: "/Products/ajax/viewRandomProduct",
+			data: {
+				currentID: getUrlParameter("idProduct"),
+				amountTake: 4
+			}
+		}).done(function (data) {
+			$('#subRelatedProduct').html(data);
+		})
+		// 
+		$.ajax({
+			url: "/Products/ajax/viewUserReviewProduct",
+			data: {
+				idProduct: getUrlParameter("idProduct"),
+			}
+		}).done(function (data) {
+			$('#subUserReview').html(data);
+		});
+
+		$('#inpQuantity').on('blur', function (e) {
+			e.preventDefault();
+			var valInput = $(this).val().trim();
+			if (valInput <= 0 || valInput > 50) {
+				$(this).val(1);
+			}
+		});
+
+		$('#btnAddToCart').on('click', function (e) {
+			e.preventDefault();
+			checkUsersLogin();
+			if (checkStatusOfAccount() == false) {
+				displayToastMessage(true, "Your Account Has Been Restricted");
+				return "";
+			}
+			var id = $(this).attr('data-id');
+			var amountAdd = $('#inpQuantity').val();
+			//
+			$.ajax({
+				async: false,
+				cache: false,
+				url: "/Carts/ajaxAddProductIntoCart",
+				data: {
+					idProduct: id,
+					Amount: amountAdd
+				}
+			}).done(function (data) {
+				$('#toastText').toast('hide');
+				$('#toastText').text(data.message);
+				if (data.flagMessage == true) {
+					$('#toastBorder').addClass('bg-success');
+					$('#toastBorder').removeClass('bg-danger');
+				} else {
+					$('#toastBorder').addClass('bg-danger');
+					$('#toastBorder').removeClass('bg-success');
+				}
+				$('.toast').toast('show');
+			});
+		})
+
+		$('#btnWatchList').on('click', function (e) {
+			e.preventDefault();
+			var idU = parseInt($(this).attr('data-idu'));
+			var idProduct = parseInt($(this).attr('data-id'));
+			//
+			if (idU == 0) {
+				usersNotLoginWatchList(idProduct);
+			} else {
+				if (checkStatusOfAccount() == false) {
+					displayToastMessage(true, "Your Account Has Been Restricted");
+					return "";
+				}
+				usersLoginWatchList(idProduct);
+			}
+		});
+
+		function usersNotLoginWatchList(idProduct) {
+			let strWPKey = localStorage.getItem("wProduct");
+			//
+			if (strWPKey != null) {
+				var arrWProduct = strWPKey.split(',');
+				for (let index = 0; index < arrWProduct.length; index++) {
+					if (arrWProduct[index] == idProduct) {
+						displayToastMessage(true, "This Product Already Exists In Your WatchList");
+						return "";
+					}
+				}
+				//
+				strWPKey += idProduct + ","; //Format : 1,2
+				localStorage.setItem("wProduct", strWPKey);
+				displayToastMessage(false, "Success Add Product Into WatchList");
+			} else {
+				var newLocalItem = idProduct + ",";
+				localStorage.setItem("wProduct", newLocalItem);
+				displayToastMessage(false, "Success Add Product Into WatchList");
+			}
+		}
+
+		function usersLoginWatchList(idProduct) {
+			$.ajax({
+				async: false,
+				cache: false,
+				url: "/WatchList/usersAddWatchList",
+				data: {
+					idProduct: idProduct
+				}
+			}).done(function (data) {
+				displayToastMessage(!data.flagMessage, data.message);
+			});
+		}
+
+		function displayToastMessage(flagDanger, msgDisplay) {
+			$('#toastText').toast('hide');
+			$('#toastText').text(msgDisplay);
+			//
+			if (flagDanger == true) {
+				$('#toastBorder').addClass('bg-danger');
+				$('#toastBorder').removeClass('bg-success');
+			} else if (flagDanger == false) {
+				$('#toastBorder').addClass('bg-success');
+				$('#toastBorder').removeClass('bg-danger');
+			}
+			//
+			$('.toast').toast('show');
+		}
+		
+		function checkUsersLogin(){
+			$.ajax({
+				url: "/Login/checkExCookieUserLogin"
+			})
+			.done(function (data) {
+				console.log(data);
+				if (data == false) {
+					window.location.assign("http://localhost:8080/UsersLogin");
+				}
+			});
+       }
+       
+       function checkStatusOfAccount(){
+		var flagReturn = true;
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Login/checkStatusOfAccount"
+		}).done(function (data) {
+			if (data == false) {
+				flagReturn = false;
+			}
+		});
+		return flagReturn;
+	 }
+	</script>
+</body>
+
+</html>

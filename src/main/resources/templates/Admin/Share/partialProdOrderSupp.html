@@ -1,0 +1,368 @@
+<table class='table table-striped' id="table2">
+	<thead>
+		<tr>
+			<th data-sortable="false">Product Name</th>
+			<th data-sortable="false">Unit Price</th>
+			<th data-sortable="false">Amount</th>
+			<th data-sortable="false">Sub-Price</th>
+			<th data-sortable="false">Confirm</th>
+			<th data-sortable="false">No Confirm</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item,iter : ${listDetailOfOrder}">
+			<tr>
+				<!--<td hidden th:text="${item.idSupplier}"></td>-->
+				<td th:text="${item.nameProduct}"></td>
+				<td><span th:id="'tdPriceOrder'+${iter.index}" th:text="${item.priceOrder}"></span><span>.00</span></td>
+				<td th:text="${item.Amount}"></td>
+				<td><span th:text="${item.Price}"></span><span>.00</span></td>
+				<th:block th:switch="${item.isStatus}">
+					<th:block th:case="'0'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'1'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled checked>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'2'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled checked>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'3'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled checked>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+					<th:block th:case="'4'">
+						<td>
+							<li class="d-inline-block me-2 mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox3" class='form-check-input' disabled checked>
+										<label for="checkbox3"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+						<td>
+							<li class="d-inline-block mb-1">
+								<div class='form-check'>
+									<div class="checkbox">
+										<input type="checkbox" id="checkbox4" class='form-check-input' disabled>
+										<label for="checkbox4"></label>
+									</div>
+								</div>
+							</li>
+						</td>
+					</th:block>
+				</th:block>
+				<td hidden th:text="${item.idInvoiceDetail}"></td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+<div style="margin-left: 600px;margin-right: 40px;">
+	<p hidden id="idInvSupp"></p>
+	<p hidden id="sttInv"></p>
+	<h6 style="display: flex;justify-content: space-between;">Total Price($):
+		<strong id="totalPrice">100</strong>
+	</h6>
+	<h6 style="display: flex;justify-content: space-between;" id="divRefundCus">Refund to
+		customers($) (if any): <span>- <strong id="refundCus">10</strong></span></h6>
+	<p hidden id="strRefundCus">0</p>
+	<!--	<h6 style="display: flex;justify-content: space-between;" id="divPriceVoucherAofSupp">Price Voucher
+		iLA($) (if any):
+		<span>- <strong id="priceVoucherAofSupp">0</strong><strong id="strong00VouILA">.00</strong></span>
+	</h6>-->
+	<h6 style="display: flex;justify-content: space-between;" id="divPriceVoucherS">Price Voucher Supplier($) (if any):
+		<span>- <strong id="priceVoucherS">10</strong><strong id="strong00VouSupp">.00</strong></span>
+	</h6>
+	<h6 style="display: flex;justify-content: space-between;" id="divProfit">Profit for iLA($): <span>- <strong
+				id="profitILA">....</strong><strong id="strong00profit">.00</strong></span>
+	</h6>
+
+	<hr>
+	<h6 style="display: flex;justify-content: space-between;" id="divMoneyReceived">The remaining amount must be
+		paid($):
+		<strong id="moneyReceived">0</strong>
+	</h6>
+	<h6 style="display: flex;justify-content: space-between;" id="divPriceRefundVSupp">Voucher refund for Supplier($):
+		<strong id="priceRefundVSupp">0</strong>
+	</h6>
+</div>
+
+<script th:inline="javascript">
+	function roundToTwo(num) {
+		return +(Math.round(num + "e+2") + "e-2");
+	}
+
+
+	var temp = 0;
+	/*<![CDATA[*/
+	var theList = /*[[${listDetailOfOrder}]]*/"";
+	var idSupplier = /*[[${idSupp}]]*/"";
+	var idInvNow = /*[[${idInv}]]*/"";
+	var idUser = /*[[${idUser}]]*/"";
+
+	var priceVoucherA = /*[[${priceVoucherA}]]*/"";
+	var quantityProd =/*[[${quantityProd}]]*/"";
+
+	var refundCus = /*[[${refundCus}]]*/"";
+	var i = 0;
+	for (i = 0; i < theList.length; i++) {
+		temp += (0.1 * (theList[i].price));
+		$("#tdPriceOrder" + i).text(parseFloat(theList[i].priceOrder));
+	}
+
+	//	if (priceVoucherA != 0) {
+	//		var priceVoucherAofSupp = (priceVoucherA / quantityProd) * i;
+	//		if (Number.isInteger(priceVoucherAofSupp) == true) {
+	//			$("#strong00VouILA").show();
+	//		} else {
+	//
+	//			$("#strong00VouILA").hide();
+	//		}
+	//
+	//		if (priceVoucherAofSupp != 0) {
+	//			$("#divPriceVoucherAofSupp").show();
+	//			$("#priceVoucherAofSupp").text(roundToTwo(priceVoucherAofSupp));
+	//		} else {
+	//			$("#divPriceVoucherAofSupp").hide();
+	//		}
+	//	} else {
+	//		$("#divPriceVoucherAofSupp").hide();
+	//	}
+
+	if (refundCus != 0) {
+		var profit = temp - (0.1 * refundCus);
+	} else {
+		var profit = temp;
+	}
+
+	// old
+	//	if (refundCus != 0) {
+	//		if (priceVoucherA != 0) {
+	//			var priceVoucherAofSupp = roundToTwo((priceVoucherA / quantityProd) * i);
+	//			var profit = temp - (0.1 * refundCus) - priceVoucherAofSupp;
+	//		} else {
+	//			var profit = temp - (0.1 * refundCus);
+	//		}
+	//	} else {
+	//		if (priceVoucherA != 0) {
+	//			var priceVoucherAofSupp = roundToTwo((priceVoucherA / quantityProd) * i);
+	//			var profit = temp - priceVoucherAofSupp;
+	//		} else {
+	//			var profit = temp;
+	//		}
+	//	}
+
+
+
+	$(document).ready(function () {
+		//fee = 0.02 * parseFloat($("#totalPrice").text());
+		//profit += fee;
+		if ($("#strRefundCus").text() != 0) {
+			$("#refundCus").text($("#strRefundCus").text());
+		}
+
+
+		if (profit > 0) {
+			if (Number.isInteger(profit) == true) {
+				$("#profitILA").text(profit);
+				$("#strong00profit").show();
+			} else {
+				$("#profitILA").text(roundToTwo(profit));
+				$("#strong00profit").hide();
+			}
+		} else {
+			$("#profitILA").text(0);
+			$("#strong00profit").show();
+		}
+	});
+
+	//paymentForSupp
+	$("#btnPaymentForSupp").click(function () {
+		$.ajax({
+			type: "Get",
+			url: "/Admin/supplier-management/paymentForSupp",  //remember change the controller to your owns.
+			data: {
+				idInvSup: $("#idInvSupp").text(),
+				idSupplier: $("#idSuppNow").text(),
+			},
+			success: function (res) {
+				$("#tableOrderOfSupp").html("");
+				$("#tableOrderOfSupp").html(res);
+				let table1 = document.querySelector('#table1');
+				let dataTable1 = new simpleDatatables.DataTable(table1);
+				//$("#exampleModalScrollable").modal("show");
+				//
+				$("#btnPaymentForSupp").hide();
+				//$("#btnRefundToCus").hide();
+				Swal.fire({
+					title: "Successfully!",
+					text: "Payment for supplier successfully!",
+					icon: "success"
+				});
+				var sttInv = "Delivered/ iLA has transferred money";
+				$("#btnPaymentForSupp").hide();
+				$("#exampleModalScrollableTitle").text("Detail Order (" + sttInv + ")");
+				$("#moneyReceived").text($("#moneyReceived").text().replace("Waiting", "Paid"));
+
+			}
+		});
+	});
+
+	$("#btnRefundToCus").click(function () {
+		$.ajax({
+			type: "Get",
+			url: "/Admin/supplier-management/refundToCus",  //remember change the controller to your owns.
+			data: {
+				idInv: idInvNow,
+				idSupplier: idSupplier,
+				idUser: idUser,
+			},
+			success: function (res) {
+				$("#tableOrderOfSupp").html("");
+				$("#tableOrderOfSupp").html(res);
+				let table1 = document.querySelector('#table1');
+				let dataTable1 = new simpleDatatables.DataTable(table1);
+				//$("#exampleModalScrollable").modal("show");
+				//$("#btnPaymentForSupp").hide();
+				$("#btnRefundToCus").hide();
+				Swal.fire({
+					title: "Successfully!",
+					text: "Refund for customer successfully!",
+					icon: "success"
+				});
+				$("#refundCus").text($("#refundCus").text().replace("(No refund yet)", "(Refunded)"));
+
+
+				$.ajax({
+					type: "Get",
+					url: "/Admin/supplier-management/recMoneyReceived",  //remember change the controller to your owns.
+					data: {
+						idInv: idInvNow,
+						idSupplier: idSupplier,
+					},
+					success: function (rec) {
+						//if (rec > 0) {
+						if (Number.isInteger(rec)) {
+							rec = rec + ".00";
+						} else {
+							rec = roundToTwo(rec);
+						}
+						//} else {
+						//	recMoneyReceived = "0.00";
+						//}
+
+						if ($("#sttInv").text() == "Pending") {
+							$("#btnPaymentForSupp").hide();
+						} else if ($("#sttInv").text() == "Delivering") {
+							rec = rec + " (Waiting)";
+							$("#btnPaymentForSupp").hide();
+						} else if ($("#sttInv").text() == "Delivered/ Waiting to payment") {
+							rec = rec + " (Waiting)";
+							$("#btnPaymentForSupp").show();
+						} else if ($("#sttInv").text() == "Cancelled") {
+							rec = rec;
+							$("#btnPaymentForSupp").hide();
+						} else {
+							rec = rec + " (Paid)";
+							$("#btnPaymentForSupp").hide();
+						}
+
+						$("#moneyReceived").text(rec);
+					},
+					error: function (response) {
+						console.log(response.responseText);
+					}
+				});
+
+
+
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+	});
+
+
+
+	/*]]>*/
+
+
+</script>

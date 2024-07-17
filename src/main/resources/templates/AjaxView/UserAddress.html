@@ -1,0 +1,161 @@
+<div class="d-flex flex-column" style="background-color: #ffffff; width: 500px;overflow-y: auto;">
+	<div class="p-2"
+		style="border-bottom: 1px solid rgba(0,0,0,.09);box-sizing: border-box;height: 56px;font-size: 1rem;font-weight: 500;line-height: 1.5rem;">
+		<p style="padding: 10px 8px;font-weight: 500;color: chocolate;">My Address</p>
+	</div>
+	<div class="p-2">
+		<div class="d-flex flex-column">
+			<!-- Body -->
+			<div class="p-2">
+				<th:block th:if="${!lsAddress.empty}">
+					<th:block th:each="item,iters : ${lsAddress}">
+						<th:block th:if="${iters.index == 0}">
+							<div class="d-flex flex-row" style="border-bottom: 1px solid #e8e8e8;">
+								<div class="col-1" style="height: 50px;">
+									<input class="form-check-input rdAddress" type="radio" name="exampleRadios"
+										th:data-id="${item.id}" th:id="${'rdOption' + iters.index}" value="option1"
+										th:data-status="${item.status}" checked>
+									<label class="form-check-label" th:for="${'rdOption' + iters.index}">
+									</label>
+								</div>
+								<div class="col-11 d-flex flex-row">
+									<div class="col-10 ">
+										<p style="color: black;" th:text="${item.userAddress}" th:data-id="${item.id}"
+											id="txAddress"></p>
+										<p
+											style="margin-bottom: 12px;height: 30px;padding-left: 10px;width: 68px;border: 1px solid;color: #ee4d2d;">
+											Default</p>
+									</div>
+									<div class="col-2">
+										<div class="d-flex">
+											<p style="width: 91%;text-align: center;color: #0088ff;cursor: pointer;"
+												id="btnUpdateAddress" th:data-id="${item.id}">Update
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</th:block>
+
+						<th:block th:if="${iters.index != 0}">
+							<div class="d-flex flex-row" style="border-bottom: 1px solid #e8e8e8;">
+								<div class="col-1" style="height: 50px;display: flex;align-items: center;">
+									<input class="form-check-input rdAddress" type="radio" name="exampleRadios"
+										th:data-id="${item.id}" th:id="${'rdOption' + iters.index}" value="option1" th:data-status="${item.status}" >
+									<label class="form-check-label" th:for="${'rdOption' + iters.index}">
+									</label>
+								</div>
+								<div class="col-11 d-flex flex-row">
+									<div class="col-10 ">
+										<p style="color: black;margin-bottom: 20px;display: flex;height: 50px;align-items: center;"
+											th:text="${item.userAddress}" th:data-id="${item.id}" id="txAddress"></p>
+									</div>
+									<div class="col-2">
+										<div class="d-flex flex-column">
+											<div class="p-2">
+												<p style="color:#0088ff;cursor: pointer;" id="btnUpdateAddress"
+													th:data-id="${item.id}">Update
+												</p>
+												<p style="color:red;cursor: pointer;" id="btnRemoveAddress"
+													th:data-id="${item.id}">Remove
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</th:block>
+
+					</th:block>
+				</th:block>
+			</div>
+			<div class="p-2">
+				<button class="LkGLx9 _4aRllO" id="btnNewAddress">
+					<svg viewBox="0 0 10 10" class="QUCjwo">
+						<path stroke="none" d="m10 4.5h-4.5v-4.5h-1v4.5h-4.5v1h4.5v4.5h1v-4.5h4.5z"></path>
+					</svg>Add New Address</button>
+			</div>
+
+		</div>
+	</div>
+	<div class="p-2 d-flex flex-row justify-content-end">
+		<div class="p-2">
+			<button class="LtBE+Z LkGLx9 _4aRllO" id="btnPopupClose">Cancel</button>
+		</div>
+		<div class="p-2">
+			<button class="FKiInz _4aRllO h4w1PK" id="btnPopupSubmit">Submit</button>
+		</div>
+	</div>
+</div>
+
+<!-- script -->
+
+<script>
+	$("#btnPopupClose").on('click', function (e) {
+		e.preventDefault();
+		$('.overlay, .product-popup-1').removeClass('show-popup');
+	});
+
+	$("p[id='btnUpdateAddress']").on('click', function (e) {
+		e.preventDefault();
+		var id = $(this).attr('data-id');
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Account/ajax/viewDetailsAddress",
+			data: {
+				idAddress: id
+			}
+		}).done(function (data) {
+			$('#contentPopup').html(data);
+		})
+		$('.overlay, .product-popup-1').addClass('show-popup');
+	});
+
+	$("p[id='btnRemoveAddress']").on('click', function (e) {
+		e.preventDefault();
+		var id = $(this).attr('data-id');
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Account/ajax/DeleteAddress",
+			data: {
+				idAddress: id
+			}
+		}).done(function (data) {
+
+		})
+		$(this).parent().parent().parent().parent().parent().remove();
+	})
+
+	$("#btnNewAddress").on('click', function (e) {
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Account/ajax/viewNewAddress",
+		}).done(function (data) {
+			$('#contentPopup').html(data);
+		})
+	});
+
+	$("#btnPopupSubmit").on('click', function (e) {
+		e.preventDefault();
+		//
+		$('input.rdAddress').each(function () {
+			if ($(this).is(":checked")) {
+				var selText = $(`p[id="txAddress"][data-id="${$(this).attr('data-id')}"]`).text();
+				$('#ckAddress').text(selText);
+				$('#ckAddress').attr('data-id', $(this).attr('data-id'));
+				if ($(this).attr('data-status') == 'true') {
+					$('#defaultAddress').removeClass('hideElement');
+					$('#defaultAddress').addClass('showElement');
+				} else {
+					$('#defaultAddress').removeClass('showElement');
+					$('#defaultAddress').addClass('hideElement');
+				}
+			}
+		});
+		//
+		$('.overlay, .product-popup-1').removeClass('show-popup');
+	});
+</script>

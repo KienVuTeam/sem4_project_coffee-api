@@ -1,0 +1,12 @@
+<th:block th:each="item: ${lsRevenue}">
+	<tr>
+		<td th:text="${item.codeInvoice}"></td>
+		<td th:text="${item.userName}"></td>
+		<td th:text="${item.address}"></td>
+		<td th:text="${item.userPhone}"></td>
+		<td th:text="${item.createDate}"></td>
+		<td th:text="${item.quantity}"></td>
+		<td th:text="${item.totalPrice}"></td>
+		<td th:text="${item.profitsAdmin}"></td>
+	</tr>
+</th:block>

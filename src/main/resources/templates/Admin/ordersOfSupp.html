@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Admin/Layout/admin_layout :: cssAdmin">
+
+</head>
+<link rel="stylesheet" href="/admin/vendors/simple-datatables/style.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9">
+</script>
+
+<body>
+	<div th:replace="Admin/Layout/admin_layout :: sidebarAdmin"></div>
+	<div id="main">
+		<nav th:replace="Admin/Layout/admin_layout :: navbarAdmin"></nav>
+
+		<!-- MODAL DETAIL ORDER -->
+		<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog"
+			aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable" role="document" style="max-width: 1200px;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalScrollableTitle">Detail Order</h5>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body" id="componentTable2">
+						<table class='table table-striped' id="table2">
+							<thead>
+								<tr>
+									<th>Product Name</th>
+									<th>Unit Price</th>
+									<th>Amount</th>
+									<th>Sub-Price</th>
+									<th>Confirm</th>
+									<th>No Confirm</th>
+								</tr>
+							</thead>
+							<tbody>
+								<th:block th:each="item : ${listOrdersOfSupp}">
+									<tr>
+										<!--<td hidden th:text="${item.idSupplier}"></td>-->
+										<td th:text="${item.nameCus}"></td>
+										<td th:text="${item.refundtoCustomers}"></td>
+										<td th:text="${item.TotalPrice}"></td>
+										<th:block th:switch="${item.status}">
+											<td>
+												<p th:case="'0'">Pending</p>
+												<p th:case="'1'">Pending Cus</p>
+											</td>
+										</th:block>
+										<td>
+											<li class="d-inline-block me-2 mb-1">
+												<div class='form-check'>
+													<div class="checkbox">
+														<input type="checkbox" id="checkbox3" class='form-check-input'
+															disabled checked>
+														<label for="checkbox3"></label>
+													</div>
+												</div>
+											</li>
+
+
+										</td>
+										<td>
+											<li class="d-inline-block mb-1">
+												<div class='form-check'>
+													<div class="checkbox">
+														<input type="checkbox" id="checkbox4" class='form-check-input'
+															disabled>
+														<label for="checkbox4"></label>
+													</div>
+												</div>
+											</li>
+										</td>
+									</tr>
+								</th:block>
+							</tbody>
+						</table>
+						<div style="margin-left: 700px;margin-right: 40px;">
+							<h6 style="display: flex;justify-content: space-between;">Total Price($):
+								<strong>14</strong>
+							</h6>
+							<h6 style="display: flex;justify-content: space-between;">Refund to
+								customers($) (if any): <strong>10</strong></h6>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="btnRefundForSupp" class="btn btn-warning ml-1">
+							<i class="bx bx-check d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Refund for supplier</span>
+						</button>
+						<button type="button" id="btnRefundToCus" class="btn btn-success ml-1">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Refund to customer</span>
+						</button>
+						<button type="button" id="btnPaymentForSupp" class="btn btn-primary ml-1">
+							<i class="bx bx-check d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Payment for supplier</span>
+						</button>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="main-content container-fluid">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Orders Of Supplier</h3>
+						<h3>(<span th:text="${nameSupp}"></span>)</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/Admin/dashboard">Dashboard</a></li>
+								<li class="breadcrumb-item">User Management</li>
+								<li class="breadcrumb-item active" aria-current="page"><a
+										href="/Admin/supplier-management">Supplier Management</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Orders Of Supplier</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<section class="section">
+				<div class="card">
+					<div class="card-body">
+						<!--						<div class="col-md-6 mb-4">
+							<div class="input-group mb-3">
+								<label class="input-group-text" for="inputGroupSelect01">Sort Status</label>
+								<select class="form-select" id="status" name="sortData">
+									<option value="allStt" select>All Status</option>
+									<option value="0">The order has not been processed yet</option>
+									<option value="1">The order has been processed</option>
+								</select>
+							</div>
+						</div>-->
+						<p hidden id="idSuppNow" th:text="${idSupp}"></p>
+						<div id="tableOrderOfSupp">
+							<table class='table table-striped' id="table1">
+								<thead>
+									<tr>
+										<th data-sortable="false">No.</th>
+										<th data-sortable="false">Customer</th>
+										<th data-sortable="false">Order Date</th>
+										<th data-sortable="false">Total Order Amount</th>
+										<th data-sortable="false">Refund to customers (if any):</th>
+										<th data-sortable="false">Payment for supplier</th>
+										<th data-sortable="false">Status</th>
+										<th data-sortable="false">Details Order</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="item,iter : ${listOrdersOfSupp}">
+										<tr>
+											<td th:text="${iter.index+1}"></td>
+											<td th:text="${item.nameCus}"></td>
+											<td>
+												<div style="min-width: 82px;" th:text="${item.createDate}">2023-10-21
+												</div>
+											</td>
+											<td><span th:text="${item.totalOrderAmount}"></span><span>.00</span></td>
+
+											<th:block th:switch="${item.isStatus}">
+												<td th:case="'2'">
+													<th:block th:if="${item.idSupplier}==${idSupp}">
+														<div style="
+															    min-width: 125px;
+															    display: flex;
+															    align-items: center;
+															    flex-wrap: nowrap;
+															    justify-content: space-between;
+															"></div>
+														<span
+															th:text="${item.refundtoCustomers}"></span><span>.00</span>
+														<strong style="color: red;">(No refund yet to customer)</strong>
+														<!--<button type="button" id="btnRefund"
+																class="btn btn-success ml-1">
+																<i class="bx bx-x d-block d-sm-none"></i>
+																<span class="d-none d-sm-block">Refund</span>
+															</button>-->
+
+													</th:block>
+												</td>
+												<td th:case="'3'">
+													<th:block th:if="${item.idSupplier}==${idSupp}">
+														<div style="min-width: 101.5px;">
+															<span
+																th:text="${item.refundtoCustomers}"></span><span>.00</span><strong
+																style="color: green;"> (Refunded)</strong>
+														</div>
+													</th:block>
+												</td>
+												<td th:case="*">
+													<span>0</span>
+												</td>
+											</th:block>
+											<!-- Status Inv Supp-->
+											<th:block th:switch="${item.status}">
+												<th:block th:case="'0'">
+													<td th:text="${item.TotalPrice}"></td>
+													<td style="color: darkorange;">Pending</td>
+												</th:block>
+												<th:block th:case="'1'">
+													<td th:text="${item.TotalPrice}"></td>
+													<td style="color: blue;">Delivering</td>
+												</th:block>
+												<th:block th:case="'2'">
+													<td>
+														<!--<div style="display: flex;
+																    justify-content: space-around;
+																    align-items: center;
+																    width: 160px;"></div>-->
+														<span th:text="${item.TotalPrice}"></span>
+														<!--<button type="button" id="btnPayment"
+																class="btn btn-primary ml-1">
+																<i class="bx bx-x d-block d-sm-none"></i>
+																<span class="d-none d-sm-block">Payment</span>
+															</button>-->
+
+													</td>
+													<td><strong style="color: green;">Delivered</strong>/ Waiting to
+														payment</td>
+												</th:block>
+
+												<th:block th:case="'3'">
+													<td th:text="${item.TotalPrice}"></td>
+													<td><strong style="color: green;">Delivered</strong>/ iLA has
+														<strong style="color: dodgerblue;">transferred money</strong>
+													</td>
+												</th:block>
+
+												<th:block th:case="'4'">
+													<td th:text="${item.TotalPrice}"></td>
+													<td>The order was <strong style="color: darkgreen;">completely
+															successful</strong></td>
+												</th:block>
+												<th:block th:case="'9'">
+													<td th:text="${item.TotalPrice}"></td>
+													<td><strong style="color: red;">Cancelled</strong></td>
+												</th:block>
+											</th:block>
+
+											<td>
+												<button class="btn btn-primary" id="btnDetailOrder"
+													data-bs-toggle="modal"
+													data-bs-target="#exampleModalScrollable">Detail</button>
+											</td>
+											<td hidden th:text="${item.idInvoiceSup}"></td>
+											<td hidden th:text="${item.VoucherS}"></td>
+											<td hidden th:text="${item.priceVoucherA}"></td>
+											<td hidden th:text="${item.idAccount}"></td>
+											<td hidden th:text="${item.idInvoice}"></td>
+											<td hidden th:text="${item.id}"></td>
+										</tr>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+
+			</section>
+		</div>
+		<footer th:replace="Admin/Layout/admin_layout :: footerAdmin"></footer>
+	</div>
+
+	<div th:replace="Admin/Layout/admin_layout :: scriptAdmin"></div>
+
+	<script src="/admin/vendors/simple-datatables/simple-datatables.js"></script>
+	<script src="/admin/js/vendors.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script th:inline="javascript">
+
+		$(document).ready(function () {
+			$("#status").on('change', function () {
+				if ($("#status").val() == "allStt") {
+					location.reload();
+				} else {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/supplier-management/filterOrdersOfSupp",  //remember change the controller to your owns.
+						data: {
+							idSupplier: $("#idSuppNow").text(),
+							status: $("#status").val(),
+						},
+						success: function (res) {
+							$("#tableOrderOfSupp").html("");
+							$("#tableOrderOfSupp").html(res);
+							let table1 = document.querySelector('#table1');
+							let dataTable1 = new simpleDatatables.DataTable(table1);
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				}
+			})
+
+			$("#table1").on('click', '#btnDetailOrder', function () {
+				// get the current row
+				$("#btnPaymentForSupp").hide();
+				$("#btnRefundToCus").hide();
+				var currentRow = $(this).closest("tr");
+
+				var idInv = currentRow.find("td:eq(13)").text();
+				var totalPrice = currentRow.find("td:eq(3)").text();
+				var strRefundCus = currentRow.find("td:eq(4)").text();
+				var refundCus = strRefundCus.replace("Refund", "");
+				var sttInv = currentRow.find("td:eq(6)").text();
+				var strMoneyReceived = currentRow.find("td:eq(5)").text();
+				var priceVoucherA = currentRow.find("td:eq(10)").text();
+				var idUser = currentRow.find("td:eq(11)").text();
+				var sttInvoice = currentRow.find("td:eq(12)").text();
+
+				if (sttInv == "Pending") {
+					var moneyReceived = strMoneyReceived;
+					$("#btnPaymentForSupp").hide();
+				} else if (sttInv == "Delivering") {
+					var moneyReceived = strMoneyReceived + " (Waiting)";
+					$("#btnPaymentForSupp").hide();
+				} else if (sttInv == "Delivered/ Waiting to payment") {
+					var moneyReceived = strMoneyReceived + " (Waiting)";
+					$("#btnPaymentForSupp").show();
+				} else if (sttInv == "Cancelled") {
+					var moneyReceived = strMoneyReceived;
+					$("#btnPaymentForSupp").hide();
+					//if supp sau cancel thi display btn hoan tien cho supp
+				} else {
+					var moneyReceived = strMoneyReceived + " (Paid)";
+					$("#btnPaymentForSupp").hide();
+				}
+
+				if (strRefundCus.includes("(Refunded)") == true) {
+					var refundCus = strRefundCus.replace("(Refunded)", "");
+				} else if (strRefundCus.includes("(No refund yet to customer)") == true) {
+					var refundCus = strRefundCus.replace("(No refund yet to customer)", "");
+					$("#btnRefundToCus").show();
+				}
+				var idInvSupp = currentRow.find("td:eq(8)").text();
+				var priceVouS = currentRow.find("td:eq(9)").text();
+				var idSupp = $("#idSuppNow").text();
+				$("#exampleModalScrollableTitle").text("Detail Order (" + sttInv + ")");
+
+				$.ajax({
+					type: "Get",
+					url: "/Admin/supplier-management/detailOfOrder",  //remember change the controller to your owns.
+					data: {
+						idSupplier: $("#idSuppNow").text(),
+						idInv: idInv,
+						refundCus: refundCus,
+						priceVoucherA: priceVoucherA,
+						idUser: idUser,
+					},
+					success: function (res) {
+						$("#componentTable2").html("");
+						$("#componentTable2").html(res);
+						let table2 = document.querySelector('#table2');
+						let dataTable2 = new simpleDatatables.DataTable(table2);
+						$("#sttInv").text(sttInv);
+						$("#idInvSupp").text(idInvSupp);
+						$("#divRefundCus").hide();
+						$("#divPriceVoucherS").hide();
+						$("#totalPrice").text(totalPrice);
+						if (refundCus != 0) {
+							$("#divRefundCus").show();
+						}
+						if (priceVouS != 0) {
+							$("#divPriceVoucherS").show();
+						}
+						if (refundCus != 0 && priceVouS != 0) {
+							$("#divRefundCus").show();
+							$("#divPriceVoucherS").show();
+						}
+						if (strRefundCus.includes("(Refunded)") == true) {
+							$("#strRefundCus").text(refundCus.concat(" (Refunded)"));
+						} else {
+							$("#strRefundCus").text(refundCus.concat(" (No refund yet)"));
+						}
+
+						$("#priceVoucherS").text(priceVouS);
+
+						$("#moneyReceived").text(moneyReceived);
+						if (sttInvoice == 9) {
+							$.ajax({
+								type: "Get",
+								url: "/Admin/supplier-management/priceRefundWhenInv9",  //remember change the controller to your owns.
+								data: {
+									idInv: idInv,
+									idSupplier: idSupp,
+								},
+								success: function (res) {
+									if (res.priceRefund != 0) {
+										$("#divPriceRefundVSupp").show();
+										$("#divPriceVoucherAofSupp").hide();
+										$("#divPriceVoucherS").hide();
+										$("#divMoneyReceived").hide();
+										//
+										alert(priceRefundVSupp);
+										if (res.status == 0) {
+											$("#btnRefundForSupp").show();
+										} else {
+											$("#btnRefundForSupp").hide();
+										}
+
+										if (Number.isInteger(res.priceRefund)) {
+											if (res.status == 0) {
+												$("#priceRefundVSupp").text(res.priceRefund + ".00" + " (No refund yet)");
+											} else {
+												$("#priceRefundVSupp").text(res.priceRefund + ".00" + " (Refunded)");
+											}
+										} else {
+											if (res.status == 0) {
+												$("#priceRefundVSupp").text(roundToTwo(res.priceRefund) + " (No refund yet)");
+											} else {
+												$("#priceRefundVSupp").text(roundToTwo(res.priceRefund) + " (Refunded)");
+											}
+										}
+
+
+										$("#profitILA").text(0);
+
+										//$("#priceVoucherAofSupp").text("0.00");
+										//$("#priceFeeService").text("0.00");
+										//$("#profitReceive").text("0.00");
+									}
+								},
+								error: function (response) {
+									console.log(response.responseText);
+								}
+							});
+
+						} else {
+							$("#divPriceRefundVSupp").hide();
+							$("#btnRefundForSupp").hide();
+						}
+
+						if ($("#priceRefundVSupp").text() != 0) {
+							$("#btnRefundForSupp").show();
+						} else {
+							$("#btnRefundForSupp").hide();
+						}
+
+
+						document.getElementById('btnRefundForSupp').onclick = function () {
+							$.ajax({
+								type: "Get",
+								url: "/Admin/supplier-management/refundToSupp",
+								data: {
+									idInv: idInvNow,
+									idSupplier: idSupplier,
+								},
+								success: function (res) {
+									if (res) {
+										Swal.fire({
+											title: "Successfully!",
+											text: "Refund to supplier successfully!",
+											icon: "success"
+										});
+
+										if ($("#priceRefundVSupp").text().includes("(No refund yet)")) {
+											$("#priceRefundVSupp").text($("#priceRefundVSupp").text().replace("(No refund yet)", "(Refunded)"));
+										}
+										$("#btnRefundForSupp").hide();
+									} else {
+										Swal.fire({
+											icon: "error",
+											title: "Oops...",
+											text: "An error occurred while refunding the supplier!"
+										});
+										$("#btnRefundForSupp").show();
+									}
+
+								},
+								error: function (response) {
+									console.log(response.responseText);
+								}
+							});
+						};
+
+
+						//
+					},
+					error: function (response) {
+						console.log(response.responseText);
+					}
+				});
+
+			});
+		});
+	</script>

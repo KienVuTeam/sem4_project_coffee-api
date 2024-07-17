@@ -1,0 +1,43 @@
+<th:block th:if="${!lsVouchers.empty}">
+	<th:block th:each="item,index : ${lsVouchers}">
+		<button class="wrapperVoucher" th:data-condition="${item.condition}" th:data-discount="${item.discount}" th:data-id="${item.id}">
+			<div class="row">
+				<div class="col-md-4 align-self-center">
+					<div class="quickview d-flex align-items-center justify-content-center">
+						<div class="quickview__thumb">
+							<img src="/images/top-grade/tg-3.png" alt="VoucherImage" width="400px"
+								style="margin-top: 5px;" height="400px">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8" style="margin-top: 35px;">
+					<p style="   
+											font-size: 50px;
+											display: inline-block;
+											padding-bottom: 27px;
+											color: darksalmon;
+											font-family: 'Bebas Neue';
+											padding-right: 2px;">$</p>
+					<p style="
+											   position: relative;
+												top: 12px;
+												font-weight: 400;
+												font-size: 86px;
+												display: inline-block;
+												font-family: 'Bebas Neue';
+												color: darksalmon;"><th:block th:text="${item.discount}"></th:block>
+					</p>
+					<p style="color: darksalmon;
+											position: relative;
+											display: inline-block;
+											bottom: 27px;
+											font-family: 'Bebas Neue';
+											font-size: 30px;">Off</p>
+					<h3>Your Purchase <span style="color: red;font-family: 'Bebas Neue';">$<th:block th:text="${item.condition}"></th:block></span>
+						Or More</h3>
+					<h3>Valid Form: <th:block th:text="${item.startDate}"></th:block> To <th:block th:text="${item.endDate}"></th:block></h3>
+				</div>
+			</div>
+		</button>
+	</th:block>
+</th:block>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+
+</head>
+<!-- ================= CSS Revenue ===================  -->
+<link rel="stylesheet" href="/vendors/chartjs/Chart.min.css">
+<link rel="stylesheet" href="/supplier/vendors/apexchart/apexcharts.css">
+<style>
+	body{
+		line-height: 29px;
+	}
+</style>
+<body>
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+
+
+        <!-- Dashboard -->
+        <section class="section">
+            <div class="card">
+                <div class="card-header row page-title m-0">
+                    <div class="col-12 col-md-6 order-md-1 order-last">
+                        <h3>Dashboard</h3>
+                        <p class="text-subtitle text-muted">Dashboard page display your statistics</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Pending Order Table -->
+
+                    <div class="row mb-2">
+                        <div class="col-12 col-md-4">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>REVENUE</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p>$</p>
+                                                <p th:text="${RevenueToday}"></p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvasDashboard1" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>ORDERS</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p th:text="${CountOrder}"></p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvasDashboard2" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>Last Month</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p>$</p>
+                                                <p th:text="${RevenuePreMonth}"></p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvasDashboard3" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other Revenue -->
+                    <hr>
+                    <div class="row" style="gap: 10px;padding-left: 1rem;">
+                        <!-- Select For Month -->
+                        <select class="form-select selectMonth" onchange="selectRevenue()" style="width: 15%;">
+                            <option value="1">January</option>
+                            <option value="2">February</option>
+                            <option value="3">March</option>
+                            <option value="4">April</option>
+                            <option value="5">May</option>
+                            <option value="6">June</option>
+                            <option value="7">July</option>
+                            <option value="8">August</option>
+                            <option value="9">September</option>
+                            <option value="10">October</option>
+                            <option value="11">November</option>
+                            <option value="12">December</option>
+                        </select>
+                        <!-- Sub Select For Month -->
+
+                        <!-- Select For Year -->
+                        <select class="form-select selectYear" onchange="selectRevenue()" style="width: 15%;">
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                        <!-- Sub Select For Year -->
+                    </div>
+                    <!-- ================================================================================================================== -->
+                    <!-- Chart Month -->
+                    <div class="listChartMonth">
+                        <!-- Chart January -->
+                        <div class="row mt-4 mb-5 showChart">
+                            <div class="col-12">
+                                <div id="bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- End Dashboard -->
+
+        <footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+
+    <script src="/supplier/js/jquery.min.js"></script>
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+
+    <!-- ================= Script Revenue ===================  -->
+    <script src="/vendors/chartjs/Chart.min.js"></script>
+    <script src="/supplier/vendors/apexchart/apexcharts.min.js"></script>
+    <script src="/supplier/vendors/apexchart/custom_ui_apexchart.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var RevenueDefault = /*[[${RevenueDefault}]]*/ "";
+        var RevenueToday = /*[[${RevenueToday}]]*/ "";
+        var TotalRevenueYear = /*[[${TotalRevenueYear}]]*/ "";
+        var idSupplier = /*[[${idSupplier}]]*/ "";
+        /*]]>*/
+    </script>
+    <script src="/supplier/js/revenueManagement.js"></script>
+    <script src="/supplier/js/dashboardRevenue.js"></script>
+</body>
+
+</html>

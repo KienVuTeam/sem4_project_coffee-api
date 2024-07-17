@@ -1,0 +1,276 @@
+<div class="modal-content">
+	<th:block th:each="item:${lstBlogDetail}">
+		<div class="modal-header">
+			<h5 class="modal-title" id="exampleModalLongTitle" th:text="${item.title}">title demo</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+				<i data-feather="x"></i>
+			</button>
+		</div>
+		<div class="modal-body">
+			<!--  -->
+			<div class="modal-body">
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<div class="blog__wrapper blog__wrapper--single">
+								<article class="blog__post blog__post--single format format-image">
+									<div class="thumb">
+										<img style="width: 100%;" alt="" th:src="${item.image}">
+									</div>
+
+									<ul class="meta mt-20 list-unstyled d-flex align-items-center">
+										<li><a href="#0"><i class="fas fa-file"></i>
+												Coffee</a></li>
+										<li><a href="#0"><i class="fas fa-comments"></i>
+												<span style="font-family: 'Jost', sans-serif;"
+													th:text="${quantityCMT}"></span> Comments</a></li>
+										<li><a href="#0"><i class="fas fa-calendar-alt"></i>
+												<span id="D_blogCreateAt"></span> </a></li>
+									</ul>
+									<div id="D_blogDescription" class="content mt-10" th:text="${item.description}">
+									</div>
+									<hr>
+
+									<!--									<div
+										class="author-box mt-50 mb-40 d-flex align-items-center justify-content-center">
+										<div class="ath-thumb mr-40">
+											<img src="/supplier/images/author1.jpg" alt="">
+										</div>
+										<div class="ath-content">
+											<span>Written by</span>
+											<h3 class="name">Rosalina D. Habdilan</h3>
+											<p>Stephen Romero has worked a Italy Report since its
+												launch in 2011. In the years since, he has led by
+												example the company's tech news team and published over
+												5,000 articles...</p>
+										</div>
+									</div>-->
+									<hr>
+
+									<div id="componentComment" class="comments__form">
+										<div class="flex flex-column">
+											<div>
+												<h2 class="title">Leave a Reply </h2>
+											</div>
+											<div class="contact-icon contacts-message">
+												<textarea id="comment" name="comment" cols="60" rows="4"
+													placeholder="Type your comments..." aria-required="true"
+													class="contentComment"></textarea>
+											</div>
+											<div>
+												<button class="submitComment" id="btnSubmitCmt">Submit</button>
+												<button class="clearComment" id="btnClear">Clear</button>
+											</div>
+										</div>
+										<div id="contentComment">
+
+										</div>
+									</div>
+								</article>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  -->
+		</div>
+	</th:block>
+
+	<div class="modal-footer">
+		<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+			<i class="bx bx-x d-block d-sm-none"></i>
+			<span class="d-none d-sm-block">Close</span>
+		</button>
+	</div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script th:inline="javascript">
+	$(document).ready(function () {
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		/*<![CDATA[*/
+		var idBlog = /*[[${idBlog}]]*/"";
+		var sttBlog = /*[[${sttBlog}]]*/"";
+		if (sttBlog == 0 || sttBlog == 2 || sttBlog == 3) {
+			$("#componentComment").hide();
+		}
+		/*]]>*/
+		//const idBlog = urlParams.get('idBlog');
+		onloadCommentBlog(idBlog)
+		replyButtonSubmit(idBlog);
+
+		$("#btnSubmitCmt").on('click', function (e) {
+			e.preventDefault();
+			var contentComment = $("textarea#comment").val();
+			if (contentComment.trim().length == 0) {
+				$("textarea#comment").get(0).setCustomValidity('Please Input This Field');
+				$("textarea#comment").get(0).reportValidity();
+			} else {
+				var contentC = $("textarea#comment").val();
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Admin/blog-management/addMainComment",
+					data: {
+						idBlog: idBlog,
+						content: contentC,
+					}
+				}).done(function (data) {
+					onloadCommentBlog(idBlog);
+					clearCommentArea();
+				});
+			}
+		})
+
+		$("#btnClear").on('click', function (e) {
+			e.preventDefault();
+			clearCommentArea();
+		})
+	});
+
+	function replyButtonSubmit(idBlog) {
+		$(document).on('click', function (e) {
+			if (e.target.className == "submitReply") {
+				e.preventDefault();
+				var dataTarget = e.target.getAttribute("data-target");
+				var currentTAComment = $(`textarea#${dataTarget}`);
+				var contentComment = $(currentTAComment).val();
+				var idMain = e.target.getAttribute("data-idm");
+				if (contentComment.trim().length == 0) {
+					$(currentTAComment).get(0).setCustomValidity('Please Input This Field');
+					$(currentTAComment).get(0).reportValidity();
+				} else {
+					var idMnC = e.target.getAttribute('data-idr');
+					if (e.target.getAttribute('data-edit') == "false") {
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/Admin/blog-management/addSubComment",
+							data: {
+								idBlog: idBlog,
+								idReply: idMnC,
+								content: contentComment,
+								idMainB: idMain
+							}
+						}).done(function (data) {
+							$(`div.replies[data-id=${idMain}]`).append(data);
+							closeAllReplyForm("");
+						});
+					} else if (e.target.getAttribute("data-edit") == "true") {
+						var idCEdit = $(currentTAComment).attr('data-id');
+						var pComment = $(`p.txtComment[data-id=${idCEdit}]`).attr('data-ureply');
+						var setHTML = "";
+						if (pComment.trim().length != 0) {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="${pComment}"><span style="color:chocolate;">
+                                    ${pComment}</span> ${contentComment}</p>`
+						} else {
+							setHTML = `<p class="txtComment" data-id="${idCEdit}" data-ureply="">${contentComment}</p>`;
+						}
+						$.ajax({
+							async: false,
+							cache: false,
+							url: "/Admin/blog-management/editComment",
+							data: {
+								idCM: idCEdit,
+								content: contentComment
+							}
+						}).done(function (data) {
+							$(`div[id="contentEdit"][data-id=${idCEdit}]`).html(setHTML);
+							//
+							closeAllReplyForm("");
+						});
+					}
+				}
+			} else if (e.target.className == "cancelButton") {
+				e.preventDefault();
+				closeAllReplyForm(" ");
+			} else if (e.target.id == "btnDeleteS") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`div[id="idReply"][data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Admin/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			} else if (e.target.id == "btnDeleteM") {
+				e.preventDefault();
+				var dataID = e.target.getAttribute("data-id");
+				var currentTag = $(`details[data-id=${dataID}]`);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Admin/blog-management/deleteComment",
+					data: {
+						idBlog: idBlog,
+						idComment: dataID
+					}
+				}).done(function (data) {
+					closeAllReplyForm("");
+				});
+				currentTag.remove();
+			}
+		})
+	}
+
+	function onloadCommentBlog(idBlog) {
+		$.ajax({
+			async: false,
+			cache: false,
+			url: "/Admin/blog-management/loadCommentBlog",
+			data: {
+				idBlog: idBlog
+			}
+		}).done(function (data) {
+			$('#contentComment').html(data);
+		});
+	}
+
+	document.addEventListener(
+		"click",
+		function (event) {
+			var target = event.target;
+			var replyForm;
+			if (target.matches("[data-toggle='reply-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				//
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', false);
+				$(`textarea#${target.getAttribute("data-target")}`).val(" ");
+
+			} else if (target.matches("[data-toggle='edit-form']")) {
+				closeAllReplyForm(target.getAttribute("data-target"));
+				replyForm = document.getElementById(target.getAttribute("data-target"));
+				replyForm.classList.toggle("d-none");
+				$(`button[class='submitReply'][data-target=${target.getAttribute("data-target")}]`).attr('data-edit', true);
+				$(`textarea#${target.getAttribute("data-target")}`).val(target.getAttribute("data-cm"));
+			}
+		},
+		false
+	);
+
+	function closeAllReplyForm(dataTarget) {
+		$('form.reply-form').each(function (e) {
+			var currentTarget = $(this).attr('id');
+			$(`textarea[id=${currentTarget}]`).val(" ");
+			if ($(this).attr("data-target") != dataTarget) {
+				if (!$(this).hasClass('d-none')) {
+					$(this).addClass('d-none');
+				}
+			}
+		})
+	}
+
+	function clearCommentArea() {
+		$("textarea#comment").attr('placeholder', "Type your comments...").val("").focus().blur();
+	}
+</script>

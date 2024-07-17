@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+	
+</head>
+    <link rel="stylesheet" href="/supplier/vendors/choicesjs/choices.min.css" />
+    <link rel="stylesheet" href="/supplier/css/alert.css">
+    <link rel="stylesheet" href="/supplier/css/productManagement.css">
+    <script type="text/javascript">
+    document.getElementById("title_supplier").textContent="Supplier - Product management ";
+    </script>
+
+<body>
+    
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+        
+        <div class="main-content container-fluid"> 
+            <!-- Manager Product -->
+            <section class="section">
+                <div class="card">
+                        <div class="card-header row page-title m-0">
+							<div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Product Management</h3>
+                            </div>
+                            <div class="col-12 col-md-6 order-md-2 order-first">
+                                <nav aria-label="breadcrumb" class="breadcrumb-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/Supplier/Dashboard">Dashboard</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Product Management</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    <div class="card-body">
+                        <div class="col-12 d-flex">
+                            <button class="btn btn-primary m-2 checkIsActive" data-bs-toggle="modal"
+                            data-bs-target="#AddProduct">Create Product</button>
+                            <div class="input-group w-25" style="padding: 7px; margin-left: 50px;">
+                                <label class="input-group-text" for="FilterProduct">Filter</label>
+                                <select class="form-select" id="FilterProduct" onchange="filterProduct(this.value)">
+                                    <option value="All" selected="selected">All Product</option>
+                                    <option value="0">Pending Product</option>
+                                    <option value="1">In Use Product</option>
+                                    <option value="2">Deny Product</option>
+                                    <option value="3">Deleted</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="ajax-product"> 
+                            <table class="table table-hover dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Product Name</th>
+                                        <th>In Category</th>
+                                        <th>Image</th>
+                                        <th>Price</th>
+                                        <th>Discount</th>
+                                        <th>Show Reviews</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${AllProduct}">
+                                        <td th:text="${itemStat.index + 1}"></td>
+                                        <td th:text="${item.title}"></td>
+                                        <td th:text="${item.nameCate}"></td>
+                                        <td>
+                                            <div class="wrapImg">
+                                            	<img th:src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="image">
+                                            </div>
+                                        </td>
+                                        <td th:text="${item.price}"></td>
+                                        
+                                        <td th:switch="${item.isStatus}">
+                                            <div th:case="0" class="text-warning">Upcoming</div>
+                                            <div th:case="1" class="text-success">On Sale</div>
+                                            <div th:case="*" class="text-info">No Discount</div>
+                                        </td>
+                                        
+                                        <td>
+                                            <button type="button" class="btn btn-info" data-bs-toggle="modal" th:attr="data-idProduct=${item.id}"
+                                                data-bs-target="#Review" onclick="detailReview(this)" title="Show Reviews">
+                                                Reviews
+                                            </button>
+                                        </td>
+                                        
+                                        <td th:switch="${item.isActive}">
+                                            <div th:case="0" class="text-warning">Pending</div>
+                                            <div th:case="1" class="text-success">Active</div>
+                                            <div th:case="2" class="text-danger">Deny</div>
+                                            <div th:case="3" class="text-danger">Deleted</div>
+                                        </td>
+
+                                        <td th:if="${item.isActive == 0}">
+                                            <button type="button" class="btn btn-info checkIsActive" data-bs-toggle="modal"
+                                                data-bs-target="#EditProduct" title="Edit Product"
+                                                th:attr="data-title=${item.title}, data-price=${item.price}, data-id=${item.id},
+                                                data-description=${item.description}, data-image=${item.image},
+                                                data-image1=${item.image1}, data-image2=${item.image2} ,data-image3=${item.image3}, data-nameCate=${item.nameCate}"
+                                                onclick="editProduct(this)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteProduct" th:attr="data-id=${item.id}" class="btn btn-danger" onclick="deleteProduct(this)" title="Delete Product">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>
+                                        </td>
+
+                                        <td th:if="${item.isActive == 1}">
+                                        </td>
+
+                                        <td th:if="${item.isActive == 2}">
+                                            <button type="button" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteProduct" th:attr="data-id=${item.id}" class="btn btn-danger" onclick="deleteProduct(this)" title="Delete Product">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>
+                                        </td>
+                                        <td th:if="${item.isActive == 3}"></td>
+    
+                                    </tr>
+    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- End Manager Product -->
+
+            <!-- Modal Edit Product -->
+            <div class="modal fade" id="EditProduct" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="form form-vertical">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Edit Product</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="first-name-vertical">Product Name</label>
+                                                <input type="text" id="first-name-vertical" class="form-control validateSpecialChar"
+                                                    name="title" placeholder="Product Name" required maxlength="50" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="email-id-vertical">Image</label>
+                                                <div class="listImg">
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeEditImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" />
+                                                        <input type="file" id="selMainEdit" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeEditImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" />
+                                                        <input type="file" id="imageNo1Edit" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeEditImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" />
+                                                        <input type="file" id="imageNo2Edit" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeEditImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" />
+                                                        <input type="file" id="imageNo3Edit" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12"> 
+                                            <div class="form-group">
+                                                <label for="contact-info-vertical">Price</label>
+                                                <input type="number" id="contact-info-vertical" class="form-control validateNumberValue"
+                                                    name="price" placeholder="Price" min="0" max="9999999999" required
+                                                    onKeyPress="if(this.value.length==10) return false;">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="password-vertical">Description</label>
+                                                <textarea name="description" class="form-control" placeholder="Description" maxlength="2000" required onchange="this.value=this.value.trim();"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-3"> 
+                                            <div class="form-group">
+                                                <select name="idCate" class="choices form-select">
+                                                    <option th:value="${item.id}" th:each="item : ${Categories}">
+                                                        <span th:text="${item.title}"></span>
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="idProduct">
+                            <input type="hidden" name="hiddenImage" id="hdMainEdit">	
+                            <input type="hidden" name="hiddenImage" id="hdImgNo1Edit">	
+                            <input type="hidden" name="hiddenImage" id="hdImgNo2Edit">	
+                            <input type="hidden" name="hiddenImage" id="hdImgNo3Edit">
+
+                            <div class="modal-footer">
+                                <button type="reset" class="btn btn-light-secondary EditReset">
+                                    <span class="d-none d-sm-block">Reset</span>
+                                </button>
+
+                                <button id="submitEditProduct" type="button" class="btn btn-primary ml-1">
+                                    <i class="bx bx-check d-block d-sm-none"></i>
+                                    <span class="d-none d-sm-block">Submit</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Edit Product -->
+        </div>
+                
+            <!-- Modal Add Product -->
+            <div class="modal fade" id="AddProduct" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <form class="form form-vertical">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Create a new product</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="first-name-vertical">Product Name</label>
+                                                <input type="text" id="first-name-vertical" class="form-control validateSpecialChar"
+                                                    name="title" placeholder="Product Name" maxlength="50" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="email-id-vertical">Image</label>
+                                                <div class="listImg">
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" />
+                                                        <input type="file" id="selMain" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" />
+                                                        <input type="file" id="imageNo1" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" />
+                                                        <input type="file" id="imageNo2" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                    <div class="dropzone">
+                                                        <div class="overlay">
+                                                            <button title="remove" id="zxc" onclick="removeImage(this)"><i class="fas fa-trash"></i></button>
+                                                        </div>
+                                                        <img class="upload-icon" />
+                                                        <img src="https://100dayscss.com/codepen/upload.svg"
+                                                            class="default-upload" />
+                                                        <input type="file" id="imageNo3" name="files" class="upload-input" accept="image/*" tabindex="-1"
+                                                            onchange="upload(this)" required/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="contact-info-vertical">Price</label>
+                                                <input type="number" id="contact-info-vertical" class="form-control validateNumberValue"
+                                                    name="price" placeholder="Price ($/USD)" min="0" max="9999999999" required 
+                                                    onKeyPress="if(this.value.length==10) return false;">
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="password-vertical">Description</label>
+                                                <textarea id="password-vertical" name="description" placeholder="Description"
+                                                    class="form-control" maxlength="2000" required onchange="this.value=this.value.trim();"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-3"> 
+                                            <div class="form-group">
+                                                <select name="idCate" class="choices form-select">
+                                                    <option th:value="${item.id}" th:each="item : ${Categories}">
+                                                        <span th:text="${item.title}"></span>
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="idSupplier" />
+                            <input type="hidden" id="hdMain">	
+                            <input type="hidden" id="hdImgNo1">	
+                            <input type="hidden" id="hdImgNo2">
+                            <input type="hidden" id="hdImgNo3">
+                            
+                            <div class="modal-footer">
+                                <button type="reset" class="btn btn-light-secondary AddReset">
+                                    <span class="d-none d-sm-block">Reset</span>
+                                </button>
+
+                                <button id="submitAddProduct" type="button" class="btn btn-primary ml-1">
+                                    <i class="bx bx-check d-block d-sm-none"></i>
+                                    <span class="d-none d-sm-block">Submit</span> 
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Add Product -->
+            
+            <!-- Modal Review Product -->
+            <div class="modal fade" id="Review" tabindex="-1" role="dialog"
+                aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+                        <form class="form form-vertical">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Reviews</h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover mb-0 tbl-centerhover dataTable1">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Customer</th>
+                                                <th>Evaluate</th>
+                                                <th>Review Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ajax-review">
+                                            <tr th:each="item : ${Reviews}">
+                                                <td th:text="${itemStat.index + 1}"></td>
+                                                <td th:text="${item.nameCus}"></td>
+                                                <td th:text="${item.review}"></td>
+                                                <td th:text="${item.createDate}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-bs-dismiss="modal" class="btn btn-light-secondary">
+                                    <span class="d-none d-sm-block">Close</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Review Product -->
+
+            <!-- Modal Confirm Delete product -->
+            <div class="modal fade text-left" id="ConfirmDeleteProduct" tabindex="-1" role="dialog"
+                aria-labelledby="myModalLabel19" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm"
+                    role="document">
+                    <div class="modal-content">
+                        <div class="modal-header bg-danger">
+                            <h4 class="modal-title text-white" id="myModalLabel19">Delete Product ?</h4>
+                            <button type="button" class="close" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="font-size: 1.1rem;">
+                            This action will render your product unusable and this action cannot be undone. Do you still want to continue ?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light-secondary btn-sm"
+                                data-bs-dismiss="modal">
+                                <i class="bx bx-x d-block d-sm-none"></i>
+                                <span class="d-sm-block d-none">Close</span>
+                            </button>
+                            <button type="button" class="btn btn-danger ml-1 btn-sm confirmDelete"
+                                data-bs-dismiss="modal">
+                                <i class="bx bx-check d-block d-sm-none"></i>
+                                <span class="d-sm-block d-none">Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Modal Confirm Delete product -->
+
+            <!-- Alert Product -->
+            	<div class="toast">
+                    <div class="toast-content">
+                        <span class="wrap-check"></span>
+                        <div class="message">
+                        <span class="message-text text-1"></span>
+                        <span class="message-text text-2"></span>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x toast-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <div class="progress"></div>
+            	</div>
+            <!-- End Alert Product -->
+
+        <footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+
+	<script src="/supplier/js/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.0.js"
+		integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-storage.js"></script>
+	<script>
+		const firebaseConfig = {
+            apiKey: "AIzaSyBGL7802ZHOkecG8gHEiZEz1qw4EVF2Ql0",
+            authDomain: "ilacoffeeproject.firebaseapp.com",
+            projectId: "ilacoffeeproject",
+            storageBucket: "ilacoffeeproject.appspot.com",
+            messagingSenderId: "726954147188",
+            appId: "1:726954147188:web:5c1846723f56d528f1c021"
+        };
+		//	
+		try {
+			firebase.initializeApp(firebaseConfig);
+		} catch (error) {
+			console.log('Error InitializeFirebase');
+		}	
+	</script>
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+    <script src="/supplier/vendors/choicesjs/choices.min.js"></script>
+    <script src="/supplier/js/alert.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+	 // Simple Datatable
+        let table1 = document.querySelector('.dataTable');
+        let dataTable = new simpleDatatables.DataTable(table1);
+        
+        // input autocomplete off
+        $("input").attr("autocomplete", "off");
+        
+        /*<![CDATA[*/
+			var idSupplier = /*[[${idSupplier}]]*/ "";
+			var statusSupp = /*[[${statusSupp}]]*/ "";
+		/*]]>*/
+    </script>
+    
+    <!-- ================= Script Validate Fields ===================  -->
+    <script src="/supplier/js/Validation/validateFields.js"></script>
+    
+    <!-- ================= Script Product ===================  -->
+    <script src="/supplier/js/productManagement.js"></script>
+    <script src="/supplier/js/uploadProduct.js"></script>
+</body>
+
+</html>

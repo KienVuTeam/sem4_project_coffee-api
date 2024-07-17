@@ -1,0 +1,211 @@
+<div class="d-flex flex-column" style="width: 500px;background-color: #fff;">
+	<div class="p-2 titleHeaderVoucher" style="border-bottom: 1px solid darkgrey;">
+		<p style="margin-left: 8px;color: steelblue;font-size: 18px;" id="nameSupplierVoucher"> Ichikai Vouchers</p>
+	</div>
+	<div class="p-2 contentVoucher" style="display: flex;justify-content: space-evenly;">
+		<div class="flex-column lsVoucher" style="overflow-y: auto;height: 460px;">
+			<!-- List Voucher -->
+			<th:block th:if="${#lists.size(lsVoucher) !=0}">
+				<th:block th:each="itVoucher,iterv : ${lsVoucher}">
+					<div class="p-2 d-flex flex-row borderVoucher" id="itemVoucher"
+						th:data-require="${itVoucher.condition}" th:data-id="${itVoucher.usercreate}"
+						th:data-discount="${itVoucher.discount}" th:data-idv="${itVoucher.id}">
+						<div class="col-4 voucherImg">
+							<div class="styleTest">
+								<img src="/images/top-grade/tg-2.png" alt=""
+									style="align-items: center;display: flex;justify-content: center;">
+							</div>
+						</div>
+						<div class="col-8">
+							<div class="flex-column d-flex" style="display: flex; justify-content: center;">
+								<div class="p-2 heightDetailsVoucher">
+									<p style="color: black;"
+										th:text="${'Discount :'  + '$' + itVoucher.discount + '.00'}"
+										th:data-id="${itVoucher.id}" th:data-price="${itVoucher.discount}"></p>
+								</div>
+								<div class="p-2 heightDetailsVoucher">
+									<p style="color: black;"
+										th:text="${'Minium Require :' + '$' + itVoucher.condition + '.00'}"
+										th:data-id="${itVoucher.id}" th:data-require="${itVoucher.condition}"></p>
+								</div>
+								<div class="p-2 heightDetailsVoucher">
+									<th:block th:if="${itVoucher.dayLeft <= 7}">
+										<p style="color: red;" th:text="${itVoucher.dayLeft + ' Day Lefts'}"></p>
+									</th:block>
+								</div>
+							</div>
+						</div>
+						<div class="col-1" style="display: flex; align-items: center;justify-content: center;">
+							<input class="form-check-input rdVoucherS" type="checkbox"
+								th:id="${'voucherCheck' + iterv.index}" th:data-id="${itVoucher.usercreate}"
+								th:data-price="${itVoucher.discount}" th:data-idv="${itVoucher.id}"
+								onclick="selectOnlyThis(this.id)">
+							<label class="form-check-label" for="rdOption1">
+							</label>
+						</div>
+					</div>
+				</th:block>
+			</th:block>
+			<th:block th:if="${#lists.size(lsVoucher) ==0}">
+				<p>Shop Doesn't Have Voucher</p>
+			</th:block>
+			<!-- End List Voucher -->
+		</div>
+	</div>
+	<div class="p-2 bottomVoucher " style="border-top: 1px solid lightgray;">
+		<div class="d-flex justify-content-end">
+			<button class="backButton" id="backButton">Back</button>
+			<button class="submitButton" id="submitButton" data-id="0">Submit</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	onLoadCheckCondition();
+	$('#backButton').on('click', function (e) {
+		e.preventDefault();
+		$('.overlay, .product-popup-1').removeClass('show-popup');
+	});
+
+	$('#submitButton').on('click', function (e) {
+		e.preventDefault();
+		var flagVoucher = false;
+		var flagNewVoucher = true;
+		//
+		$(`input.rdVoucherS[data-id=${$(this).attr('data-id')}]`).each(function () {
+			//
+			if ($(this).is(":checked")) {
+				var dataIdV = $(`p[id="voucherSelect"][data-id=${$(this).attr('data-id')}]`).attr('data-idv');
+				if (dataIdV == $(this).attr('data-idv')) {
+					flagNewVoucher = false;
+				} else {
+					restoreCaculateVoucherS($(this).attr('data-id'));
+					$(`p[id="voucherSelect"][data-id=${$(this).attr('data-id')}]`).text('- $' + $(this).attr('data-price') + '.00');
+					$(`p[id="voucherSelect"][data-id=${$(this).attr('data-id')}]`).attr('data-price', parseInt($(this).attr('data-price')));
+					$(`p[id="voucherSelect"][data-id=${$(this).attr('data-id')}]`).attr('data-idv', $(this).attr('data-idv'));
+					//Change Text Voucher
+					$(`span[id="btnChooseVoucher"][data-id=${$(this).attr('data-id')}]`).text("Select Other Vouchers");
+					//
+					var currentTotalPriceS = $(`div[id="totalShop"][data-id=${$(this).attr('data-id')}]`);
+					currentTotalPriceS.attr('data-price', parseInt(currentTotalPriceS.attr('data-price') - $(this).attr('data-price')));
+					currentTotalPriceS.text('$' + currentTotalPriceS.attr('data-price') + '.00');
+					//
+					flagVoucher = true;
+					//
+					caculateVoucherS();
+					caculationFeeService();
+					caculateTotalPayment();
+				}
+			}
+		});
+		//
+		if ((flagNewVoucher == true) && (flagVoucher == false)) {
+			restoreCaculateVoucherS($(this).attr('data-id'));
+		}
+		caculationFeeService();
+		caculateTotalPayment();
+		$('.overlay, .product-popup-1').removeClass('show-popup');
+	});
+
+	function onLoadCheckCondition() {
+		var idSupplierV = 0;
+		//
+		$(`div[id="itemVoucher"]`).each(function () {
+			var currentPrice = 0;
+			idSupplierV = $(this).attr('data-id');
+			$(`p[id="totalPrice"][data-id=${idSupplierV}]`).each(function(){
+				currentPrice = currentPrice + parseInt($(this).attr('data-price'));
+			});
+			console.log(currentPrice);
+			if (currentPrice < parseInt($(this).attr('data-require'))) {
+				$(this).addClass('voucherDisable');
+			}
+
+		})
+		//
+		var voucherExists = $(`p[id="voucherSelect"][data-id=${idSupplierV}]`).attr('data-idv');
+		if (voucherExists.trim().length > 0) {
+			$(`input.rdVoucherS[data-id=${idSupplierV}]`).each(function () {
+				if ($(this).attr('data-idv') == voucherExists) {
+					$(this).prop('checked', true);
+				}
+			})
+		}
+	}
+
+	function caculateVoucherS() {
+		var totalComboVoucher = 0;
+		$('p[id="voucherSelect"]').each(function () {
+			totalComboVoucher += parseInt($(this).attr('data-price'));
+		});
+		//
+		$('#totalComboVoucher').attr('data-price', totalComboVoucher);
+		if (parseInt(totalComboVoucher) != 0) {
+			$('#totalComboVoucher').text('- $' + totalComboVoucher + '.00');
+		} else {
+			$('#totalComboVoucher').text('$' + totalComboVoucher + '.00');
+		}
+	}
+
+	function caculateTotalPayment() {
+		var totalConsume = parseInt($('#totalConsume').attr('data-price'));
+		var totalComboVoucher = parseInt($('#totalComboVoucher').attr('data-price'));
+		var voucherAdmin = parseInt($('#voucherAdmin').attr('data-price'));
+		var feeService = parseFloat($('#feeService').attr('data-price'));
+		var totalFinal = totalConsume - totalComboVoucher - voucherAdmin;
+		totalFinal = parseFloat(totalFinal + feeService);
+		//
+		$('#totalFinal').attr('data-price', totalFinal);
+		$('#totalFinal').text('$' + parseFloat(totalFinal).toFixed(2));
+	}
+
+	function restoreCaculateVoucherS(idSupplier) {
+		$(`span[id="btnChooseVoucher"][data-id=${idSupplier}]`).text("Select Vouchers");
+		//Text Voucher
+		$(`p[id="voucherSelect"][data-id=${idSupplier}]`).text(' ');
+		$(`p[id="voucherSelect"][data-id=${idSupplier}]`).attr('data-price', 0);
+		$(`p[id="voucherSelect"][data-id=${idSupplier}]`).attr('data-idv', '');
+		caculateVoucherS();
+		caculateTotalPayment();
+
+		//
+		var totalNoneVoucher = 0;
+		$(`p[id='totalPrice'][data-id='${idSupplier}']`).each(function () {
+			totalNoneVoucher += parseInt($(this).attr('data-price'));
+		});
+		//
+		$(`div[id='totalShop'][data-id='${idSupplier}'`).text('$' + totalNoneVoucher + '.00');
+		$(`div[id='totalShop'][data-id='${idSupplier}'`).attr('data-price', totalNoneVoucher);
+	}
+
+	function selectOnlyThis(id) {
+		for (var i = 0; i <= countVouchers(); i++) {
+			if ("voucherCheck" + i === id && document.getElementById("voucherCheck" + i).checked === true) {
+				document.getElementById("voucherCheck" + i).checked = true;
+			} else {
+				document.getElementById("voucherCheck" + i).checked = false;
+			}
+		}
+	}
+
+	function countVouchers() {
+		var count = 0;
+		$('div[id="itemVoucher"]').each(function () {
+			count += 1;
+		})
+		return count - 1;
+	}
+
+	function caculationFeeService() {
+		var caculateFee = 0;
+		$(`div[id='totalShop']`).each(function () {
+			caculateFee += 2 * parseInt($(this).attr('data-price')) / 100;
+		});
+		caculateFee = parseFloat(caculateFee).toFixed(2)
+		$('#feeService').attr('data-price', caculateFee);
+		var stringFee = caculateFee.toString();
+		$('#feeService').text('$' + caculateFee);
+	}
+
+
+</script>

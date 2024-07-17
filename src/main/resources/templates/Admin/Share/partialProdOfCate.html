@@ -1,0 +1,90 @@
+<p hidden id="pIdCate" th:text="${idCate}"></p>
+<table class='table table-striped' id="tableProdOfCate">
+	<thead>
+		<tr>
+			<th>Title Supplier</th>
+			<th>Title Product</th>
+			<th>Description</th>
+			<th>Price</th>
+			<th>Sold</th>
+			<th>Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item: ${lstProd}">
+			<tr>
+				<td hidden th:text="${item.id}"></td>
+				<td th:text="${item.nameSupp}"></td>
+				<td th:text="${item.title}"></td>
+				<td th:text="${item.description}" name="descriptionProd" style="max-width: 250px;"></td>
+				<td th:text="${item.price}"></td>
+				<td th:text="${item.sold}"></td>
+				<td th:switch="${item.isActive}">
+					<th:block th:case="0">
+						<button type="button" id="btnAccept" class="btn btn-outline-success" data-bs-toggle="modal"
+							data-bs-target="#animationProd">
+							Accept
+						</button>
+						<button type="button" id="btnRefuse" class="btn btn-outline-danger" data-bs-toggle="modal"
+							data-bs-target="#animationProd">
+							Refuse
+						</button>
+					</th:block>
+					<button th:case="1" id="btnDeac" type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+						data-bs-target="#animationProd">
+						Deactive
+					</button>
+					<span th:case="2" style="color: red;">Refused</span>
+					<span th:case="3" style="color: red;">Deactived</span>
+				</td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+
+<script>
+	$(document).ready(function () {
+		//var idCate = $("#pIdCate").text();
+
+		$(".dataTable-info").hide();
+		$("#tableProdOfCate").on('click', '#btnAccept', function () {
+			// get the current row
+			var currentRow = $(this).closest("tr");
+
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+
+			$("#idProd").val(idProd);
+			$("#isActiveProd").val(1);
+			$("#myModalLabelBtnProd").text("Accept Product");
+			$("#messBtnProd").text("Are you sure you want to accept this product?");
+			$("#btnSubmitProd").text("Accept");
+
+		});
+		$("#tableProdOfCate").on('click', '#btnRefuse', function () {
+			// get the current row
+			var currentRow = $(this).closest("tr");
+
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+			$("#idProd").val(idProd);
+			$("#isActiveProd").val(2);
+			$("#myModalLabelBtnProd").text("Refuse Product");
+			$("#messBtnProd").text("Are you sure you want to refuse this product?");
+			$("#btnSubmitProd").text("Refuse");
+
+		});
+		$("#tableProdOfCate").on('click', '#btnDeac', function () {
+
+			// get the current row
+			var currentRow = $(this).closest("tr");
+
+			var idProd = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+			$("#idProd").val(idProd);
+			$("#isActiveProd").val(3);
+			$("#myModalLabelBtnProd").text("Deactive Product");
+			$("#messBtnProd").text("Are you sure you want to deactive this product?");
+			$("#btnSubmitProd").text("Deactive");
+
+		});
+
+	});
+</script>

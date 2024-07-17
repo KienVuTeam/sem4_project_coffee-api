@@ -1,0 +1,109 @@
+.borderVoucher {
+	margin-bottom: 10px;
+	border: .0625rem solid transparent;
+	border-left: none;
+	box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+	box-sizing: border-box;
+	position: relative;
+	transition: background 1s ease;
+	width: 465px;
+}
+
+.voucherImg {
+	align-items: center;
+	border-right: .0625rem dashed #e8e8e8;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+	width: var(--vc-card-height, 7.375rem);
+}
+
+.styleTest {
+	background: linear-gradient(180deg, transparent calc(var(--vc-card-radius, .25rem)*2), var(--vc-card-left-border-color, #e8e8e8) 0) 0 .0625rem /.0625rem calc(var(--vc-card-radius, .25rem)*2 + var(--vc-card-gap, .125rem)) repeat-y, radial-gradient(circle at 0 var(--vc-card-radius, .25rem), transparent 0, transparent calc(var(--vc-card-radius, .25rem) - .0625rem), var(--vc-card-left-border-color, #e8e8e8) 0, var(--vc-card-left-border-color, #e8e8e8) var(--vc-card-radius, .25rem), var(--vc-card-left-fill-color, #fff) 0) 0 .0625rem /100% calc(var(--vc-card-radius, .25rem)*2 + var(--vc-card-gap, .125rem)) repeat-y;
+	bottom: calc(var(--vc-card-sawtooth-margin, .25rem) - .0625rem);
+	top: calc(var(--vc-card-sawtooth-margin, .25rem) - .0625rem);
+	width: 100%;
+}
+
+.heightDetailsVoucher {
+	height: 30px;
+}
+
+.lsVoucher::-webkit-scrollbar {
+	display: none;
+}
+
+.backButton {
+	border: 1px solid gray;
+	height: 2.5rem;
+	border-radius: .125rem;
+	padding: 10px 0;
+	box-sizing: border-box;
+	width: 140px;
+	text-transform: uppercase;
+	font-size: .875rem;
+	font-weight: 400;
+	color: #555;
+	margin-right: 6px;
+	line-height: 1;
+	background: none;
+}
+
+.submitButton {
+	height: 2.5rem;
+	border-radius: .125rem;
+	padding: 10px 0;
+	box-sizing: border-box;
+	width: 140px;
+	text-transform: uppercase;
+	font-size: .875rem;
+	font-weight: 400;
+	margin-right: 6px;
+	line-height: 1;
+	background: none;
+	background-color: #ee4d2d;
+	color: white;
+}
+
+.hideElement{
+	visibility: hidden;
+}
+
+.showElement{
+	visibility: visible;
+}
+
+.voucherDisable{
+	pointer-events: none;
+	opacity: 0.6;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

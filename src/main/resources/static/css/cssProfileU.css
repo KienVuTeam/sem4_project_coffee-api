@@ -1,0 +1,111 @@
+.itemMenuLeft {
+	font-weight: 400;
+	margin-bottom: 20px;
+	height: 50px;
+	color: chocolate;
+	justify-content: center;
+	display: flex;
+	align-items: center;
+	box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.itemMenuLeft:active {
+	box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+}
+
+.textChgAvatar {
+	font-size: 14px;
+	color: cadetblue;
+	text-align: center;
+	height: 10px;
+}
+
+.textChgAvatar:active {
+	color: red;
+}
+
+.textHdProfile {
+	height: 25px;
+	padding-left: 15px;
+	color: #555;
+}
+
+.textBdProfile {
+	display: flex;
+	margin-left: 8px;
+	font-size: 15px;
+	color: black;
+	align-items: baseline;
+	
+}
+
+.inpProfile {
+	margin-bottom: 10px;
+	border: 0;
+	outline: 0;
+	border-bottom: 1px solid burlywood;
+	width: 325px;
+}
+
+.buttonUpdateProfile {
+	border-radius: 5px;
+	color: white;
+	width: 100%;
+	background-color: #ee4d2d;
+	box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.2);
+}
+
+.buttonUpdateProfile:active {
+	box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+}
+
+.lbUserProfile {
+	display: flex;
+	justify-content: center;
+	color: cadetblue;
+}
+
+.lbUserProfile:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.inpPassword {
+	background-color: floralwhite;
+	border-radius: 5px;
+	margin-bottom: 0px;
+	font-size: 18px;
+	border: 1px solid #efefef;
+	width: 100%;
+	height: 41px;
+	text-align: center;
+	font-weight: 400;
+	opacity: 0.9;
+}
+
+.textBdProfile {
+	margin-top: 5px;
+	display: baseline;
+	margin-left: 8px;
+	font-size: 15px;
+	color: black;
+	align-items: baseline;
+	
+}
+
+.inpProfile {
+	border: 0;
+	outline: 0;
+	border-bottom: 1px solid burlywood;
+	width: 325px;
+}
+
+.msgCPass{
+	font-size: 17px;
+    font-family: 'Jost';
+    font-weight: 400;
+    margin-left: 5px;
+    color: rgb(245, 56, 56);
+}

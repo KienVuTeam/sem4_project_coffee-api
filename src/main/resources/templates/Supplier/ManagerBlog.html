@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+	
+</head>
+	<link rel="stylesheet" href="/supplier/vendors/quill/quillBubble.css">
+    <link rel="stylesheet" href="/supplier/vendors/quill/quillSnow.css">
+    <link rel="stylesheet" href="/supplier/css/detailBlog.css">
+<body>
+
+	<style>
+        .wrapImg{
+            width: 120px;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .wrapImg > img {
+            width: 100%;
+            max-height: 90%;
+        }
+        .listImg {
+            display: flex;
+        }
+        .ml-15 {
+            margin-left: 15px;
+        }
+        .dropzone {
+            position: relative;
+            border: 1px dashed #999;
+            width: 150px;
+            height: 130px;
+            border-radius: 3px;
+            text-align: center;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+        .dropzone:hover .active{
+            display: flex;
+        }
+        .overlay{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+        .overlay button {
+            background-color: transparent;
+            border: none;
+            color: cornsilk;
+            padding: 10px;
+        }
+        .overlay button i{
+            font-size: 17px;
+        }
+        .upload-icon {
+            object-fit: cover;
+            width: 150px;
+            height: 130px;
+            display: none;
+            position: absolute;
+            z-index: 1;
+        }
+        .default-upload {
+            width: 120px;
+            height: 100px;
+            margin-top: 15px;
+        }
+        .upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .ql-editor{
+            min-height: 200px;
+        }
+        .ql-editor p{
+            color: inherit;
+        }
+    </style>
+    
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+        
+        <div class="main-content container-fluid">
+                <!-- Manager Blogs -->
+                <section class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            Manager Blogs
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-primary m-2" data-bs-toggle="modal"
+                            data-bs-target="#AddBlog">Create Blog</button>
+
+                            <table class="table table-hover dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>No.</th>
+                                        <th>Blog Name</th>
+                                        <th>Blog Thumbnail</th>
+                                        <th>Date Created</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Tại Sao Nên Mua Cà Phê BMT</td>
+                                        <td>
+                                            <div class="wrapImg">
+                                                <img src="/supplier/images/blogpost1.jpg" alt="" srcset="">
+                                            </div>
+                                        </td>
+                                        <td>12-13-2023</td>
+                                        <td>
+                                            <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                                data-bs-target="#DetailBlog">
+                                                Detail
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                <!-- End Manager Blogs -->
+
+                <!-- Modal Detail Blog -->
+                <div class="modal fade" id="DetailBlog" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <form class="form form-vertical">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Detail "Blog Name"</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <i data-feather="x"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="blog__wrapper blog__wrapper--single">
+                                                    <article class="blog__post blog__post--single format format-image">
+                                                        <div class="thumb">
+                                                            <img src="/supplier/images/blogpost1.jpg" alt="">
+                                                        </div>
+                                                        <ul class="meta mt-20 list-unstyled d-flex align-items-center">
+                                                            <li><a href="#0"><i class="fas fa-file"></i> Coffee</a></li>
+                                                            <li><a href="#0"><i class="fas fa-comments"></i> 30 Comments</a></li>
+                                                            <li><a href="#0"><i class="fas fa-calendar-alt"></i> 04th March 2019</a></li>
+                                                        </ul>
+                                                        <div class="content mt-10">
+                                                            <h2 class="title mb-10">ideal cocktails from our barmen for pefect mood</h2>
+                                                            <div class="mt-10">
+                                                                <p>For those of us who want to say thank you to our moms, it’s not always easy to put those big feelings in words. Which is where Dribbble comes in.</p>
+                                                            </div>
+                                                            <div class="mt-20">
+                                                                <p>These eight shots crystallize the hard work moms put into keeping their kids alive, happy, and healthy. They might give you the inspiration you need for filling out that card—or stand alone for your mom’s interpretation.</p>
+                                                            </div>
+                                                            <div class="mt-20">
+                                                                <p>An eyewitness described the scene at a packed branch of Asda in the Wirral, Merseyside, on Saturday, as a man in his 30s attempted to buy more than the three Pot Noodles allowed by the </p>
+                                                            </div>
+                                                            <div class="mt-20">
+                                                                <h3>Here come the moms in space</h3>
+                                                                <p>The incident, which was raised in parliament by Labour MP Bill Esterson, was just one of the horrendous cases of abuse revealed by supermarket workers in recent days as some customers grow angry over restrictions and empty shelves.</p>
+                                                            </div>
+                                                            <div class="mt-20">
+                                                                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tag-social-wrapper mt-30">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <h4>Releted Tags</h4>
+                                                                    <div class="tagcloud">
+                                                                        <a href="#0">Popular</a>
+                                                                        <a href="#0">Desgin</a>
+                                                                        <a href="#0">UX</a>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 social-share-wrapper text-left text-md-end">
+                                                                    <h4>Social Share</h4>
+                                                                    <div class="social-share">
+                                                                        <a href="#0"><i class="fab fa-facebook-f"></i></a>
+                                                                        <a href="#0"><i class="fab fa-twitter"></i></a>
+                                                                        <a href="#0"><i class="fab fa-google-plus-g"></i></a>
+                                                                        <a href="#0"><i class="fab fa-instagram"></i></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="author-box mt-50 mb-40 d-flex align-items-center justify-content-center">
+                                                            <div class="ath-thumb mr-40">
+                                                                <img src="/supplier/images/author1.jpg" alt="">
+                                                            </div>
+                                                            <div class="ath-content">
+                                                                <span>Written by</span>
+                                                                <h3 class="name">Rosalina D. Habdilan</h3>
+                                                                <p>Stephen Romero has worked a Italy Report since its launch in 2011. In the years since, he has led by example the company's tech news team and published over 5,000 articles...</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="post-comments">
+                                                            <h2 class="title mb-25">03 Comments</h2>
+                                                            <div class="latest__comments">
+                                                                <ul class="list-unstyled mb-0">
+                                                                    <li>
+                                                                        <div class="comments-box">
+                                                                            <div class="comments-avatar">
+                                                                                <img src="/supplier/images/cauthor1.png" alt="">
+                                                                            </div>
+                                                                            <div class="comments-text">
+                                                                                <div class="avatar-name">
+                                                                                    <h5>Rosalina Kelian</h5>
+                                                                                    <span><i class="fas fa-calendar-alt"></i> 19th May 2018</span>
+                                                                                    <a class="reply" href="#0"><i class="fas fa-reply"></i>Reply</a>
+                                                                                </div>
+                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                                                    tempor incididunt
+                                                                                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                                                                    exercitation
+                                                                                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="children">
+                                                                        <div class="comments-box">
+                                                                            <div class="comments-avatar">
+                                                                                <img src="/supplier/images/cauthor2.png" alt="">
+                                                                            </div>
+                                                                            <div class="comments-text">
+                                                                                <div class="avatar-name">
+                                                                                    <h5>Rosalina Kelian</h5>
+                                                                                    <span><i class="fas fa-calendar-alt"></i> 19th May 2018</span>
+                                                                                    <a class="reply" href="#0"><i class="fas fa-reply"></i>Reply</a>
+                                                                                </div>
+                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                                                    tempor incididunt
+                                                                                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                                                                    exercitation
+                                                                                    ullamco laboris nisi ut aliquip.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="comments-box">
+                                                                            <div class="comments-avatar">
+                                                                                <img src="/supplier/images/cauthor3.png" alt="">
+                                                                            </div>
+                                                                            <div class="comments-text">
+                                                                                <div class="avatar-name">
+                                                                                    <h5>Arista Williamson</h5>
+                                                                                    <span><i class="fas fa-calendar-alt"></i> 19th May 2018</span>
+                                                                                    <a class="reply" href="#0"><i class="fas fa-reply"></i>Reply</a>
+                                                                                </div>
+                                                                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                                                    tempor incididunt
+                                                                                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                                                                                    exercitation
+                                                                                    ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </article>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light-secondary close" data-bs-dismiss="modal">
+                                        <span class="d-none d-sm-block">Close</span>
+                                    </button>
+
+                                    <button type="submit" class="btn btn-primary ml-1">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Detail Blog -->
+
+                <!-- Modal Add Blog -->
+                <div class="modal fade" id="AddBlog" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <form class="form form-vertical">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Create a new Blog</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <i data-feather="x"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-vertical">Blog Title</label>
+                                                    <input type="text" id="first-name-vertical"
+                                                        class="form-control" name="blogTitle"
+                                                        placeholder="Enter Your Blog Title" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="email-id-vertical">Blog Thumbnail</label>
+                                                    <div class="listImg">
+                                                        <div class="dropzone">
+                                                            <div class="overlay">
+                                                                <button title="remove" onclick="removeImage(this)"><i class="fas fa-trash"></i></button>
+                                                            </div>
+                                                            <img class="upload-icon" />
+                                                            <img src="https://100dayscss.com/codepen/upload.svg"
+                                                                class="default-upload" />
+                                                            <input type="file" class="upload-input"
+                                                                onchange="upload(this)" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="email-id-vertical">Blog Content</label>
+                                                <div class="form-group">
+                                                    <div id="full">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="reset" class="btn btn-light-secondary">
+                                        <span class="d-none d-sm-block">Reset</span>
+                                    </button>
+
+                                    <button type="submit" class="btn btn-primary ml-1">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Add Blog -->
+            </div>
+        
+        <footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+	<script src="/supplier/vendors/quill/quill_min.js"></script>
+    <script src="/supplier/js/form_editor.js"></script>
+
+    <script>
+        // Simple Datatable
+        let table1 = document.querySelector('.dataTable');
+        let dataTable = new simpleDatatables.DataTable(table1);
+    </script>
+    <script>
+        let file = document.querySelector(".upload-input");
+        let listImg = document.querySelector(".listImg");
+            
+        function upload(e) {
+            let dropzone = e.parentNode;
+            let overlays = dropzone.children[0];
+            let imgs = dropzone.children[1];
+            let defaultImgs = dropzone.children[2];
+            
+            imgs.src = URL.createObjectURL(e.files[0]);
+            defaultImgs.style.display = "none";
+            overlays.classList.add("active");
+            imgs.style.display = "block";
+        }
+
+        function removeImage(e){
+            let nextItem = `<div class="overlay"><button title="remove" onclick="removeImage(this)"><i class="fas fa-trash"></i></button></div>
+            <img class="upload-icon" />
+            <img src="https://100dayscss.com/codepen/upload.svg"
+            class="default-upload" />
+            <input type="file" class="upload-input" onchange="upload(this)" />`;
+            let nextNode = document.createElement("div");
+            nextNode.classList.add("dropzone");
+            nextNode.innerHTML = nextItem;
+            listImg.appendChild(nextNode);
+            
+            e.parentNode.parentNode.remove();
+        }
+    </script>
+
+</body>
+
+</html>

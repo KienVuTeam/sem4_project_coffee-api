@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Yinka Enoch Adedokun">
+    <meta name="description" content="Simple Forgot Password Page Using HTML and CSS">
+    <link rel="shortcut icon" href="/images/logo/favicon.ico" type="images/x-icon">
+    <title>New Email</title>
+    <link rel="stylesheet" href="/css/cssRecoverP.css">
+</head>
+
+<body>
+    <div class="row">
+        <h1>New Email</h1>
+        <h6 class="information-text">Enter your new Email</h6>
+        <div class="form-group">
+            <input type="email" name="user_email" id="uNewEmail" autocomplete="off" maxlength="50"
+                minlength="8">
+            <span class="txAlert" data-validate="false" id="msgNewEmail"></span>
+            <p><label for="username">Please Enter the new email address. After submitting the request, an email will be send to the new emai address with a link
+                and email verification code to complete the process.
+            </label></p>
+            <button id="btnSendMail">Submit</button>
+        </div>
+
+    </div>
+
+    <div class="container" id="modalAlert">
+        <div class="cookiesContent" id="cookiesPopup">
+            <button class="close" id="closeModal">✖</button>
+            <!-- 44cd55 -->
+            <img src="https://cdn-icons-png.flaticon.com/128/738/738884.png" alt="cookies-img" class="imgModal"
+                id="iconModal" />
+            <p class="msgModal" id="messageModal">We use cookies for improving user experience, analytics and marketing.
+            </p>
+            <button class="accept" id="btnAccept">OK</button>
+        </div>
+    </div>
+
+    <div class="container" id="modalLoading">
+        <div class="cookiesContent" id="cookiesPopup">
+            <!-- 44cd55 -->
+            <p></p>
+            <img src="/images/users/loadingWaiting.gif" alt="cookies-img" class="imgModal" style="top: 20px;position: relative;"
+                id="iconModalLoading" />
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="/js/errorFieldCheck.js"></script>
+    <script>
+       
+        const fieldCheck = new errorFieldCheck();        
+        var modal = document.getElementById("modalAlert");
+        var buttonAccept = document.getElementById("btnAccept");
+        var modalLoading = document.getElementById("modalLoading");
+        //
+        $('#uNewEmail').on('input blur', function (e) {
+            e.preventDefault();
+            checkEmailUserInput();
+        })
+
+        function checkEmailUserInput() {
+            var flagValidate = fieldCheck.checkInputEmail($('#uNewEmail'), $("#msgNewEmail"));
+            if (flagValidate == true) {
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    data: {
+                        newEmail: $('#uNewEmail').val().trim()
+                    },
+                    url: "/Email/userCheckEmailChange",
+                }).done(function (data) {
+                    if (data.flagMessage == false) {
+                        $('#msgNewEmail').text(data.message);
+                        $('#msgNewEmail').attr('data-validate',false);
+                    } else {
+                        $('#msgNewEmail').attr('data-validate',true);
+                    }
+                });
+            }
+        }
+
+        $('#btnSendMail').on('click',function(e){
+            e.preventDefault();
+            checkEmailUserInput();
+            var flagValidate = $('#msgNewEmail').attr('data-validate');
+
+            if (flagValidate == "true") {
+                modalLoading.style.display = "flex";
+                $.ajax({
+                    cache: false,
+                    data: {
+                        newEmail: $('#uNewEmail').val().trim()
+                    },
+                    url: "/Email/userRequestSendMail",
+                    beforeSend: function(){
+                        modalLoading.style.display = "flex";
+                    }
+                })
+                .done(function (data) {
+                    showModalDialog(data);
+                    modalLoading.style.display = "none";
+                });
+            }
+        })
+
+        function showModalDialog(data) {
+            $('#messageModal').text(data.msgRecover);
+            buttonAccept.style.backgroundColor = "#ed6755";
+            if (data.flagSuccess) {
+                if (data.flagSendding == true) {
+                    $('#iconModal').attr('src', "/images/users/iconEmail.png");
+                    buttonAccept.style.backgroundColor = "#44cd55";
+                } else {
+                    $('#iconModal').attr('src', "/images/users/errorIcon.png");
+                }
+            } else {
+                $('#iconModal').attr('src', "/images/users/errorIcon.png");
+                $('#messageModal').text("There Are Some Errors Please Try Back");
+            }
+            $('#modalAlert').fadeIn(500);
+            modal.style.display = "flex";
+        }
+
+        $('#closeModal').on('click', function (e) {
+            e.preventDefault();
+            eventUnDisplayModal();
+        });
+
+        $('#btnAccept').on('click', function (e) {
+            e.preventDefault();
+            eventUnDisplayModal();
+        });
+
+        window.onclick = function (e) {
+            if (e.target == modal) {
+                eventUnDisplayModal();
+            }
+        }
+
+        function eventUnDisplayModal() {
+            modal.style.display = "none";
+        }
+
+    </script>
+</body>
+
+</html>

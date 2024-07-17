@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+</head>
+    <link rel="stylesheet" href="/supplier/vendors/choicesjs/choices.min.css" />
+    <link rel="stylesheet" href="/supplier/css/detailBlog.css">
+    <link rel="stylesheet" href="/supplier/css/alert.css">
+    <script type="text/javascript">
+    document.getElementById("title_supplier").textContent="Supplier - Voucher management ";
+    </script>
+
+<body>
+	<style>
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        
+        .wrapImg{
+            width: 120px;
+        }
+
+        .wrapImg > img {
+            width: 100%;
+            max-height: 90%;
+        }
+        .alert{
+            width: 30%;
+            display: none;
+            left: 105%;
+            z-index: 1234;
+        }
+        .showAlert {
+            display: block;
+            animation: movein 0.5s ease forwards, moveout 0.5s 2.5s ease forwards;
+        }
+        .validateSpecialChar{
+            text-transform: uppercase;
+        }
+        ::-webkit-input-placeholder { /* WebKit browsers */
+            text-transform: none;
+        }
+        :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+            text-transform: none;
+        }
+        ::-moz-placeholder { /* Mozilla Firefox 19+ */
+            text-transform: none;
+        }
+        :-ms-input-placeholder { /* Internet Explorer 10+ */
+            text-transform: none;
+        }
+        ::placeholder { /* Recent browsers */
+            text-transform: none;
+        }
+        @keyframes movein {
+            from { 
+                left: 105%; 
+            }
+            to   { 
+                left: 70%; 
+            }
+        }
+
+        @keyframes moveout {
+            from { left: 65%; }
+            to   { left: 105%; }
+        }
+    </style>
+    
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+        
+        <div class="main-content container-fluid">
+                <!-- Manager Voucher -->
+                <section class="section">
+                    <div class="card">
+                        <div class="card-header row page-title m-0">
+							<div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Voucher Management</h3>
+                            </div>
+                            <div class="col-12 col-md-6 order-md-2 order-first">
+                                <nav aria-label="breadcrumb" class="breadcrumb-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/Supplier/Dashboard">Dashboard</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Voucher Management</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="col-12 d-flex">
+                                <button class="btn btn-primary m-2 checkIsActive" data-bs-toggle="modal"
+                                data-bs-target="#AddVoucher">Create Voucher</button>
+                                <div class="input-group w-25 ml-50" style="padding: 7px;">
+                                    <label class="input-group-text" for="FilterVoucher">Filter</label>
+                                    <select class="form-select" id="FilterVoucher" onchange="filterVoucher(this.value)">
+                                        <option value="All" selected="selected">All Voucher</option>
+                                        <option value="1">In Use Voucher</option>
+                                        <option value="2">Upcoming Voucher</option>
+                                        <option value="3">Expired Voucher</option>
+                                    </select>
+                                </div>
+                            </div>
+							
+                            <div id="ajax-voucher">
+                            	<table class="table table-hover dataTable">
+	                                <thead>
+	                                    <tr>
+	                                        <th>No.</th>
+	                                        <th>Voucher Code</th>
+	                                        <th>Condition</th>
+	                                        <th>Discount</th>
+	                                        <th>Used</th>
+	                                        <th>Date Begin</th>
+	                                        <th>Date End</th>
+	                                        <th>Status</th>
+	                                        <th>Action</th>
+	                                    </tr>
+	                                </thead>
+	                                <tbody>
+	                                    <tr th:each="item : ${AllVoucher}">
+	                                        <td th:text="${itemStat.index + 1}"></td>
+	                                        <td th:text="${item.id}"></td>
+	                                        <td th:text="${item.condition}"></td>
+	                                        <td th:text="${item.discount}"></td>
+	                                        <td th:text="${item.used}"></td>
+	                                        <td th:text="${item.startDate}"></td>
+	                                        <td th:text="${item.endDate}"></td>
+	                                        
+	                                        <td th:switch="${item.isActive}">
+	                                            <div th:case="0" class="text-warning">Upcoming</div>
+	                                            <div th:case="1" class="text-success">On Sale</div>
+	                                            <div th:case="2" class="text-danger">Expired</div>
+	                                        </td>
+	                                        
+	                                        <td th:if="${item.isActive == 0}">
+                                                <button type="button" class="btn btn-info edit checkIsActive" data-bs-toggle="modal" title="Edit Voucher"
+                                                    data-bs-target="#EditVoucher" onclick="editVoucher(this)"
+                                                    th:attr="data-startDate=${item.startDate},
+                                                    data-endDate=${item.endDate},data-id=${item.id},
+                                                    data-discount=${item.discount},data-condition=${item.condition},data-usercreate=${item.usercreate},data-isActive=${item.isActive}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                                </button>
+                                                <button type="submit" class="btn btn-danger" th:attr="data-id=${item.id}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteVoucher" onclick="deleteVoucher(this)" title="Delete Voucher">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                </button>
+	                                        </td>
+	                                        <td th:if="${item.isActive == 1}">
+                                                <button type="submit" class="btn btn-secondary checkIsActive" th:attr="data-id=${item.id}" data-bs-toggle="modal" data-bs-target="#ConfirmEndVoucher" onclick="endVoucher(this)" title="End Voucher">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                                </button>
+	                                        </td>
+	                                        <td th:if="${item.isActive == 2}">
+	                                            
+	                                        </td>
+	                                       	
+	                                    </tr>
+	                                    
+	                                </tbody>
+	                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- End Manager Voucher -->
+
+                <!-- Modal Edit Voucher -->
+                <div class="modal fade" id="EditVoucher" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <form action="/Supplier/EditVoucher" method="post" class="form form-vertical">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Edit Voucher</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <i data-feather="x"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Condition</label>
+                                                    <input type="number" id="contact-info-vertical"
+                                                        class="form-control validateNumberValue" name="condition" placeholder="Minimum Order Price" 
+                                                        min="1" max="9999999999" required >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Discount</label>
+                                                    <input type="number" id="contact-info-vertical" class="form-control validateNumberValue" name="discount"
+                                                        placeholder="Discount" min="1" required >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date Begin</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control editStartDate" name="startDate"
+                                                        placeholder="Date Begin" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date End</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control editEndDate" name="endDate"
+                                                        placeholder="Date End" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" class="editId" name="id">
+                                <input type="hidden" name="usercreate">
+                                <input type="hidden" name="isActive">
+                                
+                                <div class="modal-footer">
+                                    <button type="reset" class="btn btn-light-secondary">
+                                        <span class="d-none d-sm-block">Reset</span>
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary ml-1" onclick="confirmEditVoucher(this)">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Edit Voucher -->
+
+                <!-- Modal Add Voucher -->
+                <div class="modal fade" id="AddVoucher" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <form action="/Supplier/AddVoucher" method="post" class="form form-vertical">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Create a new Voucher</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <i data-feather="x"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-vertical">Voucher ID</label>
+                                                    <input type="text" id="first-name-vertical"
+                                                        class="form-control validateSpecialChar" name="id" autocomplete="off"
+                                                        placeholder="Voucher ID" maxlength="20" onkeypress="if(event.which===32){event.preventDefault();return false}" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Condition</label>
+                                                    <input type="number" id="contact-info-vertical"
+                                                        class="form-control validateNumberValue" name="condition" placeholder="Minimum Order Price" 
+                                                        min="1" max="9999999999" required >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Discount</label>
+                                                    <input type="number" id="contact-info-vertical" class="form-control validateNumberValue" name="discount"
+                                                        placeholder="Discount" min="1" required >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date Begin</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control startDate" name="startDate"
+                                                        placeholder="Date Begin" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date End</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control endDate" name="endDate"
+                                                        placeholder="Date End" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="reset" class="btn btn-light-secondary">
+                                        <span class="d-none d-sm-block">Reset</span>
+                                    </button>
+
+                                    <button type="submit" class="btn btn-primary ml-1 submitAddVoucher">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Add Voucher -->
+
+                <!-- Modal Confirm Delete Voucher -->
+                <div class="modal fade text-left" id="ConfirmDeleteVoucher" tabindex="-1" role="dialog"
+                    aria-labelledby="myModalLabel19" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm"
+                        role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h4 class="modal-title text-white" id="myModalLabel19">Delete Voucher ?</h4>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="font-size: 1.1rem;">
+                                This action will make the voucher disappear and this action cannot be undone. Do you still want to continue ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light-secondary btn-sm"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                    <span class="d-sm-block d-none">Close</span>
+                                </button>
+                                <button type="button" class="btn btn-danger ml-1 btn-sm confirmDelete"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-check d-block d-sm-none"></i>
+                                    <span class="d-sm-block d-none">Delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Confirm Delete Voucher -->
+
+                <!-- Modal Confirm End Voucher -->
+                <div class="modal fade text-left" id="ConfirmEndVoucher" tabindex="-1" role="dialog"
+                    aria-labelledby="myModalLabel19" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm"
+                        role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h4 class="modal-title text-white" id="myModalLabel19">Conclude Voucher ?</h4>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="font-size: 1.1rem;">
+                                This action will cause your voucher to end early and cannot be undone. Do you still want to continue ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light-secondary btn-sm"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                    <span class="d-sm-block d-none">Close</span>
+                                </button>
+                                <button type="button" class="btn btn-danger ml-1 btn-sm confirmEnd"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-check d-block d-sm-none"></i>
+                                    <span class="d-sm-block d-none">Conclude</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Confirm End Voucher -->
+
+                <!-- Alert Voucher -->
+                <div class="toast">
+                    <div class="toast-content">
+                        <span class="wrap-check"></span>
+                        <div class="message">
+                        <span class="message-text text-1"></span>
+                        <span class="message-text text-2"></span>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x toast-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <div class="progress"></div>
+                </div>
+                <!-- End Alert Voucher -->
+            </div>
+        
+        <footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+	
+	<script src="/supplier/js/jquery.min.js"></script>
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+    <script src="/supplier/vendors/choicesjs/choices.min.js"></script>
+    <script src="/supplier/js/alert.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+		// Simple Datatable
+		let table1 = document.querySelector('.dataTable');
+		let table3; 
+		
+		let dataTable = new simpleDatatables.DataTable(table1);
+		let dataTable2;
+        
+        // Declare Variable For Validation Date
+        let currentDate = new Date(new Date().toISOString().slice(0, -14));
+            currentDate.setFullYear(currentDate.getFullYear());
+            currentDate.setMonth(currentDate.getMonth());
+            currentDate.setDate(currentDate.getDate() + 1);
+        let tomorrowDate = new Date(new Date().toISOString().slice(0, -14));
+            tomorrowDate.setFullYear(tomorrowDate.getFullYear());
+            tomorrowDate.setMonth(tomorrowDate.getMonth());
+            tomorrowDate.setDate(tomorrowDate.getDate() + 2);
+        let maxYear = currentDate.getFullYear() + 1;
+        
+     // input autocomplete off
+     $("input").attr("autocomplete", "off");
+
+     /*<![CDATA[*/
+		var idSupplier = /*[[${idSupplier}]]*/ "";
+		var suppCookie = /*[[${suppCookie}]]*/ "";
+	 /*]]>*/
+	</script>
+
+    <!-- ================= Script Vavidation Date =================== -->
+    <script src="/supplier/js/Validation/dateVoucher.js"></script>
+    
+    <!-- ================= Script Validate Fields =================== -->
+    <script src="/supplier/js/Validation/validateFields.js"></script>
+
+	<script>
+	// Declare variable node element
+        let arr = [];
+        // Voucher
+        let V_tableEdit = document.querySelector('.tableEdit');
+        let V_listSearchItem = document.querySelectorAll('.searchItem');
+        let V_selectAll = document.querySelector('#selectAll');
+        let V_selectList = document.querySelectorAll('input[name="checkbox"]');
+        let V_search = document.querySelector('#search'); 
+
+// ===================================================================================
+// ===================================================================================
+		document.onload = checkIsActive();	
+	
+        function editVoucher(t){
+			let id = document.querySelector("#EditVoucher .editId");
+			let startDate = document.querySelector("#EditVoucher .editStartDate");
+			let endDate = document.querySelector("#EditVoucher .editEndDate");
+			let condition = document.querySelector("#EditVoucher input[name='condition']");
+			let discount = document.querySelector("#EditVoucher input[name='discount']");
+			let usercreate = document.querySelector("#EditVoucher input[name='usercreate']");
+			let isActive = document.querySelector("#EditVoucher input[name='isActive']");
+			
+            id.value = t.dataset.id;
+            startDate.value = t.dataset.startdate;
+            endDate.value = t.dataset.enddate;
+            condition.value = t.dataset.condition;
+            discount.value = t.dataset.discount;
+            usercreate.value = t.dataset.usercreate;
+            isActive.value = t.dataset.isactive;
+        }
+
+        function confirmEditVoucher(t){
+            let inputs = document.querySelector("#EditVoucher form").getElementsByTagName("input");
+            // inputs:  0: condition; 1: discount; 2: dateBegin; 3: dateEnd; 4: id; 5: usercreate; 6: isActive
+            let FilterVoucher = document.querySelector("#FilterVoucher");
+            let flag = true;
+            if(inputs[0].value == "" || inputs[0].checkValidity() == false){
+                flag = false;
+                inputs[0].reportValidity();
+                return false;
+            }
+            
+            if(parseInt(inputs[1].value) > (parseInt(inputs[0].value)/2)){
+                flag = false;
+                inputs[1].setCustomValidity("Condition amount cannot be reduced by more than 50%");
+                inputs[1].reportValidity();
+                return false;
+            }
+            
+            if(inputs[1].value == ""){
+                flag = false;
+                inputs[1].reportValidity();
+                return false;
+            }
+
+            if(!inputs[2].checkValidity()){
+                flag = false;
+                inputs[2].reportValidity();
+                return false;
+            }
+            if(!inputs[3].checkValidity()){
+                flag = false;
+                inputs[3].reportValidity();
+                return false;
+            }
+
+            if(flag){
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/EditVoucher",
+                    data: {
+                        condition: inputs[0].value,
+                        discount: inputs[1].value,
+                        startDate: inputs[2].value,
+                        endDate: inputs[3].value,
+                        id: inputs[4].value,
+                        usercreate: idSupplier,
+                        type : FilterVoucher.value,
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        returnAjaxVoucher(data);
+                        showAlert("success", "Your changes has been successful");
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                        showAlert("danger", "Awww, Somthing went wrong!!!");
+                    }
+                });
+                $("#EditVoucher").modal("hide");
+            }
+        }
+
+        $(".submitAddVoucher").on("click", function (e) {
+            
+            e.preventDefault();
+            let flag = true;
+            let form = document.querySelector("#AddVoucher form");
+            let id = document.querySelector("#AddVoucher input[name='id']");
+            let condition = document.querySelector("#AddVoucher input[name='condition']");
+            let discount = document.querySelector("#AddVoucher input[name='discount']");
+            let startDate = document.querySelector("#AddVoucher input[name='startDate']");
+            let endDate= document.querySelector("#AddVoucher input[name='endDate']");
+            
+            if(id.value == ""){
+                flag = false;
+                id.setCustomValidity("Please fill out this field");
+                id.reportValidity();
+            }else{
+            	$.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/CheckDuplicateIDVoucher",
+                    data: {
+                        id: id.value,
+                        userCreate: idSupplier
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if(data){
+                            flag = false;
+                            id.setCustomValidity("Voucher already exists");
+                            id.reportValidity();
+                            return false;
+                        }
+
+                        if(condition.value == "" || condition.checkValidity() == false){
+                            flag = false;
+                            condition.reportValidity();
+                            return false;
+                        }
+                        
+                        if(parseInt(discount.value) > (parseInt(condition.value)/2)){
+                            flag = false;
+                            discount.setCustomValidity("Condition amount cannot be reduced by more than 50%");
+                            discount.reportValidity();
+                            return false;
+                        }
+                        
+                        if(discount.value == ""){
+                            flag = false;
+                            discount.reportValidity();
+                            return false;
+                        }
+
+                        if(!startDate.checkValidity()){
+                            flag = false;
+                            startDate.reportValidity();
+                            return false;
+                        }
+                        if(!endDate.checkValidity()){
+                            flag = false;
+                            endDate.reportValidity();
+                            return false;
+                        }
+
+                        if(flag){
+                            form.submit();
+                        }
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+
+            
+        })
+        
+        function filterVoucher(value) {
+            $.ajax({
+                type : "GET",
+                contentType : "application/json",
+                url : "/Supplier/FilterVoucher",
+                data: {
+                    usercreate: idSupplier,
+                    type : value
+                },
+                dataType : 'json',
+                success : function(data) {
+                    if (data != null) {
+                        var html = "";
+                        html += `<table class="table table-hover dataTable3">
+		                            <thead>
+		                            <tr>
+		                                <th>No.</th>
+		                                <th>Voucher Code</th>
+		                                <th>Condition</th>
+		                                <th>Discount</th>
+		                                <th>Used</th>
+		                                <th>Date Begin</th>
+		                                <th>Date End</th>
+		                                <th>Status</th>
+		                                <th>Action</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody>`;
+                        data.forEach(function(item, index) {
+                            html+= `<tr>
+		                                <td>${index + 1}</td> 
+		                                <td>${item.id}</td>
+		                                <td>${item.condition}</td>
+		                                <td>${item.discount}</td>
+		                                <td>${item.used}</td>
+		                                <td>${item.startDate}</td>
+		                                <td>${item.endDate}</td>
+                                        <td>`
+		                                
+							switch (item.isActive) {
+                                case 0: html+=`<div class="text-warning">Upcoming</div>`;break;
+                                case 1: html+=`<div class="text-success">On Sale</div>`;break;
+                                case 2: html+=`<div class="text-danger">Expired</div>`;break;
+                            }
+		                                
+		                    html+=     `</td>
+                                        <td>`
+                            switch (item.isActive) { 
+                                case 0: html+=`<button type="button" class="btn btn-info edit checkIsActive" data-bs-toggle="modal" title="Edit Voucher"
+                                                data-bs-target="#EditVoucher" onclick="editVoucher(this)"
+                                                data-startDate="${item.startDate}" 
+                                                data-endDate="${item.endDate}" data-id="${item.id}"
+                                                data-discount="${item.discount}" data-condition="${item.condition}" data-usercreate="${item.usercreate}" data-isActive="${item.isActive}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+                                            <button type="submit" class="btn btn-danger" data-id="${item.id}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteVoucher" onclick="deleteVoucher(this)" title="Delete Voucher">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                            </button>`;break;
+                                case 1: html+=`<button type="submit" class="btn btn-secondary checkIsActive" data-id="${item.id}" data-bs-toggle="modal" data-bs-target="#ConfirmEndVoucher" onclick="endVoucher(this)" title="End Voucher">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                                </button>`;break;
+                            }
+		                        html+= `</td>
+                                    </tr>`;
+                        })
+                        html += `</tbody></table>`;
+                        
+                        $("#ajax-voucher").empty();
+                        $("#ajax-voucher").append(html);
+                        
+                        table4 = document.querySelector('.dataTable3');
+                        dataTable3 = new simpleDatatables.DataTable(table4);
+                        
+                        checkIsActive();
+                    } else {
+                        alert("error")
+                    }
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        }
+
+        function deleteVoucher(t){
+            let confirmDelete = document.querySelector("#ConfirmDeleteVoucher .confirmDelete");
+            let idVoucher = t.dataset.id;
+            let FilterVoucher = document.querySelector("#FilterVoucher");
+            confirmDelete.addEventListener("click", function(){
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/DeleteVoucher",
+                    data: {
+                        usercreate: idSupplier,
+                        type : FilterVoucher.value,
+                        idVoucher: idVoucher
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        returnAjaxVoucher(data);
+                        showAlert("success", "Your changes has been successful");
+                    },
+                    error : function(e) {
+                        showAlert("danger", "Awww, Somthing went wrong!!!");
+                        console.log("ERROR: ", e);
+                    }
+                });
+            });
+        };
+
+        function endVoucher(t){
+            let confirmEnd = document.querySelector("#ConfirmEndVoucher .confirmEnd");
+            let idVoucher = t.dataset.id;
+            let FilterVoucher = document.querySelector("#FilterVoucher");
+            confirmEnd.addEventListener("click", function(){
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/EndVoucher",
+                    data: {
+                        usercreate: idSupplier,
+                        type : FilterVoucher.value,
+                        idVoucher: idVoucher
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        returnAjaxVoucher(data);
+                        showAlert("success", "Your changes has been successful");
+                    },
+                    error : function(e) {
+                        showAlert("danger", "Awww, Somthing went wrong!!!");
+                        console.log("ERROR: ", e);
+                    }
+                });
+            });
+        };
+
+        function returnAjaxVoucher(data){
+            var html = "";
+            html += `<table class="table table-hover dataTable3">
+                        <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Voucher Code</th>
+                            <th>Condition</th>
+                            <th>Discount</th>
+                            <th>Used</th>
+                            <th>Date Begin</th>
+                            <th>Date End</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+            data.forEach(function(item, index) {
+                html+= `<tr>
+                            <td>${index + 1}</td> 
+                            <td>${item.id}</td>
+                            <td>${item.condition}</td>
+                            <td>${item.discount}</td>
+                            <td>${item.used}</td>
+                            <td>${item.startDate}</td>
+                            <td>${item.endDate}</td>
+                            <td>`
+                            
+                switch (item.isActive) {
+                    case 0: html+=`<div class="text-warning">Upcoming</div>`;break;
+                    case 1: html+=`<div class="text-success">On Sale</div>`;break;
+                    case 2: html+=`<div class="text-danger">Expired</div>`;break;
+                }
+                            
+                html+=     `</td>
+                            <td>`
+                switch (item.isActive) { 
+                    case 0: html+=`<button type="button" class="btn btn-info edit checkIsActive" data-bs-toggle="modal" title="Edit Voucher"
+                                    data-bs-target="#EditVoucher" onclick="editVoucher(this)"
+                                    data-startDate="${item.startDate}" 
+                                    data-endDate="${item.endDate}" data-id="${item.id}"
+                                    data-discount="${item.discount}" data-condition="${item.condition}" data-usercreate="${item.usercreate}" data-isActive="${item.isActive}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                </button>
+                                <button type="submit" class="btn btn-danger" data-id="${item.id}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteVoucher" onclick="deleteVoucher(this)" title="Delete Voucher">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                </button>`;break;
+                    case 1: html+=`<button type="submit" class="btn btn-secondary checkIsActive" data-id="${item.id}" data-bs-toggle="modal" data-bs-target="#ConfirmEndVoucher" onclick="endVoucher(this)" title="End Voucher">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                    </button>`;break;
+                }
+                    html+= `</td>
+                        </tr>`;
+            })
+            html += `</tbody></table>`;
+            
+            $("#ajax-voucher").empty();
+            $("#ajax-voucher").append(html);
+            
+            table4 = document.querySelector('.dataTable3');
+            dataTable3 = new simpleDatatables.DataTable(table4);
+            
+            checkIsActive();	
+        }
+
+    </script>
+
+
+
+<!-- ==================================================================================================================================== -->
+
+<!-- ==================================================================================================================================== -->
+
+<!-- ==================================================================================================================================== -->
+    
+</body>
+
+</html>

@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+
+</head>
+<style>
+td {
+	text-align: center;
+}
+
+.disabled-link {
+	pointer-events: none;
+}
+
+#col_1, #col_2, #col_3, #col_4, #col_5, #col_6, #col_7, #col_8, #col_9,
+	#col_10, #col_11, #col_12, #col_13 {
+	width: 30px;
+	height: 30px;
+	right: 10%;
+	position: absolute;
+	right: 10%;
+}
+
+#top__tool input[type=search] {
+	min-height: calc(1.5em + .934rem + 2px);
+	padding: .467rem .6rem;
+	font-size: .9025rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #555252;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #dfe3e7;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	border-radius: .25rem;
+	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+input[type=checkbox] {
+	
+}
+
+#preloader {
+	background: #ccc url(/supplier/images/loader3.gif) no-repeat center;
+	opacity: 0.9;
+	background-size: 5%;
+	height: 100vh;
+	width: 100%;
+	position: fixed;
+	z-index: 100;
+}
+
+.margin__left {
+	text-align: right;
+}
+
+.dataTable-sorter::before, .dataTable-sorter::after {
+	display: none;
+}
+</style>
+
+<!-- Add Jquery -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"
+	integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+	crossorigin="anonymous"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+	integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--  <script th:src="@{/ckeditor/ckeditor.js}"></script> -->
+<!-- bootstrap 5 -->
+
+
+<script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<!-- <script src="//cdn.ckeditor.com/4.22.1/basic/ckeditor.js"></script> -->
+
+
+<body>
+	<div id="preloader"></div>
+	<div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+
+	<div id="main">
+		<!-- star add =--------------------------------------------------==-->
+		<!-- Button trigger modal -->
+
+		<!-- Modal checkbox check uncheck -->
+
+
+		<!--  -->
+
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalInvoiDetail" tabindex="-1"
+			aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Invoice Detail</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form action="#" method="post">
+							<table id="tbl_invoiceDetail" class="table table-striped"
+								style="text-align: center;">
+								<thead>
+									<th flag_checkconfirm=true>No</th>
+									<th>Product name</th>
+									<th>Price</th>
+									<th>Quantity</th>
+									<th>Sub-price</th>
+									<th id="invoiDetail-confirm">Confirm</th>
+									<th id="invoiDetail-unConfirm">No confirm</th>
+								</thead>
+								<tbody id="data_invoice_detail">
+									<!-- <tr id="data_invoice_detail">
+										<td>1</td>
+										<td>Bia 333</td>
+										<td>2$</td>
+										<td>10</td>
+										<td>20$</td>
+										<td><input type="radio" name="check_choose"></td>
+										<td><input type="radio" name="check_choose"></td> 
+
+									</tr> -->
+
+								</tbody>
+							</table>
+
+							<div class="box-bottom-orderDetail" style="float: right;">
+								<span>Voucher Shop: 0$</span>
+								<!--  <p>Voucher ILA: (Nếu có): 2$</p> -->
+								<p style="color: purple;" id="refundOrderAmount-text">Discount:
+									0.00 $</p>
+								<p style="color: red;" id="totalOrderAmount-text">Total:
+									0.00 $</p>
+								<button class="btn btn-primary " data-idInvoiSup="0"
+									id="btn-confirm-invoiDetail" onclick="invoiDetailOnclick_ConfirmM(this)">Confirm</button>
+							</div>
+						</form>
+
+					</div>
+					<!-- <div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div> -->
+				</div>
+			</div>
+		</div>
+
+		<!-- end Add =-----------------------------------------------------=      -->
+
+		<nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+
+		<div class="main-content container-fluid">
+			<!-- <div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Datatable</h3>
+						<p class="text-subtitle text-muted">
+							We use 'simple-datatables' made by @fiduswriter. You can check
+							the full documentation <a
+								href="https://github.com/fiduswriter/Simple-DataTables/wiki">here</a>.
+						</p>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Datatable</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div> -->
+			<section class="section">
+				<div class="card">
+					<div class="card-header">Order Management</div>
+					<div class="card-body">
+
+						<!-- Button trigger for basic modal -->
+						<button type="button" class="btn btn-outline-primary block"
+							data-bs-toggle="modal" data-bs-target="#modalCheckUncheck">
+							customize filed show - hide</button>
+						<br> <br>
+						<!--  -->
+						<div style="display: flex; justify-content: space-between;"
+							id="top__tool">
+							<div>
+
+								<div class="input-group mb-3" style="width: 300px;">
+									<label class="input-group-text" for="inputGroupSelect01">Filter
+										Order</label> <select class="form-select" id="inputGroupSelect01">
+										<option value="0">--choose option--</option>
+										<option value="1">All Order</option>
+										<option value="2">Don't process</option>
+										<option value="3">Processed</option>
+
+									</select>
+								</div>
+							</div>
+							<!--  -->
+							<div>
+								<input type="search" placeholder="Key search..." id="keySearch">
+								<button class="btn btn-info"
+									onclick="getOrderManagementByCondition();">search</button>
+							</div>
+
+						</div>
+						<!-- ------------------------------------------------------ -->
+						<!--  <div style="display: flex; justify-content: center; flex-wrap: wrap; color: black; justify-content: space-around;">
+								
+								
+						</div> -->
+						<!--  -->
+						<!-- <select class="form-select" style="width: 300px;">
+						
+							<option d value="0">All Order</option>
+							<option value="1">Da xu ly</option>
+							<option value="2">Chưa Xu ly</option>
+							<option value="3">Da bi huy</option>
+						</select>-->
+
+
+						<table class='table table-striped' id="orderManagermentTable"
+							style="text-align: center;">
+							<thead>
+								<tr>
+									<th id="th_1" class="disabled-link" style="text-align: center;">No</th>
+									<th id="th_2" class="disabled-link" style="text-align: center;">Name
+										Cus</th>
+									<th id="th_3" class="disabled-link" style="text-align: center;">Address</th>
+									<th id="th_4" class="disabled-link" style="text-align: center;">Order
+										date</th>
+									<th id="th_5" class="disabled-link" style="text-align: center;">Total
+										Order Amount</th>
+									<th id="th_6" class="disabled-link" style="text-align: center;">Total
+										amount of product</th>
+									<th id="th_7" class="disabled-link" style="text-align: center;">Price
+										Voucher</th>
+									<th id="th_8" class="disabled-link" style="text-align: center;">Refund
+										to Customer</th>
+									<th id="th_9" class="disabled-link" style="text-align: center;">ILA
+										Commission</th>
+									<th id="th_10" class="disabled-link"
+										style="text-align: center;">Estimated total price</th>
+									<th id="th_11" class="disabled-link"
+										style="text-align: center;">Money received</th>
+									<th id="th_12" class="disabled-link"
+										style="text-align: center;">Action</th>
+									<th id="th_13" class="disabled-link"
+										style="text-align: center;">View detail</th>
+								</tr>
+							</thead>
+							<tbody id="data_orderManagerment">
+
+
+								<!-- <tr>
+									<td rowspan="" name="td_1">1</td>
+									<td rowspan="" name="td_2">Cus1</td>
+									<td  name="td_3">HCM</td>
+									<td name="td_4">10-10-2023</td>
+									<td name="td_5">20</td>
+									<td name="td_6">10</td>
+									<td name="td_7">5</td>
+									<td name="td_8">0</td>
+									<td name="td_9">0</td>
+									<td name="td_10">0</td>
+									<td name="td_11">0</td>
+									<td name="td_12">
+										<button class="btn btn-success">Confirm</button>
+									</td>
+									<td name="td_13"><button class="btn btn-info round"
+											data-bs-toggle="modal" data-bs-target="#exampleModal">Detail</button></td>
+								</tr>
+								<tr>
+									<td rowspan="" name="td_1"></td>
+									<td  name="td_2"></td>
+									<td  name="td_3">HCM</td>
+									<td name="td_4">10-10-2023</td>
+									<td name="td_5">20</td>
+									<td name="td_6">10</td>
+									<td name="td_7">5</td>
+									<td name="td_8">0</td>
+									<td name="td_9">0</td>
+									<td name="td_10">0</td>
+									<td name="td_11">0</td>
+									<td name="td_12">
+										<button class="btn btn-success">Confirm</button>
+									</td>
+									<td name="td_13"><button class="btn btn-info round"
+											data-bs-toggle="modal" data-bs-target="#exampleModal">Detail</button></td>
+								</tr>
+								<tr>
+									<td  name="td_1"></td>
+									<td name="td_2"></td>
+									<td  name="td_3">HCM</td>
+									<td name="td_4">10-10-2023</td>
+									<td name="td_5">20</td>
+									<td name="td_6">10</td>
+									<td name="td_7">5</td>
+									<td name="td_8">0</td>
+									<td name="td_9">0</td>
+									<td name="td_10">0</td>
+									<td name="td_11">0</td>
+									<td name="td_12">
+										<button class="btn btn-success">Confirm</button>
+									</td>
+									<td name="td_13"><button class="btn btn-info round"
+											data-bs-toggle="modal" data-bs-target="#exampleModal">Detail</button></td>
+								</tr>
+								-->
+								<tr id="" th:each="item ,key: ${model1}">
+									<td name="td_1" th:text="${key.index + 1}"></td>
+									<td th:text="${item.nameCus}" name="td_2"></td>
+									<td name="td_3" th:text="${item.address}">HCM</td>
+									<td name="td_4" th:text="${item.createAt}"></td>
+									<td name="td_5" th:text="${item.totalOrderAmount}">...</td>
+									<td name="td_6" th:text="${item.totalAmountOfProduct}">...</td>
+									<td name="td_7" th:text="${item.priceVoucher}">...</td>
+									<td name="td_8" th:text="${item.refundtoCustomers}">...</td>
+									<td name="td_9" th:text="${item.Commission}">...</td>
+									<td name="td_10" th:text="${item.estimatedTotalPrice}">...</td>
+									<td name="td_11" th:text="${item.moneyReceived}">...</td>
+									<td name="td_12" th:switch="${item.statusOfInvoiceSupp}"><b
+										style="color: red;" th:case="'0'" th:text="${'Dont process'}"></b>
+										<b style="color: purple;" th:case="'1'"
+										th:text="${'Processing'} "></b> <b style="color: dark;"
+										th:case="'2'" th:text="${'Cus has received'}"></b>
+
+										<button class="btn btn-success" th:case="'3'"
+											onclick='SuppConfirmForReceivedMoney(this);'
+											th:data-idInvoi="${item.idInvoice}">Payment of admin</button>
+										<b style="color: green;" th:case="'4'" th:text="${'Success'}"></b>
+
+										<div th:case="*">
+											<b style="color: red;">### Error</b>
+										</div> <!--  <button class="btn btn-success" th:text="${item.statusOfInvoi}" th:data-temp="${item.statusOfInvoiceSupp}">...</button>-->
+									</td>
+									<!-- statusOfInvoiSup   // statusOfInvoi -->
+									<td name="td_13">
+										<button class="btn btn-info round" th:data="${item.idInvoice}"
+											th:data-statusOfInvoiSup="${item.statusOfInvoiceSupp}"
+											th:data-idInvoiSup="${item.idInvoiceSupp}"
+											th:data-invoiTotalWhenOn="${item.totalOrderAmount}"
+											onclick='showInvoiceDetail(this)'>Detail</button> <!-- th:switch="${item.statusOfInvoiceSupp}"// th:case="'0'" //<b style="color: purple;" th:case="'1'" th:text="${'confirm'} "></b> //<div th:case="*">
+											<b style="color: red;">### Error</b> //<a
+											onclick="return  confirm('Are you sure DELETE ?')"
+											th:href="@{/ConfirmInvoice(id=${item.idInvoice} ,isStatus=3)}"
+											class="btn btn-danger">Delete</a> <a
+											th:href="@{/ConfirmInvoice(id=${item.idInvoice} ,isStatus=1)}"
+											type="button" class="btn btn-info">Confirm</a>
+										</div>-->
+
+
+
+									</td>
+
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</section>
+		</div>
+
+		<!--  Modal-->
+		<!--Basic Modal -->
+		<div class="modal fade text-left" id="modalCheckUncheck" tabindex="-1"
+			role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="myModalLabel1">Check - uncheck
+							filed</h5>
+						<button type="button" class="close rounded-pill"
+							data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body" style="font-size: 25px; color: purple;">
+						<!--  /<div class="row">
+					  		<div class="col-6">
+					  			   <label>No</label>
+								   <label>Name Cus</label>
+								   <label>Address</label>
+								   <label>Order date</label>
+								   <label>Total amount</label>
+								   <label>Total amount of product</label>
+								   <label>Price Voucher</label>
+								   <label>Refund to customer</label>
+								   <label>Hoa hồng ILA</label>
+								   <label>Estimated total price</label>
+								   <label>Money received</label>
+								   <label>Action</label>
+								   <label>View detail</label>
+					  		</div>
+					  		<div class="col-6" style="display: block;">
+					  			<input type="checkbox" id="col_1"
+								onclick="col_1()"><input type="checkbox" id="col_2"
+								onclick="col_2()"><input type="checkbox" id="col_3"
+								onclick="col_3()"><input type="checkbox" id="col_4"
+								onclick="col_4()"><input type="checkbox" id="col_5"
+								onclick="col_5()"><input type="checkbox" id="col_6"
+								onclick="col_6()"><input type="checkbox" id="col_7"
+								onclick="col_7()"><input type="checkbox" id="col_8"
+								onclick="col_8()"><input type="checkbox" id="col_9"
+								onclick="col_9()"><input type="checkbox" id="col_10"
+								onclick="col_10()"><input type="checkbox" id="col_11"
+								onclick="col_11()"><input type="checkbox" id="col_12"
+								onclick="col_12()"><input type="checkbox" id="col_13"
+								onclick="col_13()">
+					  		</div>
+					   </div> /-->
+						<div style="margin: 0px 5px;">
+							<label>No</label> <input class="margin__left" type="checkbox"
+								id="col_1" onclick="col_1()">
+						</div>
+						<!--  <div style="margin: 0px 5px;">
+							<label>Name Cus</label> <input class="margin__left"
+								type="checkbox" id="col_2" onclick="col_2()">
+						</div> -->
+
+						<div style="margin: 0px 5px;">
+							<label>Address</label> <input class="margin__left"
+								type="checkbox" id="col_3" onclick="col_3()">
+						</div>
+
+						<div style="margin: 0px 5px;">
+							<label>Order date</label> <input class="margin__left"
+								type="checkbox" id="col_4" onclick="col_4()">
+						</div>
+
+						<!-- <div style="margin: 0px 5px;">
+							<label>Total amount</label> <input class="margin__left"
+								type="checkbox" id="col_5" onclick="col_5()">
+						</div> -->
+
+						<div style="margin: 0px 5px;">
+							<label>Total amount of product</label> <input
+								class="margin__left" type="checkbox" id="col_6"
+								onclick="col_6()">
+						</div>
+
+						<div style="margin: 0px 5px;">
+							<label>Price Voucher</label> <input class="margin__left"
+								type="checkbox" id="col_7" onclick="col_7()">
+						</div>
+
+						<div style="margin: 0px 5px;">
+							<label>Refund to customer</label> <input class="margin__left"
+								type="checkbox" id="col_8" onclick="col_8()">
+						</div>
+
+						<div style="margin: 0px 5px;">
+							<label>Commission ILA</label> <input class="margin__left"
+								type="checkbox" id="col_9" onclick="col_9()">
+						</div>
+
+						<div style="margin: 0px 5px;">
+							<label>Estimated total price</label> <input class="margin__left"
+								type="checkbox" id="col_10" onclick="col_10()">
+						</div>
+
+						<div style="margin: 0px 5px;">
+							<label>Money received</label> <input class="margin__left"
+								type="checkbox" id="col_11" onclick="col_11()">
+						</div>
+
+						<!--  <div style="margin: 0px 5px;">
+							<label>Action</label> <input class="margin__left" type="checkbox"
+								id="col_12" onclick="col_12()">
+						</div> -->
+
+						<!--  <div style="margin: 0px 5px;">
+							<label>View detail</label> <input class="margin__left"
+								type="checkbox" id="col_13" onclick="col_13()">
+						</div> -->
+					</div>
+
+					<!--  <div class="modal-footer">
+                                        <button type="button" class="btn" data-bs-dismiss="modal">
+                                            <i class="bx bx-x d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">Close</span>
+                                        </button>
+                                        <button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+                                            <i class="bx bx-check d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">Accept</span>
+                                        </button>
+                                    </div> -->
+				</div>
+			</div>
+		</div>
+
+		<!-- End -->
+		<footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+	</div>
+
+
+	<div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+
+	<script th:src="@{/supplier/vendors/quill/quill_min.js}"></script>
+	<script th:src="@{/supplier/js/form_editor.js}"></script>
+	<script
+		th:src="@{/supplier/vendors/simple-datatables/simple-datatables.js}"></script>
+
+	<script>
+	hideSearch();
+	//
+	var arrObjInvoiDetail =[];
+	var itemIdOfCartDetail =[];
+	//
+		// Simple Datatable
+		let table1 = document.querySelector('#orderManagermentTable');
+		let dataTable = new simpleDatatables.DataTable(table1);
+
+		//var editor = CKEDITOR.replace('ckeditor1',{
+
+		//});
+		//var editorEdit = CKEDITOR.replace('edit_ckeditor2',{
+			
+		//});
+		//---------------------------------
+		
+		
+		let selectElement = document.getElementById("inputGroupSelect01");
+    
+	    selectElement.addEventListener("change", function() {
+	      let selectedValue = selectElement.value;
+	      //alert("You selected: " + selectedValue);
+	      if(selectedValue !=0){	    	  
+	      getAllDataOrderManagementJson(selectedValue);
+	      }
+	    });
+		//24-10
+		async	function showInvoiceDetail(element){
+				itemIdOfCartDetail =[];
+				arrObjInvoiDetail =[];
+				debugger
+				let id = element.getAttribute("data");
+				let statusOfInvoiSup = element.getAttribute("data-statusOfInvoiSup");
+				let idInvoiSup = element.getAttribute("data-idInvoiSup");
+				let numTotal = element.getAttribute("data-invoiTotalWhenOn");
+				console.log("inra: "+statusOfInvoiSup);
+				console.log("inra: "+id);
+				console.log("inra: "+idInvoiSup);
+				let totalOrderAmount =0;
+				let refundOrderAmount =0;
+				
+				await $.ajax({
+					url:`http://localhost:8080/supplier/get-invoice-detail?idSupplier=1&id=${id}`,
+					type: "GET",			
+					success: (res)=>{	
+						let object = "";
+						totalOrderAmount=0;
+						$.each(res, (index, item) => {							
+							//alert("thanh cong: "+ item.nameProduct);
+							if(statusOfInvoiSup !=0){	
+								object +=`
+									<tr style="text-align: center;">
+											<td>${index+1}</td>
+											<td>${item.nameProduct}</td>
+											<td>${item.priceOrder}</td>
+											<td>${item.amount}</td>
+											<td   >${item.price}</td>
+											${item.isStatus ==1 ? `<td><input type="checkbox"  name="tick"  data-Invoi="${item.idInvoice}" data-InvoiDetail="${item.idInvoiceDetail}"  disabled="true" style="color: red;" checked="checked"  value=1></td>
+												<td><input type="checkbox" name="unTick"  data-Invoi="${item.idInvoice}" data-InvoiDetail="${item.idInvoiceDetail}" disabled="true"  value=2 ></td>
+												${totalOrderAmount+= item.price}` :
+													
+													`<td><input type="checkbox"  name="tick"  data-Invoi="${item.idInvoice}" data-InvoiDetail="${item.idInvoiceDetail}" disabled="true"   value=1></td>
+												<td><input type="checkbox" name="unTick"  data-Invoi="${item.idInvoice}" data-InvoiDetail="${item.idInvoiceDetail}" disabled="true" checked="checked" style="color: red;"  value=2 ></td>
+												${refundOrderAmount += item.price}
+												`}
+											
+										</tr>	
+										`;
+								//$("#invoiDetail-confirm").hide();
+								//$("#invoiDetail-unConfirm").hide();
+								$("#totalOrderAmount-text").text("Total: "+totalOrderAmount+" $");
+								$("#refundOrderAmount-text").text("Refund: "+refundOrderAmount+" $");
+								//totalOrderAmount =0;
+								$("#btn-confirm-invoiDetail").hide();
+							}else{
+							object +=`
+							<tr style="text-align: center;">
+									<td class="flag_checkConfirm" flag_checkConfirm=false>${index+1}</td>
+									<td>${item.nameProduct}</td>
+									<td>${item.priceOrder}</td>
+									<td>${item.amount}</td>
+									<td class="data-productPrice" data-priceOfProduct=\"${item.price}">${item.price}</td>
+									<td><input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" data-Invoi="${item.idInvoice}" data-InvoiDetail="${item.idInvoiceDetail}" data-priceOfProduct=\"${item.price}" data-totalPrice= \"${numTotal}"  value=1></td>
+									<td><input type="checkbox" name="unTick" onclick="invDetailOnclick_unTick(this);" data-Invoi="${item.idInvoice}" data-InvoiDetail="${item.idInvoiceDetail}" data-priceOfProduct=\"${item.price}" data-totalPrice= \"${numTotal}" value=2 ></td>
+									
+								</tr>	
+								`;
+							totalOrderAmount=0;
+							$("#totalOrderAmount-text").text("Total: "+totalOrderAmount+" $");
+							refundOrderAmount =0;
+							$("#refundOrderAmount-text").text("Refund: "+refundOrderAmount+" $");
+							//$("#invoiDetail-confirm").show();
+							//$("#invoiDetail-unConfirm").show();
+							$("#btn-confirm-invoiDetail").show();
+								
+							}
+							console.log("inra: "+item.nameProduct);
+						});
+						$("#data_invoice_detail").html(object);
+						$("#modalInvoiDetail").modal("show");
+						
+						
+						
+					
+					},
+					error: (e)=>{
+						alert("failed");
+					}
+				});
+				allDataInvoiceDetailOnView();
+				$("#btn-confirm-invoiDetail").attr("data-idInvoiSup", idInvoiSup);	
+				
+			};
+			//end 24-10
+		
+		//mang idInvoi 
+		//var arrayIdInvoi = [];
+		//
+		function clearTable() {
+      // Lấy tham chiếu đến phần thân của bảng
+      debugger
+      const tbody = document.getElementById("data_orderManagerment");
+      
+      // Gán nội dung của phần thân của bảng bằng chuỗi trống
+      tbody.innerHTML = '';
+    }
+		//
+		function getOrderManagementByCondition(){
+			debugger
+			let condition = document.getElementById("keySearch").value;
+			console.log("key :"+condition);
+			if(condition === null ||condition ==""){
+				alert("Key null");
+				return null;
+				
+				}else{
+					
+				
+			$.ajax({
+				cache: false,
+            	url: `http://localhost:8080/supplier/index-order-management-json-search?condition=${condition}`,
+            	type: 'get',
+            	dataType: 'json',
+            	success: (res)=>{
+            		$("#keySearch").val("");
+            		let object ="";
+            		$.each(res, (index, item) => {		
+            			object+=`
+            			<tr>
+            				<td name="td_1" >${index+1}</td>
+							<td  name="td_2">${item.nameCus}</td>
+							<td name="td_3" >${item.address}</td>
+							<td name="td_4" >${item.createAt}</td>
+							<td name="td_5" >${item.totalOrderAmount}</td>
+							<td name="td_6" >${item.totalAmountOfProduct}</td>
+							<td name="td_7">${item.priceVoucher}</td>
+							<td name="td_8" >${item.refundtoCustomers}</td>
+							<td name="td_9" >${item.commission}</td>
+							<td name="td_10" >${item.estimatedTotalPrice}</td>
+							<td name="td_11">${item.moneyReceived}</td>
+							
+						
+							<td name="td_12">						
+							  ${item.statusOfInvoiceSupp == 0 ? 
+									  `<b style="color: red;" >Dont process </b> `: 
+										  `${item.statusOfInvoiceSupp ==1 ? `<b style="color: purple;" >Processing </b> `:` ${item.statusOfInvoiSup ==2? `<b style="color: dark;" >Cus has received </b>`:
+										  `${item.statusOfInvoiceSupp ==3? `<button class="btn btn-success" >Payment of admin</button>`:
+											  `<b style="color: green;" >Success </b>`}` }` } ` }
+										
+							</td>
+							
+							<td name="td_13" >
+							
+							<button class="btn btn-info round" data="${item.idInvoice}"
+								data-statusOfInvoiSup="${item.statusOfInvoiceSupp}"
+								data-idInvoiSup="${item.idInvoiceSupp}"
+								
+								onclick="showInvoiceDetail(this);">Detail
+								</button> 								 
+							</td>
+            			</tr>
+									`;
+									$("#data_orderManagerment").html(object);
+            			//
+	            		//if (arrayIdInvoi.indexOf(item.id) === -1) {
+	            			//arrayIdInvoi.push(item.id);
+						//}
+            		
+            		//
+					});
+            	},
+            	error: (err)=>{
+            		console.log("err "+err);
+            	}
+            }).then(function(){
+            	setTimeout(() => {
+            		reloadCheckUncheck();
+				}, 100);
+            	
+            });
+			}
+		}
+		//
+		
+		function getAllDataOrderManagementJson(caseF){
+			debugger
+	        	//idSup co khi login vao
+	        	let caseFillter = caseF;
+	        	let idSup =1;
+	        	//debugger
+	            $.ajax({
+	            	cache: false,
+	            	url: `http://localhost:8080/supplier/index-order-managerment-Json?caseFillter=${caseFillter}`,
+	            	type: 'get',
+	            	dataType: 'json',
+	            	success: (res)=>{
+	            		let object ="";
+	            		$.each(res, (index, item) => {		
+	            			//
+	            			if(item === null){
+	            				alert("ko co data");
+	            				//clearTable();
+	            				
+	            			}else{
+	            				
+	            			object+=`
+	            			<tr>
+	            				<td name="td_1" >${index+1}</td>
+								<td  name="td_2">${item.nameCus}</td>
+								<td name="td_3" >${item.address}</td>
+								<td name="td_4" >${item.createAt}</td>
+								<td name="td_5" >${item.totalOrderAmount}</td>
+								<td name="td_6" >${item.totalAmountOfProduct}</td>
+								<td name="td_7">${item.priceVoucher}</td>
+								<td name="td_8" >${item.refundtoCustomers}</td>
+								<td name="td_9" >${item.commission}</td>
+								<td name="td_10" >${item.estimatedTotalPrice}</td>
+								<td name="td_11">${item.moneyReceived}</td>
+								
+							
+								<td name="td_12">						
+								  ${item.statusOfInvoiceSupp == 0 ? 
+										  `<b style="color: red;" >Dont process </b> `: 
+											  `${item.statusOfInvoiceSupp ==1 ? `<b style="color: purple;" >Processing </b> `:` ${item.statusOfInvoiSup ==2? `<b style="color: dark;" >Cus has received </b>`:
+											  `${item.statusOfInvoiceSupp ==3? `<button class="btn btn-success" >Payment of admin</button>`:
+												  `<b style="color: green;" >Success </b>`}` }` } ` }
+											
+								</td>
+								
+								<td name="td_13" >
+								
+								<button class="btn btn-info round" data="${item.idInvoice}"
+									data-idInvoiSup="${item.idInvoiceSupp}"
+									data-statusOfInvoiSup="${item.statusOfInvoiceSupp}"
+									onclick="showInvoiceDetail(this);">Detail
+									</button> 								 
+								</td>
+	            			</tr>
+										`;
+										$("#data_orderManagerment").html(object);
+	            			//
+		            		//if (arrayIdInvoi.indexOf(item.id) === -1) {
+		            			//arrayIdInvoi.push(item.id);
+							//}
+	            		}
+	            		//
+						});
+	            	},
+	            	error: (err)=>{
+	            		console.log("err "+err);
+	            	}
+	            }).then(function(){
+	            	setTimeout(() => {
+	            		reloadCheckUncheck();
+					}, 100);
+	            	
+	            });
+	        	
+	            
+	        }
+			//getNameCusAddressCreateAtByJson();	
+			//getAllDataOrderManagementJson();
+		//------------------------------
+		
+		
+		
+		//--------------
+		$('input[type=radio][name=choose_InvoiceDetail]').change(function() {
+			debugger
+		    if (this.value === 1) {
+		        // ...
+		        alert("confirm")
+		    }
+		    else if (this.value === 2) {
+		        // ...
+		        alert("unconfirm")
+		    }
+		});
+		// test new
+		//var table = document.getElementById("orderManagermentTable");
+		//for (var i = 1, row; row = table.rows[i]; i++) {
+			//console.log("row: "+row)
+   //iterate through rows
+   //rows would be accessed using the "row" variable assigned in the for loop
+   //for (var j = 0, col; col = row.cells[j]; j++) {
+     //iterate through columns
+     //columns would be accessed using the "col" variable assigned in the for loop
+  		//console.log("col: "+row.cells[j].innerText)
+   //}  
+//}
+		//
+		
+
+    
+        function stateChange(newState) {
+            setTimeout(function () {
+                if (newState == -1) {
+                    alert('VIDEO HAS STOPPED');
+                }
+            }, 5000);
+        }
+        // stateChange(-1);
+        //
+        var loader = document.getElementById("preloader");
+        window.addEventListener("load", function () {
+            setTimeout(function(){
+                loader.style.display = "none";
+            },10);
+            
+        });
+        //
+   		//let parentDiv = document.getElementById("top__tool");
+		//let newDiv = document.createElement("<input type='text' class='aaa'>");
+		//parentDiv.appendChild(newDiv);
+		// handle confirm 
+		function InvoiceDetailConfirm( idInvoi, idInvoiDetail){
+			//idSup lay khi sup login vao!!!
+			debugger
+			let idSup =1 //-tam lay id sup login vao =1
+			let hardData = {
+					"userCase" : 1,
+				    "statusType": 0,
+				    "idSupplier": idSup,
+				    "idInvoice": idInvoi,
+				    "idInvoiceDetails": idInvoiDetail	
+			};
+			//
+			$.ajax({
+				type:"Get",
+				url: `http://localhost:8080/supplier/confirm-unconfirm-invoice`,
+				data: hardData,
+				success: (res)=>{
+					//alert("success")
+				},
+				error: (r)=>{
+					
+				}
+			});
+		}
+		// hard unConfim
+		function InvoiceDetailUnconfirm(idInvoi, idInvoiDetail){
+			debugger
+			//idSup lay khi sup login vao!!!
+			let idSup =1 //-tam lay id sup login vao =1
+			let hardData ={
+					"userCase" : 1,
+				    "statusType": 1,
+				    "idSupplier": idSup,
+				    "idInvoice": idInvoi,
+				    "idInvoiceDetails": idInvoiDetail
+			};
+			//
+			$.ajax({
+				type:"Get",
+				url: `http://localhost:8080/supplier/confirm-unconfirm-invoice`,
+				data: hardData,
+				success: (res)=>{
+					//alert("success");
+				},
+				error: (r)=>{
+					
+				}
+			});
+			
+		}
+		//
+		function SuppConfirmForReceivedMoney(element){
+			debugger
+			//idSup lay khi sup login vao!!!
+			let idSup =1 //-tam lay id sup login vao =1
+			let idInvoi = element.getAttribute("data-idInvoi");
+			console.log("id: "+idInvoi);
+			let hardData ={
+					"userCase" : 1,
+				    "statusType": 2,
+				    "idSupplier": idSup,
+				    "idInvoice": idInvoi,
+				    "idInvoiceDetails": 0
+			};
+			//
+			$.ajax({
+				type:"Get",
+				url: `http://localhost:8080/supplier/confirm-unconfirm-invoice`,
+				data: hardData,
+				success: (res)=>{
+					getAllDataOrderManagementJson(1);
+					alert("success");
+				},
+				error: (r)=>{
+					
+				}
+			});
+			
+			
+		}
+		
+		//
+		function confirmInvoiMFinal(idInvoiSup){
+			debugger;
+			//let temp =0;
+			//let idOfInvoiSup =element.getAttribute("data-idInvoiSup");
+			// mac dinh la 1 vi chua co phan login cho supp
+			let idSup = 1;
+			let dataIs ={
+					"id" : idOfInvoiSup,
+					"idSupplier" : idSup
+			};			
+			//console.log("url: "+window.location);
+			//
+			
+			$.ajax({
+				type: "Post",
+				url: 'http://localhost:8080/supplier/confirm-invoiM', //http://localhost:8080/supplier/confirm-unconfirm-invoice | http://localhost:8080/confirm-invoiM'
+				data: dataIs,
+				success: (res)=>{
+					alert("confirm invoiM success");
+					//reloadPage();
+					
+				},
+				error: (err)=>{
+					alert("err: "+err);
+					console.log("err: "+err);
+				},
+			}).then(function(){
+				reloadPage();
+			});
+
+		};
+		//
+		function confirmInvoiM(element){
+			try {
+				debugger
+				let idOfInvoiSup =element.getAttribute("data-idInvoiSup");
+				//flag
+				let flagCheck = false;
+				function checkAllIsTrue(arr){
+					return arr.status == true;
+				}
+				debugger
+				let arr_checkBeforConfirm= [];
+				var table = document.getElementById("tbl_invoiceDetail");
+				for (var i = 0, row; row = table.rows[i]; i++) {
+				    var cell = row.cells[0];
+				    var attribute = cell.getAttribute("flag_checkConfirm");
+				    let status = attribute;
+				    let item={'index': i, 'status': status}
+				    arr_checkBeforConfirm.push(item);
+				    console.log("test: "+arr_checkBeforConfirm);
+				    
+				    // do something with the attribute
+				}
+				debugger
+
+				flagCheck = arr_checkBeforConfirm.every(checkAllIsTrue);
+				
+				if(flagCheck){
+					console.log("validate success")
+					
+				}else{
+					alert("validate failed");
+				}
+				
+				reloadPage();
+			} catch (e) {
+				// TODO: handle exception
+				console.log("err "+e);
+				console.error
+			}
+			
+		}
+		
+		function tickInvoice(element){		
+			debugger
+			let idInvoi;
+			let idInvoiDetail;
+			let productPrice;
+			let invoiceTotal;
+			let item ={};
+			//item = [];
+			idInvoi = element.getAttribute('data-Invoi');
+				idInvoiDetail = element.getAttribute('data-InvoiDetail');
+				productPrice = element.getAttribute('data-priceOfProduct');
+				invoiceTotal = element.getAttribute('data-totalPrice');
+
+			 if (element.checked) {
+
+				console.log("inra: "+element.parentElement.parentElement.querySelector('input[name="tick"]').value);
+				let change = element.parentElement.parentElement.querySelector('.flag_checkConfirm'); 
+				change.setAttribute("flag_checkConfirm", true);
+				element.parentElement.parentElement.querySelector('input[name="unTick"]').checked=false;
+				//----
+				debugger
+
+				console.log("test tick first time: "+idInvoi+" "+idInvoiDetail+" "+productPrice+" "+invoiceTotal);
+				//data
+				item={
+						'idInvoi' :idInvoi,
+						'idInvoiDetail': idInvoiDetail,
+						'productPrice' :parseFloat(productPrice)
+						};
+				itemIdOfCartDetail.push(item);
+
+				
+			} else {
+				let test =element.parentElement.parentElement.querySelector('input[name="unTick"]').checked=true;
+
+				console.log("test when tick more time: "+idInvoi+" "+idInvoiDetail+" "+productPrice);
+				debugger
+				//let prod = itemIdOfCartDetail.map(prod => prod.idInvoi);
+
+				//console.log(prod); 
+				// Xóa các số lẻ khỏi mảng
+				for (let i = itemIdOfCartDetail.length - 1; i >= 0; i--) {
+				  if (itemIdOfCartDetail[i].idInvoiDetail == idInvoiDetail) {
+					  itemIdOfCartDetail.splice(i, 1);
+				  }
+				}
+
+				console.log(itemIdOfCartDetail); // Output: [2, 4]
+
+			}
+			 //gan cuoi
+			 let totalAmount = itemIdOfCartDetail.reduce(function (acc, arr) {
+			 return acc + arr.productPrice;
+			}, 0);
+
+			console.log(totalAmount); // Output: 450
+			$("#totalOrderAmount-text").text('');
+			$("#totalOrderAmount-text").text("Total: "+totalAmount+" $");
+			let refund = parseFloat(invoiceTotal) - parseFloat(totalAmount);
+			$("#refundOrderAmount-text").text("Refund: "+refund+" $");
+			
+		}
+		function unTickInvoice(element){
+			
+			debugger
+			let idInvoi
+			let idInvoiDetail
+			idInvoi = element.getAttribute('data-Invoi');
+			 idInvoiDetail = element.getAttribute('data-InvoiDetail');
+			 productPrice = element.getAttribute('data-priceOfProduct');
+			 invoiceTotal = element.getAttribute('data-totalPrice');
+			if (element.checked) {
+				console.log("unCheck")
+				element.parentElement.parentElement.querySelector('input[name="tick"]').checked=false;
+				console.log("inra: "+element.parentElement.parentElement.querySelector('input[name="unTick"]').value);
+				
+				//debugger
+				 
+				//console.log("test get id: "+idInvoi+" "+idInvoiDetail);
+				//InvoiceDetailUnconfirm(idInvoi, idInvoiDetail);
+				
+				//new 
+				for (let i = itemIdOfCartDetail.length - 1; i >= 0; i--) {
+				  if (itemIdOfCartDetail[i].idInvoiDetail == idInvoiDetail) {
+					  itemIdOfCartDetail.splice(i, 1);
+				  }
+				}
+			} else {
+				//idInvoi = element.getAttribute('data-Invoi');
+				//idInvoiDetail = element.getAttribute('data-InvoiDetail');
+				let test = element.parentElement.parentElement.querySelector('input[name="tick"]').checked=true;
+				//InvoiceDetailConfirm(idInvoi, idInvoiDetail);
+				//new
+				item={
+						'idInvoi' :idInvoi,
+						'idInvoiDetail': idInvoiDetail,
+						'productPrice' :parseFloat(productPrice)
+						};
+				itemIdOfCartDetail.push(item);
+			}
+			//gan cuoi
+			 let totalAmount = itemIdOfCartDetail.reduce(function (acc, arr) {
+			 return acc + arr.productPrice;
+			}, 0);
+
+			console.log(totalAmount); // Output: 450
+			$("#totalOrderAmount-text").text('');
+			$("#totalOrderAmount-text").text("Total: "+totalAmount+" $");
+			let refund = parseFloat(invoiceTotal) - parseFloat(totalAmount);
+			$("#refundOrderAmount-text").text("Refund: "+refund+" $");
+		}
+
+        async function test(){
+        	//debugger
+        	
+        	await	function testrun(){
+        		for (let index of arrayIdInvoi) {
+            	    console.log("inra: "+index);
+            	};
+        	}
+        }
+        test();
+        
+        
+        
+        //-----------------------------------------
+		async function reloadPage() {
+        	debugger
+			let url = "http://localhost:8080/supplier/index-order-managerment";
+			window.location.href = url;
+		}
+		function reloadCheckUncheck(){
+			debugger
+			col_1();
+			//col_2();
+			col_3();
+			col_4();
+			//col_5();
+			col_6();
+			col_7();
+			col_8();
+			col_9();
+			col_10();
+			col_11();
+			//col_12();
+			//col_13();
+		}
+		//-------------------
+		var showHideCol = [ "col1", "col2" ];
+		//
+		function getCookie(cname) {
+			let name = cname + "=";
+			let decodedCookie = decodeURIComponent(document.cookie);
+			let ca = decodedCookie.split(';');
+			for (let i = 0; i < ca.length; i++) {
+				let c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			return "";
+		}
+		function col_1() {
+			//debugger
+			//document.cookie = `temp_cookie =${showHideCol}`;
+			// Get the value of a cookie named "example"
+			
+			//console.log("cookie: " +getCookie("temp_cookie"));
+
+			var checkbox = document.getElementById("col_1");
+
+			// Check if the checkbox is checked
+			if (checkbox.checked) {
+				$("#th_1").hide();
+				$('td[name="td_1"]').hide();
+			} else {
+				$("#th_1").show();
+				$('td[name="td_1"]').show();
+			}
+		}
+		function col_2() {
+
+			var checkbox = document.getElementById("col_2");
+			if (checkbox.checked) {
+				$("#th_2").hide();
+				$('td[name="td_2"]').hide();
+			} else {
+				$("#th_2").show();
+				$('td[name="td_2"]').show();
+			}
+		}
+		function col_3() {
+
+			var checkbox = document.getElementById("col_3");
+			if (checkbox.checked) {
+				$("#th_3").hide();
+				$('td[name="td_3"]').hide();
+			} else {
+				$("#th_3").show();
+				$('td[name="td_3"]').show();
+			}
+		}
+		function col_4() {
+
+			var checkbox = document.getElementById("col_4");
+			if (checkbox.checked) {
+				$("#th_4").hide();
+				$('td[name="td_4"]').hide();
+			} else {
+				$("#th_4").show();
+				$('td[name="td_4"]').show();
+			}
+		}
+		function col_5() {
+			var checkbox = document.getElementById("col_5");
+			if (checkbox.checked) {
+				$("#th_5").hide();
+				$('td[name="td_5"]').hide();
+			} else {
+				$("#th_5").show();
+				$('td[name="td_5"]').show();
+			}
+		}
+		function col_6() {
+			var checkbox = document.getElementById("col_6");
+			if (checkbox.checked) {
+				$("#th_6").hide();
+				$('td[name="td_6"]').hide();
+			} else {
+				$("#th_6").show();
+				$('td[name="td_6"]').show();
+			}
+		}
+		function col_7() {
+			var checkbox = document.getElementById("col_7");
+			if (checkbox.checked) {
+				$("#th_7").hide();
+				$('td[name="td_7"]').hide();
+			} else {
+				$("#th_7").show();
+				$('td[name="td_7"]').show();
+			}
+		}
+		function col_8() {
+			var checkbox = document.getElementById("col_8");
+			if (checkbox.checked) {
+				$("#th_8").hide();
+				$('td[name="td_8"]').hide();
+			} else {
+				$("#th_8").show();
+				$('td[name="td_8"]').show();
+			}
+		}
+		function col_9() {
+			var checkbox = document.getElementById("col_9");
+			if (checkbox.checked) {
+				$("#th_9").hide();
+				$('td[name="td_9"]').hide();
+			} else {
+				$("#th_9").show();
+				$('td[name="td_9"]').show();
+			}
+		}
+		function col_10() {
+			var checkbox = document.getElementById("col_10");
+			if (checkbox.checked) {
+				$("#th_10").hide();
+				$('td[name="td_10"]').hide();
+			} else {
+				$("#th_10").show();
+				$('td[name="td_10"]').show();
+			}
+		}
+		function col_11() {
+			var checkbox = document.getElementById("col_11");
+			if (checkbox.checked) {
+				$("#th_11").hide();
+				$('td[name="td_11"]').hide();
+			} else {
+				$("#th_11").show();
+				$('td[name="td_11"]').show();
+			}
+		}
+		function col_12() {
+			var checkbox = document.getElementById("col_12");
+			if (checkbox.checked) {
+				$("#th_12").hide();
+				$('td[name="td_12"]').hide();
+			} else {
+				$("#th_12").show();
+				$('td[name="td_12"]').show();
+			}
+		}
+		function col_13() {
+			var checkbox = document.getElementById("col_13");
+			if (checkbox.checked) {
+				$("#th_13").hide();
+				$('td[name="td_13"]').hide();
+			} else {
+				$("#th_13").show();
+				$('td[name="td_13"]').show();
+			}
+		}
+		
+		//------
+		function hideSearch(){
+			
+		let searchHide = $(".dataTable-search").remove();
+		}
+		
+		function getNameCus_Address_CreateAt(){
+			debugger
+			$.ajax({
+				url: `/getNameCus-Address-CreateAt?idSupplier=1`,
+				type: 'Get',
+				success: (res)=>{
+					alert("success");
+					
+				},
+				error: (e)=>{
+					alert("err");
+				}
+			});
+		}
+		//getNameCus_Address_CreateAt();
+		//----------------------------------------------NEW
+		
+		
+		// Load finish
+		jQuery(document).ready(function($){
+			//
+		});
+		//----load finish
+		document.addEventListener("DOMContentLoaded", function() {
+			
+			//debugger
+			//let table = $("#orderManagermentTable"); // Lấy tham chiếu đến bảng đầu tiên trong tài liệu
+			//let rowCount = table.rows.length;
+			//console.log("Số dòng trong bảng là: " + rowCount);
+			//start
+			//var table = document.getElementById("orderManagermentTable");
+		    //for (var i = 0; i < table.rows.length; i++) {    
+		        //for (var j = 0; j < table.rows[i].cells.length; j++){
+		          //table.rows[i].cells[j].onclick = function () {
+		            //r = this.parentNode.rowIndex;  
+		            //c = this.cellIndex;
+		            //alert("you clicked on\n column: "+c+"\n row:"+r);
+		          //};
+		        //}
+		      //}
+		    //end
+			//	
+			//function temp01(arr){
+				//debugger
+				//for (var i = 0; i < arr.length; i++) {
+					//console.log("id: "+arr[i]);
+			//	}
+			//};
+			//temp01(arrayIdInvoi);
+			
+			//-----
+			//----
+        //debugger
+        //let targetElement = document.getElementsByClassName('dataTable-sorter');
+       //targetElement.style.setProperty('--before-display', 'none');
+
+
+//targetElement.style.setProperty('--before-content', 'none');
+
+
+//targetElement.style.setProperty('--after-content', 'none');
+
+
+		});
+		hideSearch();
+		//
+		function invDetailOnclick_unTick(element){
+			//debugger
+			let idInvoiDetail = element.getAttribute('data-InvoiDetail');
+			let invoiceTotal = element.getAttribute('data-totalPrice');
+			 if (element.checked) {
+				 element.parentElement.parentElement.querySelector('input[name="tick"]').checked=false;
+				console.log("inra: "+element.parentElement.parentElement.querySelector('input[name="unTick"]').value);
+				
+				arrObjInvoiDetail.forEach((obj)=>{
+					if(obj.idInvDetail ==idInvoiDetail ){
+						obj.statusForSubmit =true;
+						obj.status =false;
+					}
+				});
+			} else {
+				let test = element.parentElement.parentElement.querySelector('input[name="tick"]').checked=true;
+				
+				arrObjInvoiDetail.forEach((obj)=>{
+					if(obj.idInvDetail ==idInvoiDetail ){
+						obj.statusForSubmit =true;
+						obj.status =true;
+					}
+				});		
+			
+			}
+			//gan cuoi
+			 let totalAmount = arrObjInvoiDetail.reduce(function (acc, arr) {
+				 //let totalTick =0;
+				 //console.log("idinvD: "+idInvoiDetail)
+				 //console.log("idinvinFor: "+arr.idInvDetail);
+				 if(arr.status == true){
+					 acc+= arr.productPrice;
+					 //console.log("price: "+ arr.productPrice);
+					 //console.log("total: "+acc);
+				 }
+			 return acc ;
+			}, 0);
+			 //
+			 let refundAmount = arrObjInvoiDetail.reduce(function (acc, arr) {
+				 //let totalTick =0;
+				 //console.log("idinvD: "+idInvoiDetail)
+				 //console.log("idinvinFor: "+arr.idInvDetail);
+				 if(arr.status == false){
+					 acc+= arr.productPrice;
+					 //console.log("price: "+ arr.productPrice);
+					 //console.log("total: "+acc);
+				 }
+			 return acc ;
+			}, 0);
+			 //
+			 //debugger
+			console.log(refundAmount); // Output: 450
+			//$("#totalOrderAmount-text").text('');
+			$("#totalOrderAmount-text").text("Total: "+totalAmount+" $");
+			//let refund = parseFloat(invoiceTotal) - parseFloat(totalAmount);
+			$("#refundOrderAmount-text").text("Refund: "+refundAmount+" $");
+			
+		}
+		//
+		function invDetailOnclick_Tick(element){		
+			//debugger
+			let idInvoiDetail = element.getAttribute('data-InvoiDetail');
+			let invoiceTotal = element.getAttribute('data-totalPrice');
+			 if (element.checked) {
+				console.log("inra: "+element.parentElement.parentElement.querySelector('input[name="tick"]').value);				
+				
+				element.parentElement.parentElement.querySelector('input[name="unTick"]').checked=false;
+				arrObjInvoiDetail.forEach((obj)=>{
+					if(obj.idInvDetail ==idInvoiDetail ){
+						obj.statusForSubmit =true;
+						obj.status =true;
+					}
+				});
+			} else {
+				let test =element.parentElement.parentElement.querySelector('input[name="unTick"]').checked=true;
+				
+				arrObjInvoiDetail.forEach((obj)=>{
+					if(obj.idInvDetail ==idInvoiDetail ){
+						obj.statusForSubmit =true;
+						obj.status =false;
+					}
+				});
+				
+			
+			}
+			 //gan cuoi
+			 let totalAmount = arrObjInvoiDetail.reduce(function (acc, arr) {
+				 //let totalTick =0;
+				 //console.log("idinvD: "+idInvoiDetail)
+				 //console.log("idinvinFor: "+arr.idInvDetail);
+				 if(arr.status == true){
+					 acc+= arr.productPrice;
+					 //console.log("price: "+ arr.productPrice);
+					 //console.log("total: "+acc);
+				 }
+			 return acc ;
+			}, 0);
+			 //
+			 let refundAmount = arrObjInvoiDetail.reduce(function (acc, arr) {
+				 //let totalTick =0;
+				 //console.log("idinvD: "+idInvoiDetail)
+				 //console.log("idinvinFor: "+arr.idInvDetail);
+				 if(arr.status == false){
+					 acc+= arr.productPrice;
+					 //console.log("price: "+ arr.productPrice);
+					 //console.log("total: "+acc);
+				 }
+			 return acc ;
+			}, 0);
+			 //
+			 //debugger
+			console.log(totalAmount); // Output: 450
+			console.log(refundAmount);
+			//$("#totalOrderAmount-text").text('');
+			$("#totalOrderAmount-text").text("Total: "+totalAmount+" $");
+			//let refund = parseFloat(invoiceTotal) - parseFloat(totalAmount);
+			$("#refundOrderAmount-text").text("Refund: "+refundAmount+" $");
+			
+		}
+		
+		//
+		async function confirm_UnConfirm_invoiDetail( idInvoi, idInvoiDetail, statusType){
+			//idSup lay khi sup login vao!!!
+			debugger
+			let idSup =1 //-tam lay id sup login vao =1 //unconfirm 1
+			let hardData = {
+					"userCase" : 1,
+				    "statusType": statusType,
+				    "idSupplier": idSup,
+				    "idInvoice": idInvoi,
+				    "idInvoiceDetails": idInvoiDetail	
+			};
+			//int userCase, int statusType, int idSupplier, int idInvoice, int idInvoiceDetails
+			//?userCase=1&statusType=${hardData.statusType}&idSupplier=${hardData.idSupplier}&idInvoice=${hardData.idInvoice}&idInvoiceDetails=${hardData.idInvoiceDetails}
+			 /*$.ajax({
+				type:"Get",
+				url: `http://localhost:8080/supplier/confirm-unconfirm-invoice`,
+				data: hardData,
+				success: (res)=>{
+					alert("success")
+				},
+				error: (r)=>{
+					console.log("err: "+r);
+					console.error;
+				}
+			});*/
+			//dùn featch
+			debugger
+			let url=`http://localhost:8080/supplier/confirm-unconfirm-invoice?userCase=1&statusType=${hardData.statusType}&idSupplier=${hardData.idSupplier}&idInvoice=${hardData.idInvoice}&idInvoiceDetails=${hardData.idInvoiceDetails}`;
+			  fetch(url)
+			  .then(response => {
+			    if (!response.ok) {
+			      throw new Error('Network response was not ok');
+			    }
+			    return response.json();
+			  })
+			  .then(data => {
+			    console.log('Response data:', data);
+			    // Xử lý dữ liệu phản hồi ở đây
+			    alert("data: "+data);
+			  })
+			  .catch(error => console.error('Fetch error:', error));
+					
+		}
+		//
+		//
+		//New 
+		
+		function allDataInvoiceDetailOnView(){
+			let item={};
+		debugger
+			let table = document.getElementById("tbl_invoiceDetail");
+			let body = table.getElementsByTagName('tbody')[0];
+			let lengthOfData = body.rows.length;
+			console.log("length: "+lengthOfData);
+			for (var i = 0; i< lengthOfData; i++) {
+				let row = body.rows[i]
+				console.log(row);
+				/*for (var j = 0; j < row.cells.length; j++) {
+				    // Lấy mỗi ô
+				    var cell = row.cells[j];
+				}*/
+				
+				let idInvoi = row.querySelector('input[name="tick"]').getAttribute("data-invoi");
+				let idInvDetail = row.querySelector('input[name="tick"]').getAttribute("data-invoidetail");
+				let productPrice = row.querySelector('input[name="tick"]').getAttribute("data-priceofproduct");
+				let InvoiTotal = row.querySelector('input[name="tick"]').getAttribute("data-totalprice");
+				
+				item={
+						'idInvoi' : idInvoi,
+					    'idInvDetail':idInvDetail,
+						'productPrice':parseFloat(productPrice),
+						'InvoiTotal': parseFloat(InvoiTotal),
+						'status': false,
+						'statusForSubmit' :false
+				}
+				arrObjInvoiDetail.push(item)
+				item ={};
+				
+			}
+			console.log("arr:"+arrObjInvoiDetail);
+		
+	}
+
+	//End
+	async function testCF(idInvSup){
+		debugger
+		//let idOfInvoiSup = id;
+		let idSup = 1;
+		let dataIs ={
+				"id" : idInvSup,
+				"idSupplier" : idSup
+		};			
+		//console.log("url: "+window.location);
+		$.ajax({
+			type: "Post",
+			url: 'http://localhost:8080/supplier/confirm-invoiM', //http://localhost:8080/supplier/confirm-unconfirm-invoice | http://localhost:8080/confirm-invoiM'
+			data: dataIs,
+			success: (res)=>{
+				alert("confirm invoiM success");
+			},
+			error: (err)=>{
+				alert("err: "+err);
+				console.log("err: "+err);
+			},
+		}).done(()=>{
+			reloadPage();
+		});
+	}
+	
+	async function invoiDetailOnclick_ConfirmM(){
+		//
+		let idInvoi =0;
+		//
+		//debugger
+		let flagCheck = false;
+		function allStatusBeforConfirmIsTrue(obj){
+			return obj.statusForSubmit == true;
+		}
+		
+		flagCheck = arrObjInvoiDetail.every(allStatusBeforConfirmIsTrue);
+		let recordCount = arrObjInvoiDetail.length;
+		let ind =0;
+		if(flagCheck){
+			//confirm_UnConfirm_invoiDetail(1,1,1);
+			for (var i = 0; i < recordCount; i++) {
+				var array_element = arrObjInvoiDetail[i];
+				console.log(array_element);
+				idInvoi = array_element.idInvoi;
+				let idInvoiDetail = array_element.idInvDetail;
+				let status = array_element.status; //c =0 | uc = 1
+				let statusType =0;
+				if(status){
+					statusType =0;
+				}else{
+					statusType = 1;
+				}
+				debugger
+				console.log("data for submit invoidetial_confirm: "+idInvoi+" "+idInvoiDetail+" "+status+" "+statusType);
+				
+				await confirm_UnConfirm_invoiDetail( idInvoi, idInvoiDetail, statusType);
+			}
+				await testCF(idInvoi);
+				//await reloadPage();
+		}else{
+			alert("please tick full");
+		}
+		
+	}
+	/*
+	.then(function(){
+				reloadPage();
+			});*/
+	</script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,154 @@
+<div class="modal-header">
+	<h5 class="modal-title" id="modalDetailProdTitle">Product Detail</h5>
+	<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+			stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+			class="feather feather-x">
+			<line x1="18" y1="6" x2="6" y2="18"></line>
+			<line x1="6" y1="6" x2="18" y2="18"></line>
+		</svg>
+	</button>
+</div>
+<!-- product details area start -->
+<div class="product-details__area pt-120 pb-110">
+	<div class="container">
+		<div class="row">
+			<div class="col-xl-6">
+				<div class="product-details__wrapper" style="display: flex; flex-wrap: wrap;">
+					<div class="pd-img"
+						style="border: 1px solid #E2DFDD;margin-right: 10px;flex: 0 0 80%;-ms-flex: 0 0 80%;max-width: 80%;">
+						<div class="tab-content" id="pdContent">
+							<div class="tab-pane fade show active" id="pd-1" role="tabpanel" aria-labelledby="pd-1-tab">
+								<div class="big-img"
+									style="min-height: 515px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;align-items: center;justify-content: center;">
+									<img th:src="${detailProd.image}" style="height: 490px;width: 435px;" alt="err"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';">
+								</div>
+							</div>
+							<div class="tab-pane fade" id="pd-2" role="tabpanel" aria-labelledby="pd-2-tab">
+								<div class="big-img"
+									style="min-height: 515px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;align-items: center;justify-content: center;">
+									<img th:src="${detailProd.image1}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="height: 490px;width: 435px;">
+								</div>
+							</div>
+							<div class="tab-pane fade" id="pd-3" role="tabpanel" aria-labelledby="pd-3-tab">
+								<div class="big-img"
+									style="min-height: 515px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;align-items: center;justify-content: center;">
+									<img th:src="${detailProd.image2}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="height: 490px;width: 435px;">
+								</div>
+							</div>
+							<div class="tab-pane fade" id="pd-4" role="tabpanel" aria-labelledby="pd-4-tab">
+								<div class="big-img"
+									style="min-height: 515px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;align-items: center;justify-content: center;">
+									<img th:src="${detailProd.image3}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="height: 490px;width: 435px;">
+								</div>
+							</div>
+							<div class="tab-pane fade" id="pd-5" role="tabpanel" aria-labelledby="pd-5-tab">
+								<div class="big-img"
+									style="min-height: 515px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;align-items: center;justify-content: center;">
+									<img src="/images/products/pp-2.png"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="height: 490px;width: 435px;">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="pd-tab"
+						style="flex: 0 0 95px;-ms-flex: 0 0 95px;max-width: 95px;display: -ms-flexbox;display: flex; -ms-flex-wrap: wrap;flex-wrap: wrap;flex-direction: column;align-items: center;justify-content: center;">
+						<nav>
+							<div class="nav" id="shop-filter-tab" role="tablist">
+								<a class="nav-link active" id="pd-1-tab" data-bs-toggle="tab" href="#pd-1" role="tab"
+									aria-controls="pd-1"
+									style="border: 1px solid #E2DFDD;width: 95px;height: 95px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;justify-content: center;align-items: center;"
+									aria-selected="true">
+									<img th:src="${detailProd.image}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="max-width: 70px;max-height: 70px;">
+								</a>
+								<a class="nav-link" id="pd-2-tab" data-bs-toggle="tab" href="#pd-2" role="tab"
+									aria-controls="pd-2"
+									style="border: 1px solid #E2DFDD;width: 95px;height: 95px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;justify-content: center;align-items: center;"
+									aria-selected="true">
+									<img th:src="${detailProd.image1}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="max-width: 70px;max-height: 70px;">
+								</a>
+								<a class="nav-link" id="pd-3-tab" data-bs-toggle="tab" href="#pd-3" role="tab"
+									aria-controls="pd-3"
+									style="border: 1px solid #E2DFDD;width: 95px;height: 95px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;justify-content: center;align-items: center;"
+									aria-selected="true">
+									<img th:src="${detailProd.image2}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="max-width: 70px;max-height: 70px;">
+								</a>
+								<a class="nav-link" id="pd-4-tab" data-bs-toggle="tab" href="#pd-4" role="tab"
+									aria-controls="pd-4"
+									style="border: 1px solid #E2DFDD;width: 95px;height: 95px;display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;justify-content: center;align-items: center;"
+									aria-selected="true">
+									<img th:src="${detailProd.image3}"
+										onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+										alt="err" style="max-width: 70px;max-height: 70px;">
+								</a>
+							</div>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-6">
+				<div class="product-details__content">
+					<div class="tr-wrapper d-flex align-items-center justify-content-between">
+						<h2 class="title" id="nameProdDetail" th:text="${detailProd.title}">Cafe Du Monde Coffee
+							Chicory, 15 Ounce Ground</h2>
+					</div>
+					<strong id="cateProdDetail">Category:</strong> <span th:text="${detailProd.nameCate}"></span>
+					<br>
+					<strong>Sold:</strong> <span th:text="${detailProd.sold}">10</span>
+					<br>
+					<br>
+					<p id="descriptionProdDetail" th:text="${detailProd.description}">The coffee is brewed by first
+						roasting the green coffee beans over hot
+						coals in
+						brazier.Once the beans are roasted each participant is given an
+						opportunity to sample
+						The coffee is brewed.</p>
+
+					<h3 class="price" id="priceProdDetail">$<span th:text="${detailProd.price}"></span></h3>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn" data-bs-dismiss="modal">
+		<i class="bx bx-x d-block d-sm-none"></i>
+		<span class="d-none d-sm-block">Close</span>
+	</button>
+	<th:block th:switch="${detailProd.isActive}">
+		<th:block th:case="'0'">
+			<button type="button" id="btnAcceptProdDetail" class="btn btn-outline-success" data-bs-toggle="modal"
+				data-bs-target="#animationProd">
+				Accept
+			</button>
+			<button type="button" id="btnRefuseProdDetail" class="btn btn-outline-danger" data-bs-toggle="modal"
+				data-bs-target="#animationProd">
+				Refuse
+			</button>
+		</th:block>
+
+		<button th:case="'1'" id="btnDeacProdDetail" type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+			data-bs-target="#animationProd">
+			Deactive
+		</button>
+		</th>
+		<!--	<button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+		<i class="bx bx-check d-block d-sm-none"></i>
+		<span class="d-none d-sm-block">Accept</span>
+	</button>-->
+</div>

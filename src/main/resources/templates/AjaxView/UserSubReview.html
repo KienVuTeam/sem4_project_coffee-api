@@ -1,0 +1,37 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<th:block th:if="${!lsReview.empty}">
+	<th:block th:each="item,index : ${lsReview}">
+		<div class="comment d-flex">
+			<div class="thumb">
+				<img th:src="${item.userAvatar}" alt="img">
+			</div>
+			<div class="content pl-20">
+				<h5 class="name">
+					<th:block th:text="${item.userName}"></th:block> -<span class="date"
+						th:text="${item.createDate}"></span>
+				</h5>
+				<div class="review d-flex" style="color: #C7A17A;">
+					<th:block th:each="i: ${#numbers.sequence(1, (item.review))}">
+						<i class="fas fa-star"></i>
+					</th:block>
+					<th:block th:if="${item.review - 5 != 0}">
+						<th:block th:each="i: ${#numbers.sequence(1, 5 - (item.review))}">
+							<i class="fal fa-star"></i>
+						</th:block>
+					</th:block>
+				</div>
+				<th:block th:switch="${item.review}">
+					<p th:case="1">Poor</p>
+					<p th:case="2">Below Average </p>
+					<p th:case="3">Average</p>
+					<p th:case="4">Good</p>
+					<p th:case="5">Excellent</p>
+				</th:block>
+			</div>
+		</div>
+	</th:block>
+</th:block>

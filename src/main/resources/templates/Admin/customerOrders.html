@@ -1,0 +1,95 @@
+<table class='table table-striped' id="tableCusOrder">
+	<thead>
+		<tr>
+			<th data-sortable="false">No. Invoice</th>
+			<th data-sortable="false">Supplier</th>
+			<th data-sortable="false">Total Price</th>
+			<th data-sortable="false">Status</th>
+			<th data-sortable="false">Products</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item,iter : ${listCusOrder}">
+			<tr>
+				<td hidden th:text="${item.idInvoiceSup}"></td>
+				<td th:text="${iter.index+1}"></td>
+				<td th:text="${item.titleSup}"></td>
+				<td th:text="${item.priceInvSup}"></td>
+				<th:block th:switch="${item.sttInvSup}">
+					<th:block th:case="'0'">
+						<td>Pending</td>
+					</th:block>
+					<th:block th:case="'1'">
+						<td style="color: blue;">Delivering</td>
+					</th:block>
+					<th:block th:case="'2'">
+						<td><strong style="color: green;">Delivered</strong></td>
+					</th:block>
+
+					<th:block th:case="'3'">
+						<td><strong style="color: green;">Delivered</strong></td>
+					</th:block>
+
+					<th:block th:case="'4'">
+						<td><strong style="color: darkgreen;">Completely successful</strong></td>
+					</th:block>
+					<th:block th:case="'9'">
+						<td><strong style="color: red;">Cancelled</strong></td>
+					</th:block>
+				</th:block>
+				<td>
+					<button type="button" id="btnPurchasedProduct" class="btn btn-primary">Purchased
+						product</button>
+				</td>
+				<td hidden th:text="${item.idSupplier}"></td>
+				<td hidden th:text="${item.idInvoice}"></td>
+				<td hidden th:text="${item.priceVoucherA}"></td>
+				<td hidden th:text="${item.isStatus}"></td>
+				<td hidden th:text="${item.sttInvSup}"></td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+<p hidden id="idAccount" th:text="${idAccount}"></p>
+
+<script>
+	$("#tableCusOrder").on('click', '#btnPurchasedProduct', function () {
+		var currentRow = $(this).closest("tr");
+
+		var idInvS = currentRow.find("td:eq(0)").text();
+		var moneyReceived = currentRow.find("td:eq(3)").text();
+		var idSupp = currentRow.find("td:eq(6)").text();
+		var idInvoice = currentRow.find("td:eq(7)").text();
+		var priceVouA = currentRow.find("td:eq(8)").text();
+		var sttInv = currentRow.find("td:eq(9)").text();
+		var sttInvSupp = currentRow.find("td:eq(10)").text();
+		$.ajax({
+			type: "Get",
+			url: "/Admin/customer-management/purchasedProduct",  //remember change the controller to your owns.
+			data: {
+				id: idInvS,
+				idAccount: $("#idAccount").text(),
+				idSupplier: idSupp,
+				idInvoice:idInvoice,
+				priceVouA:priceVouA,
+				sttInv:sttInv,
+				sttInvSupp:sttInvSupp,
+			},
+			success: function (res) {
+				$("#mbodyCusOrder").html("");
+				$("#cusOrderTitle").text("Customer Orders - Purchased Product");
+				$("#backCusOrder").show();
+				$("#mbodyCusOrder").html(res);
+				let tablePurchasedProduct = document.querySelector('#tablePurchasedProduct');
+				let dataTablePurchasedProduct = new simpleDatatables.DataTable(tablePurchasedProduct);
+				
+				$("#moneyReceived").text(moneyReceived);
+				
+				
+			},
+			error: function (response) {
+				console.log(response.responseText);
+			}
+		});
+	});
+</script>

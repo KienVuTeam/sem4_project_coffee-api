@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymleaf.org">
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+
+</head>
+<style>
+.backdrop-open {
+    display: block;
+}
+.backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Độ mờ của backdrop */
+    z-index: 999;
+}
+/*New*/
+.inlineRight{
+	right: 0;
+}
+.inlineTop{
+	top: 0;
+}
+td {
+	text-align: center;
+}
+
+format_th_center{
+	text-align: center;
+}
+
+
+
+#top__tool input[type=search] {
+	min-height: calc(1.5em + .934rem + 2px);
+	padding: .467rem .6rem;
+	font-size: .9025rem;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #555252;
+	background-color: #fff;
+	background-clip: padding-box;
+	border: 1px solid #dfe3e7;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	border-radius: .25rem;
+	transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+
+#preloader {
+	background: #ccc url(/supplier/images/loader3.gif) no-repeat center;
+	opacity: 0.9;
+	background-size: 5%;
+	height: 100vh;
+	width: 100%;
+	position: fixed;
+	z-index: 100;
+}
+
+.margin__left {
+	text-align: right;
+}
+
+.dataTable-sorter::before, .dataTable-sorter::after {
+	display: none;
+}
+</style>
+
+<!-- Add Jquery -->
+<script src="https://code.jquery.com/jquery-3.7.0.js"
+	integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+	crossorigin="anonymous"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+	integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--  <script th:src="@{/ckeditor/ckeditor.js}"></script> -->
+<!-- bootstrap 5 -->
+
+
+<script src="//cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+<!-- <script src="//cdn.ckeditor.com/4.22.1/basic/ckeditor.js"></script> -->
+
+
+<body>
+<div class="backdrop" id="backdrop"></div>
+	<div id="preloader"></div>
+	<div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+
+	<div id="main">
+	<nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+
+	<div class="main-content container-fluid">
+	<!-- Add new here -->
+	<!--  <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#full-scrn">
+                        Full Screen Modal
+                    </button> -->
+
+                    <!-- full size modal-->
+                    <div class="modal fade text-left w-100" id="full-scrn" tabindex="-1" role="dialog"
+                        aria-labelledby="myModalLabel20" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-full" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title" id="myModalLabel20">Full Screen Modal</h4>
+                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                <i data-feather="x"></i>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            Cake cupcake sugar plum. Sesame snaps pudding cupcake candy canes icing cheesecake. Sweet roll
+                            pudding lollipop apple pie gummies dragée. Chocolate bar cookie caramels I love lollipop ice
+                            cream tiramisu lollipop sweet.
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                                <i class="bx bx-x d-block d-sm-none"></i>
+                                <span class="d-none d-sm-block">Close</span>
+                            </button>
+                            <button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+                                <i class="bx bx-check d-block d-sm-none"></i>
+                                <span class="d-none d-sm-block">Accept</span>
+                            </button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+	<!-- End -->                
+                
+                    <!-- new -->
+                    <!-- button trigger for  Vertically Centered modal -->
+                   
+                    <!-- Vertically Centered modal Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+                        role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Confirm Invoice Of Cus</h5>
+                            <button type="button" id ="btn_close_exampleModalCenter"class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <i data-feather="x"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                            Are you sure ???
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Close</span>
+                            </button>
+                            <button type="button" class="btn btn-primary ml-1" data-bs-dismiss="modal" id="btn-confirm-invoiDetail"  onclick="invoiDetailOnclick_ConfirmM(this)">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Accept</span>
+                            </button>
+                        </div>
+                        </div>
+
+                    </div>
+                    </div>
+                  
+                <!-- end -->
+            
+	
+	<!--  -->
+	<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Invoice Management</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/Supplier/index-invoice-management}">Invoice</a></li>
+								<li style="border-bottom: 1px solid #000;" class="breadcrumb-item active" aria-current="page">View Detail</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+	</div>
+	<!--  -->
+		 <section id="input-sizing">
+        <div class="row match-height">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Order Information</h4>
+                    </div>
+                    
+                        <div class="card-body">
+                                <!--  -->
+                                <input type="hidden" id="statusOfInvoiceDetail_hidden" th:value="${diableBtnConfirm}"> 
+                                <!--  -->
+                            <div class="row" th:each="item ,key: ${invoiceDetailMgI}" >
+                                
+                                <input type="hidden" id="totalOrderAmount_hidden" th:value="${item.totalOrderAmount}">
+                                <input type="hidden" id="idOfInvoice_hidden" th:value="${item.idInvoice}"> 
+                                <input type="hidden" id="statusOfInvoiSupp_hidden" th:value="${item.statusOfInvoiceSupp}" th:attr="data-statusOfInvoiceSupp=${item.statusOfInvoiceSupp}">
+                           
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Customer Name</h6>
+                                    <input class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.nameCus}" readonly="readonly">
+                                </div> 
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Address</h6>
+                                    <input class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.address}" readonly="readonly">
+                                </div>
+                                
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Create Date</h6>
+                                   
+                                    <input class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.createAt}" readonly="readonly">
+                                </div>
+                              <!--   <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Total order amount of product : disable </h6>
+                                    <input class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.totalAmountOfProduct}" readonly="readonly">
+                                </div> \
+                                -->
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Original Invoice ($)</h6>
+                                    <input class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.totalOrderAmount}" readonly="readonly" >
+                                </div>
+                                <!-- 
+                                th:value="${item.Commission}"
+                                th:value="${item.estimatedTotalPrice}"
+                                  -->
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Commission For Admin ($)</h6>
+                                    <input id="outputCommission" class="form-control form-control-lg" type="text" placeholder="Large Input" value=0.00 readonly="readonly">
+                                </div>
+                                
+                               <!--<div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Voucher</h6>
+                                    <input class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.voucher}" readonly="readonly">
+                                </div>
+                                -->
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Price Voucher ($)</h6>
+                                    <input id="outputPriceVoucher" class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.priceVoucher}" readonly="readonly">
+                                </div>
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Refund To Admin ($)</h6>
+                                    <input id="refundtoCustomers" class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.refundtoCustomers}" readonly="readonly">
+                                </div>
+                                
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Actual Invoice ($)</h6>
+                                    <input id="estimatedTotalPrice" class="form-control form-control-lg" type="text" th:data-estimatedTotalPrice-hide="${item.estimatedTotalPrice}" value=0.00 placeholder="Large Input"  readonly="readonly">
+                                </div>
+                                <div class="col-sm-4" style="margin-bottom: 10px;">
+                                    <h6>Money Received ($)</h6>
+                                    <input id="outputMoneyReceived" class="form-control form-control-lg" type="text" placeholder="Large Input" th:value="${item.moneyReceived}" readonly="readonly">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- end -->
+    <!-- <section id="input-sizing">
+        <div class="row match-height">
+        <div class="col-12">
+        	<div class="card"> -->
+        	<!-- Bordered table start -->
+			<div class="row" id="table-bordered">
+			  <div class="col-12">
+			    <div class="card">
+			      <div class="card-header">
+			        <h4 class="card-title">Order Processing</h4>
+			      </div>
+			      <div class="card-content">
+			        
+			        <!-- table bordered -->
+			        <div class="table-responsive">
+			          <table class="table table-bordered mb-0" style="margin: 5px 5px;" id="tbl_invoiceDetail">
+			            <thead>
+			              <tr>
+			                <th style="text-align: center;">No</th>
+			                <th style="text-align: center;">Product name</th>
+			                <th style="text-align: center;">Price ($)</th>
+			                <th style="text-align: center;">Quantity</th>
+			                <th style="text-align: center;">Amount ($)</th>
+			                <th style="text-align: center;">Tick | Untick </th>
+			                
+			                
+			               
+			              </tr>
+			            </thead>
+			            <tbody>
+			              <tr th:each="item ,key: ${invoiceDetail}" >
+			              
+			                
+			                <div th:if="${statusOfInvoiceSupp eq 0}" >
+			                
+				                <td  th:text=" ${key.index}+1">Michael Right</td>
+				                <td th:text="${item.nameProduct}">$15/hr</td>
+				                <td class="text-bold-500" th:text="${item.priceOrder}">UI/UX</td>
+				                <td th:text="${item.amount}">Remote</td>
+				                <td th:text="${item.price}">Austin,Taxes</td>
+				                <!-- <td><input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" th:data-Invoi="${item.idInvoice}"
+				                 th:data-InvoiDetail="${item.idInvoiceDetail}" th:data-priceOfProduct="${item.price}" th:data-totalPrice= "0"    value=1>
+				                	
+				                </td>/
+				                -->
+				                <!--fix  -->
+				                <span th:if="${diableBtnConfirm eq true}">
+					                <span th:if="${item.isStatus eq 1 or item.isStatus eq 4}">
+					                	<td><input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" th:data-Invoi="${item.idInvoice}"
+						                 th:data-InvoiDetail="${item.idInvoiceDetail}" th:data-priceOfProduct="${item.price}" th:data-totalPrice= "0"  checked="checked" disabled="true" value=1>
+						                	
+						                </td>
+					                
+					                </span>
+					                <span th:unless="${item.isStatus eq 1 or item.isStatus eq 4}">				                
+					                <td>
+					                <input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" th:data-Invoi="${item.idInvoice}"
+					                 th:data-InvoiDetail="${item.idInvoiceDetail}" th:data-priceOfProduct="${item.price}" th:data-totalPrice= "0"  disabled="true" value=2>					                	
+					                </td>
+					                
+					                 </span>
+				                
+				                </span>
+				                <span th:unless="${diableBtnConfirm eq true}">				                
+					                <td><input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" th:data-Invoi="${item.idInvoice}"
+					                 th:data-InvoiDetail="${item.idInvoiceDetail}" th:data-priceOfProduct="${item.price}" th:data-totalPrice= "0"    value=1>
+					                	
+					                </td>
+				                
+				                 </span>
+				                 <!-- end -->
+				                
+				                
+			                </div>
+			                <div th:unless="${statusOfInvoiceSupp eq 0}">
+			                	<td  th:text=" ${key.index}+1" class="check_temp" data-temp="false">Michael Right</td>
+				                <td th:text="${item.nameProduct}">$15/hr</td>
+				                <td class="text-bold-500" th:text="${item.priceOrder}">UI/UX</td>
+				                <td th:text="${item.amount}">Remote</td>
+				                <td th:text="${item.price}">Austin,Taxes</td>
+				                <span th:if="${item.isStatus eq 1 or item.isStatus eq 4}">
+				                	<td><input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" th:data-Invoi="${item.idInvoice}"
+				                 th:data-InvoiDetail="${item.idInvoiceDetail}" th:data-priceOfProduct="${item.price}" th:data-totalPrice= "0"  checked="checked" disabled="true" value=1>
+				                	
+				                </td>
+				                
+				                </span>
+				                <span th:unless="${item.isStatus eq 1 or item.isStatus eq 4}">				                
+				                <td><input type="checkbox"  name="tick" onclick="invDetailOnclick_Tick(this);" th:data-Invoi="${item.idInvoice}"
+				                 th:data-InvoiDetail="${item.idInvoiceDetail}" th:data-priceOfProduct="${item.price}" th:data-totalPrice= "0"  disabled="true" value=2>
+				                	
+				                </td>
+				                
+				                 </span>
+			                </div>
+			               
+			              </tr>
+			              
+			             
+			            </tbody>
+			          </table>
+			        </div>
+			      </div>
+			      <!--  -->
+			      
+			      <div class="card-footer" style="margin: 15px 0px;  background-color: #f2f4f4; min-height: 100px;"  >
+			      <hr>
+			      	<div  class="inlineRight" >
+			      		
+				      	
+				      	<p id="totalOrderAmount-text" style="color: red;">Total: 0.00 $</p>
+				      	<button class="btn btn-primary " data-idInvoiSup="0"
+						 id="show_modal_pre_confirm_invoiceDetail">Confirm
+						</button>
+			      	</div>
+			      	
+			      </div>
+			    </div>
+			  </div>
+			</div>
+<!-- Bordered table end -->
+        <!--	</div>
+        </div>
+        </div>
+    </section>    --> 
+				
+		
+	
+		
+
+		<!-- End -->
+		
+		<footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+	</div>
+
+
+    <!-- start script -->
+	<div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+
+	<script th:src="@{/supplier/vendors/quill/quill_min.js}"></script>
+	<script th:src="@{/supplier/js/form_editor.js}"></script>
+	<script
+		th:src="@{/supplier/vendors/simple-datatables/simple-datatables.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var dataList = /*[[${invoiceDetail}]]*/ [];
+        /*]]>*/
+    </script>
+	<script>
+	  //hideSearch();
+	  //document.getElementById("icon_supplier").setAttribute("href", "/supplier/images/coffee3.png");
+	  document.getElementById("title_supplier").textContent="Supplier - Invoice management ";
+	  //
+	  var loader = document.getElementById("preloader");
+      window.addEventListener("load", function () {
+          setTimeout(function(){
+              loader.style.display = "none";
+          },100);
+          
+      });
+      //------------New
+      // Simple Datatable
+		//let table = document.querySelector('#tbl_InvoiceManagement');
+		//let dataTable = new simpleDatatables.DataTable(table);
+		
+		
+	 //	--------------------New
+	 var totalReal_statusInvoiceEq0 =0;
+	 let tempPriceVouString = $("#outputPriceVoucher").val();
+	 let tempPriceVouParse= Number.parseFloat(tempPriceVouString);
+	 console.log("data log dataType tempVou: "+typeof(tempPriceVouParse));
+	 _statusOfInvoiceSupp = $("#statusOfInvoiSupp_hidden").val();
+	 let arrListStatusOfInvoiceDetail =[];
+	 $.each(dataList, (index, item) => {
+		 arrListStatusOfInvoiceDetail.push(item.isStatus);
+	 });
+	 
+	 const statusOfLsInvoiceDetailsHave2orMore = arrListStatusOfInvoiceDetail.every(function func_have2orMore(curVal){
+		 return curVal ==2; 
+	 });
+	 //alert("yes or no: "+statusOfLsInvoiceDetailsHave2orMore);
+	 if(_statusOfInvoiceSupp ==0 && statusOfLsInvoiceDetailsHave2orMore ==true){
+		 $("#totalOrderAmount-text").remove();
+	 };
+	 if(_statusOfInvoiceSupp ==0 && statusOfLsInvoiceDetailsHave2orMore ==false){
+		 //debugger
+		 console.log("data log "+_statusOfInvoiceSupp+" "+statusOfLsInvoiceDetailsHave2orMore);
+		 $("#totalOrderAmount-text").remove();
+		 $.each(dataList, (index, item) => {
+			 console.log("statusOfInvoiceDetail: "+item.isStatus);
+			 if(item.isStatus == 1){
+				 console.log("data log priceOrder:"+item.price);
+				 console.log("check dataType: "+typeof(item.price));
+				 totalReal_statusInvoiceEq0+=item.price;
+			 }
+			 
+		 });
+		 let commission = totalReal_statusInvoiceEq0*0.1;
+		 $("#outputCommission").val(commission.toFixed(2));
+		 let actual_invoice = totalReal_statusInvoiceEq0-(totalReal_statusInvoiceEq0*0.1)-tempPriceVouParse;
+		 console.log("data log totalReal: "+actual_invoice);
+		 $("#estimatedTotalPrice").val(actual_invoice.toFixed(2));
+		 //$("#totalOrderAmount-text").text(actual_invoice+" $"); 
+	 }else if(_statusOfInvoiceSupp ==1 || _statusOfInvoiceSupp ==2||_statusOfInvoiceSupp ==3 ||_statusOfInvoiceSupp ==4){
+		 //debugger
+		 $.each(dataList, (index, item) => {
+			 console.log("statusOfInvoiceDetail: "+item.isStatus);
+			 if(item.isStatus == 1 || item.isStatus ==4){
+				 console.log("data log priceOrder:"+item.price);
+				 console.log("check dataType: "+typeof(item.price));
+				 totalReal_statusInvoiceEq0+=item.price;
+			 }
+		 });
+		 let commission = totalReal_statusInvoiceEq0*0.1;
+		 $("#outputCommission").val(commission.toFixed(2));
+		 let actual_invoice = totalReal_statusInvoiceEq0-(totalReal_statusInvoiceEq0*0.1)-tempPriceVouParse;
+		 console.log("data log totalReal: "+actual_invoice);
+		 $("#estimatedTotalPrice").val(actual_invoice.toFixed(2));
+		 //$("#totalOrderAmount-text").text(actual_invoice+" $"); 
+	 }else if(_statusOfInvoiceSupp ==9){ //finally
+		 let _numberIs0When9 =0;
+	 
+		 $("#estimatedTotalPrice").val(_numberIs0When9.toFixed(2));
+		 $("#outputCommission").val(_numberIs0When9.toFixed(2));
+		 $("#outputMoneyReceived").val(_numberIs0When9.toFixed(2));
+	 }
+	 // 
+	 let tempRealAmount = $("#estimatedTotalPrice").val();
+	 if (tempRealAmount <0){
+		 let _numberIs0 =0;
+		 $("#estimatedTotalPrice").val(_numberIs0.toFixed(2));
+	 }
+	 //
+	 
+	 async function reloadPage(idOfInvoice) {
+			//debugger
+			let url = `http://localhost:8080/Supplier/index-invoice-management`;///invoice-detail?idOfInvoice=${idOfInvoice}
+			window.location.href = url;
+		}
+	 var arrObjInvoiDetail =[];
+		//
+		function loadInvoiceDetail_isSuccessY(){
+			//debugger
+			arrObjInvoiDetail =[];
+			let tableD = document.getElementById("tbl_invoiceDetail");
+			let body = tableD.getElementsByTagName('tbody')[0];
+			let lengthOfData = body.rows.length;
+			console.log("length: "+lengthOfData);
+			for (var i = 0; i< lengthOfData; i++) {
+				let row = body.rows[i]
+				console.log(row);
+				/*for (var j = 0; j < row.cells.length; j++) {
+				    // Lấy mỗi ô
+				    var cell = row.cells[j];
+				}*/
+				
+				let idInvoi = row.querySelector('input[name="tick"]').getAttribute("data-invoi");
+				let idInvDetail = row.querySelector('input[name="tick"]').getAttribute("data-invoidetail");
+				let productPrice = row.querySelector('input[name="tick"]').getAttribute("data-priceofproduct");
+				let InvoiTotal = document.getElementById("totalOrderAmount_hidden").value; 
+					//row.querySelector('input[name="tick"]').getAttribute("data-totalprice");
+				
+				item={
+						'idInvoi' : idInvoi,
+					    'idInvDetail':idInvDetail,
+						'productPrice':parseFloat(productPrice),
+						'InvoiTotal': parseFloat(InvoiTotal),
+						'status': false,
+						'statusForSubmit' :true
+				}
+				arrObjInvoiDetail.push(item)
+				item ={};
+				
+			}
+			console.log("arr:"+arrObjInvoiDetail);
+		}
+		//
+		function invDetailOnclick_Tick(element){		
+			//debugger
+			let priceVou = $("#outputPriceVoucher").val();
+			//$("#priceVoucher-text").text("Voucher: "+priceVou+" $");
+            let idInvoiDetail = element.getAttribute('data-InvoiDetail');
+			//let InvoiTotal = document.getElementById("totalOrderAmount_hidden").value;
+			 if (element.checked) {
+				console.log("inra: "+element.parentElement.parentElement.querySelector('input[name="tick"]').value);				
+				
+				//element.parentElement.parentElement.querySelector('input[name="unTick"]').checked=false;
+				arrObjInvoiDetail.forEach((obj)=>{
+					if(obj.idInvDetail ==idInvoiDetail ){
+						obj.statusForSubmit =true;
+						obj.status =true;
+					}
+				});
+				// -
+				console.log("tick")
+			} else {
+				console.log("untick")
+				
+				//let test =element.parentElement.parentElement.querySelector('input[name="unTick"]').checked=true;
+				
+				arrObjInvoiDetail.forEach((obj)=>{
+					if(obj.idInvDetail ==idInvoiDetail ){
+						obj.statusForSubmit =true;
+						obj.status =false;
+					}
+				});
+				
+			
+			}
+			 //gan cuoi
+			 let totalAmount = arrObjInvoiDetail.reduce(function (acc, arr) {
+				 if(arr.status == true){
+					 acc+= arr.productPrice;
+				
+				 }
+			 return acc ;
+			}, 0);
+			 //
+			 let totalTemp = totalAmount -(totalAmount*0.1)-priceVou;
+			 if(totalTemp < 0){
+				 totalTemp = 0;
+			 }
+			 //alert("temp: "+temp);
+			 //
+			 let refundAmount = arrObjInvoiDetail.reduce(function (acc, arr) {
+				 //let totalTick =0;
+				 //console.log("idinvD: "+idInvoiDetail)
+				 //console.log("idinvinFor: "+arr.idInvDetail);
+				 if(arr.status == false){
+					 acc+= arr.productPrice;
+					 //console.log("price: "+ arr.productPrice);
+					 //console.log("total: "+acc);
+				 }
+			 return acc ;
+			}, 0);
+			 //
+			 //debugger
+			console.log(totalAmount); // Output: 450
+			console.log(refundAmount);
+			//$("#totalOrderAmount-text").text('');
+			$("#totalOrderAmount-text").text("Total: "+totalTemp+" $ ");
+			//let refund = parseFloat(invoiceTotal) - parseFloat(totalAmount); [Total =subPrice-(subPrice * 10%)-priceVoucher]
+			//$("#refundOrderAmount-text").text("Refund: "+refundAmount+" $");
+			
+		}
+		// 
+		
+		//
+		async function confirm_UnConfirm_invoiDetail(idInvoi, idInvoiDetail, statusType) {
+			
+			
+			//new 
+			//old
+			
+			//end
+			//idSup lay khi sup login vao!!!
+			//debugger
+			let idSup = 1 //-tam lay id sup login vao =1 //unconfirm 1
+			let hardData = {
+				"userCase": 1,
+				"statusType": statusType,
+				"idSupplier": idSup,
+				"idInvoice": idInvoi,
+				"idInvoiceDetails": idInvoiDetail
+			};
+			//int userCase, int statusType, int idSupplier, int idInvoice, int idInvoiceDetails
+			//?userCase=1&statusType=${hardData.statusType}&idSupplier=${hardData.idSupplier}&idInvoice=${hardData.idInvoice}&idInvoiceDetails=${hardData.idInvoiceDetails}
+			/*$.ajax({
+			   type:"Get",
+			   url: `http://localhost:8080/Supplier/confirm-unconfirm-invoice`,
+			   data: hardData,
+			   success: (res)=>{
+				   alert("success")
+			   },
+			   error: (r)=>{
+				   console.log("err: "+r);
+				   console.error;
+			   }
+		   });*/
+			//debugger
+			let url = `http://localhost:8080/Supplier/confirm-unconfirm-invoice?userCase=1&statusType=${hardData.statusType}&idSupplier=${hardData.idSupplier}&idInvoice=${hardData.idInvoice}&idInvoiceDetails=${hardData.idInvoiceDetails}`;
+			fetch(url)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					console.log('Response data:', data);
+					// Xử lý dữ liệu phản hồi ở đây
+					//alert("data: " + data);
+				})
+				.catch(error => console.error('Fetch error:', error));
+
+		}
+		//
+		async function testCF(idInvSup) {
+			//debugger
+			//let idOfInvoiSup = id;
+			let idSup = 1;
+			let dataIs = {
+				"id": idInvSup,
+				"idSupplier": idSup
+			};
+			//console.log("url: "+window.location);
+			$.ajax({
+				type: "Post",
+				url: 'http://localhost:8080/Supplier/confirm-invoiM', //http://localhost:8080/supplier/confirm-unconfirm-invoice | http://localhost:8080/confirm-invoiM'
+				data: dataIs,
+				success: (res) => {
+					alert("confirm invoiM success");
+				},
+				error: (err) => {
+					alert("err: " + err);
+					console.log("err: " + err);
+				},
+			}).done(() => {
+				reloadPage();
+			});
+		}
+		//new
+		function Ajax_confirm_InvoiM(idInvoi,strLsInvoiceD, strLsStatus){
+			//4
+			//debugger
+			//temp 
+			let flagRefund;
+			let flagSuccess;
+			let priceRefund;
+			let idSupp = 1;
+			$.ajax({
+			 url: `http://localhost:8080/Supplier/prepare-invoice-detail?idSupplier=${idSupp}&idInvoice=${idInvoi}&strLsInvoiD=${strLsInvoiceD}&strLsStatus=${strLsStatus}`,
+		    // data: {"idSupplier":1, "idInvoice":2, "strLsInvoiD": "3,7", "strLsStatus": "1,0"},
+		     type: "Get",
+		     success: (res)=>{
+		    	 let dataObject = $.parseJSON(res);
+		    	 console.log("json: "+dataObject);
+		    	 //alert("success: "+res);
+		    	
+		    		 flagRefund = dataObject.flagRefund;
+		    		 flagSuccess = dataObject.flagSuccess;
+		    		 priceRefund = dataObject.priceRefund;
+		    	 
+		    	 //
+		    	 if(flagRefund == false && flagSuccess){
+		    		 //alert("success");
+		    		 Swal.fire({
+			    		  position: 'top-center',
+			    		  icon: 'success',
+			    		  title: 'Process success',
+			    		  showConfirmButton: false,
+			    		  timer: 1500
+			    		});
+		    		 reloadPage(idInvoi);
+		    	 }else{
+		    		// alert("hien modal :"+flagRefund +" "+flagSuccess);
+		    		 Swal.fire({
+		    			  title: 'Invalid Order ',
+		    			  text: `You Must Refund: ${priceRefund} $ To iLa`,
+		    			  icon: 'warning',
+		    			  showCancelButton: true,
+		    			  confirmButtonColor: '#3085d6',
+		    			  cancelButtonColor: '#d33',
+		    			  confirmButtonText: 'Yes, i gree!'
+		    			}).then((result) => {
+		    			  if (result.isConfirmed) {
+		    			    confirmRefund(idInvoi);
+		    			  };
+		    			});
+		    	 }
+		    	 
+		     },
+		     error: (err)=>{
+		    	 alert("err: "+err);
+		     }
+		 });
+		 
+		}
+		//
+		function aaa(data){
+			alert("aaa: "+data);
+		}
+		//
+		function confirmRefund(idInvoice){
+			//debugger
+			let parseIdInvoice = parseInt(idInvoice, 10);
+			let idSupp =1;
+			//alert("data: "+flagRefund+" "+flagSuccess);
+			//
+			/*let url = `http://localhost:8080:/Supplier/sup-confirm-refund?idInvoice=${parseIdInvoice}&idSupplier=${idSupp}`;
+			fetch(url)
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					console.log('Response data:', data);
+					setTimeout(function() {
+						reloadPage(idInvoice);						
+					  }, 3000);
+					Swal.fire({
+			    		  position: 'top-center',
+			    		  icon: 'success',
+			    		  title: 'Confirm refund',
+			    		  showConfirmButton: false,
+			    		  timer: 2500
+			    		});
+				})
+				.catch(error => console.error('Fetch error:', error));
+			*/
+			//http://localhost:8080:/Supplier/sup-confirm-refund?idInvoice=${parseIdInvoice}&idSupplier=${idSupp}
+			$.ajax({
+				url: `http://localhost:8080/Supplier/supp-confirm-refund`,
+				type: "Get",
+				data: {
+					"idInvoice" : parseIdInvoice,
+					"idSupplier": idSupp
+				},
+				success: (res)=>{
+					//alert("final");
+					console.log("resp: "+res);
+					setTimeout(function() {
+						reloadPage(idInvoice);						
+					  }, 3000);
+					Swal.fire({
+			    		  position: 'top-center',
+			    		  icon: 'success',
+			    		  title: 'Confirm refund',
+			    		  showConfirmButton: false,
+			    		  timer: 2500
+			    		});
+					
+					
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+				    // Xử lý lỗi khi có lỗi xảy ra trong request
+				    errorMessage = "Lỗi: " + textStatus + ", " + errorThrown;
+				    console.log(errorMessage);
+				  }
+					
+			}); 
+		}
+		//
+		function pre_Confirm_unConfirm_invoiM( idInvoi,strLsInvoiceD, strLsStatus ){
+			//debugger
+			//3
+			console.log("lsInvoiD: "+strLsInvoiceD+"lsStatus: "+strLsStatus);
+			let flagCheck = false;
+			Ajax_confirm_InvoiM(idInvoi,strLsInvoiceD, strLsStatus);
+			
+		}
+		//End----------------------
+		
+		
+		async function invoiDetailOnclick_ConfirmM(){
+		// 2
+		let idInvoi =0;
+		//
+		//debugger
+		let flagCheck = false;
+		function allStatusBeforConfirmIsTrue(obj){
+			return obj.statusForSubmit == true;
+		}
+		
+		flagCheck = arrObjInvoiDetail.every(allStatusBeforConfirmIsTrue);
+		let recordCount = arrObjInvoiDetail.length;
+		let ind =0;
+		//
+		let lsInvoiD="";
+		let lsStatus="";
+		let statusType;
+		//debugger
+		if(flagCheck){
+			//confirm_UnConfirm_invoiDetail(1,1,1);
+			for (var i = 0; i < recordCount; i++) {
+				var array_element = arrObjInvoiDetail[i];
+				console.log(array_element);
+				idInvoi = array_element.idInvoi;
+				let idInvoiDetail = array_element.idInvDetail;
+				let status = array_element.status; //c =0 | uc = 1 
+				//Vinh : // 0: Confirm, 1: Unconfirm
+				statusType =0;
+				if(status){
+					statusType =0;
+				}else{
+					statusType = 1;
+				}
+				if(i === (recordCount -1)){
+					lsInvoiD+=idInvoiDetail;
+					lsStatus+=statusType;
+				}else{
+					lsInvoiD+=idInvoiDetail+",";
+					lsStatus+=statusType+",";
+				}
+				
+				//debugger
+				console.log("data for submit invoidetial_confirm: "+idInvoi+" "+idInvoiDetail+" "+status+" "+statusType+" |||| "+"lsInvoiD: "+lsInvoiD+" lsStatus: "+lsStatus);
+				
+				//await confirm_UnConfirm_invoiDetail( idInvoi, idInvoiDetail, statusType);
+				
+			}
+			    pre_Confirm_unConfirm_invoiM( idInvoi, lsInvoiD, lsStatus);
+				//await testCF(idInvoi);
+				
+				//--
+				//await reloadPage();
+		}else{
+			alert("please tick full");
+		}
+		
+	}
+		//
+		$("#show_modal_pre_confirm_invoiceDetail").on("click", function(e){
+			//0
+			Swal.fire({
+				  title: 'Are you sure?',
+				  text: "Confirm invoice Detail",
+				  icon: 'warning',
+				  showCancelButton: true,
+				  confirmButtonColor: '#3085d6',
+				  cancelButtonColor: '#d33',
+				  confirmButtonText: 'Yes'
+				}).then((result) => {
+				  if (result.isConfirmed) {
+				  /*  Swal.fire(
+				      'Deleted!',
+				      'Your file has been deleted.',
+				      'success'
+				    )*/
+					  invoiDetailOnclick_ConfirmM();
+				  }
+				});
+		});
+		//
+	$('#btn_pre_pre_confirm_invoiMm').on('click', function (e) {
+        //e.preventDefault();
+       // alert("hello");
+        
+        $("#backdrop").attr("class", "backdrop-open")
+        $("#exampleModalCenter").attr("class", "modal fade show");
+        $("#exampleModalCenter").attr("aria-modal", true);
+        $("#exampleModalCenter").attr("aria-hidden", "false");
+        $("#exampleModalCenter").attr("style", "display:block");
+        $("body").attr(" background", "rgba(255, 255, 255, 0.1) ");
+        
+    });
+		//
+		$('#btn_close_exampleModalCenterr').on('click', function (e) {
+        //e.preventDefault();
+        //alert("hello");
+		 const backdrop = document.getElementById('backdrop');
+		 backdrop.classList.remove('backdrop-open');
+        $("#exampleModalCenter").attr("class", "modal fade ");
+        $("#exampleModalCenter").attr("aria-modal", false);
+        $("#exampleModalCenter").attr("aria-hidden", "true");
+        $("#exampleModalCenter").attr("style", "display:none");
+        
+    });
+		
+		//----------Last here
+		//----load finish
+		loadInvoiceDetail_isSuccessY();
+		document.addEventListener("DOMContentLoaded", function() {
+			//alert("status: "+status);
+			
+		});
+		
+		function test() {
+			 //debugger
+			 let flag_hideBtnConfirm = $("#statusOfInvoiceDetail_hidden").val();
+			 var flag_hideBtnConfirmParse = JSON.parse(flag_hideBtnConfirm);
+			 //alert("data log status :"+flag_hideBtnConfirmParse);
+			 if(flag_hideBtnConfirmParse){				 
+			 $("#show_modal_pre_confirm_invoiceDetail").remove();	
+			 }
+			 //
+			 let status= document.getElementById("statusOfInvoiSupp_hidden").value;
+			 console.log("statusOfInvoiSupp_hidden: "+status);
+			 //
+			 if(status == 0 || status == 1 ||status ==2 || status ==9){
+				 $("#outputMoneyReceived").val("0.00");
+			 }
+			 if(status == 3 || status ==4 || status == 1 ||status ==2 || status ==9){
+				 $("#show_modal_pre_confirm_invoiceDetail").remove();	
+				 $("#totalOrderAmount-text").remove();
+			 }
+			 
+			 /*if(status == 1){
+				 debugger
+				 
+				 //let refundCus = $("#refundtoCustomers").val();
+				 //$("#refundOrderAmount-text").text("Refund: "+refundCus+" $");
+				 $("#btn-confirm-invoiDetail").hide();
+				 //let moneyReceived = $("#estimatedTotalPrice").val();
+		     }else{
+		    	 
+		     }
+			 */
+		}
+		 test();
+		
+	
+		 /*$.ajax({
+			 url: "http://localhost:8080/Supplier/prepare-invoice-detail?idSupplier=1&idInvoice=2&strLsInvoiD=3,7&strLsStatus=0,1",
+		    // data: {"idSupplier":1, "idInvoice":2, "strLsInvoiD": "3,7", "strLsStatus": "1,0"},
+		     type: "Get",
+		     success: (res)=>{
+		    	 alert("success");
+		     },
+		     error: (err)=>{
+		    	 alert("err: "+err);
+		     }
+		 });
+		 */
+	</script>
+
+
+
+</body>
+
+</html>

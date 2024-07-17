@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head th:replace="Admin/Layout/admin_layout :: cssAdmin">
+</head>
+<link rel="stylesheet" href="/admin/vendors/chartjs/Chart.min.css">
+
+<body>
+
+	<div th:replace="Admin/Layout/admin_layout :: sidebarAdmin"></div>
+	<div id="main">
+		<nav th:replace="Admin/Layout/admin_layout :: navbarAdmin"></nav>
+
+		<div class="main-content container-fluid">
+			<div class="page-title">
+				<h3>Dashboard</h3>
+			</div>
+			<section class="section">
+				<div class="row mb-2">
+					<div class="col-12 col-md-3">
+						<div class="card card-statistic">
+							<div class="card-body p-0" style="height: 100px;">
+								<div class="d-flex flex-column">
+									<div class='px-3 py-3 d-flex justify-content-between'>
+										<h3 class='card-title'>Revenue Today</h3>
+										<div class="card-right d-flex align-items-center">
+											<p>$<span th:text="${profitsCurrDate}"></span></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-3">
+						<div class="card card-statistic">
+							<div class="card-body p-0" style="height: 100px;">
+								<div class="d-flex flex-column">
+									<div class='px-3 py-3 d-flex justify-content-between'>
+										<h3 class='card-title'>ORDERS Today</h3>
+										<div class="card-right d-flex align-items-center">
+											<p th:text="${countInvCurrDate}"></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row mb-4">
+					<div class="col-md-8">
+						<div class="card">
+							<div class="card-header d-flex justify-content-between align-items-center">
+								<h4 class="card-title">Orders Today</h4>
+								<div class="d-flex ">
+									<a href="/Admin/order-management" class="btn btn-primary round">See More</a>
+								</div>
+							</div>
+
+							<div class="card-body px-0 pb-0">
+								<div class="table-responsive">
+									<table class='table mb-0' id="table1">
+										<thead>
+											<tr>
+												<th>No.</th>
+												<th>Customer</th>
+												<th>Phone</th>
+												<th>Total</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+										<tbody>
+											<th:block th:each="item,iter: ${lstViewMain}">
+												<tr>
+													<td th:text="${iter.index+1}">Graiden</td>
+													<td th:text="${item.nameCus}">vehicula.aliquet@semconsequat.co.uk
+													</td>
+													<td th:text="${item.phone}">076 4820 8838</td>
+													<td th:text="${item.TotalPrice}">Offenburg</td>
+													<td th:switch="${item.isStatus}">
+														<span th:case="0" style="color: blue">Processing</span>
+														<span th:case="1" style="color: green">The customer has received
+															the goods</span>
+														<span th:case="2"
+															style="color: seagreen"><strong>Success</strong></span>
+														<span th:case="9"
+															style="color: red"><strong>Cancelled</strong></span>
+													</td>
+												</tr>
+											</th:block>
+
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="card ">
+							<div class="card-header">
+								<h4>Your Earnings</h4>
+							</div>
+							<div class="card-body">
+								<div id="radialBars"></div>
+								<div class="text-center mb-5">
+									<h6>From last month</h6>
+									<h1 class='text-green'>+$4027.4</h1>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<footer th:replace="Admin/Layout/admin_layout :: footerAdmin"></footer>
+	</div>
+	<div th:replace="Admin/Layout/admin_layout :: scriptAdmin"></div>
+	<script src="/admin/vendors/chartjs/Chart.min.js"></script>
+	<script src="/admin/vendors/apexcharts/apexcharts.min.js"></script>
+	<!--<script src="/admin/js/pages/dashboard.js"></script>-->
+</body>
+
+</html>

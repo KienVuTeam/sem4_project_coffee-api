@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<head>
+	<title>Cafena - Ours Products</title>
+	<header th:replace="_common/scriptClientHeader :: scriptClientHeader">...</header>
+	<style>
+		.cafena-pagination ul li:hover {
+			background-color: #C7A17A;
+			border-color: #C7A17A;
+		}
+
+		.cafena-pagination ul li:hover a {
+			color: #ffffff;
+		}
+
+		.cafena-pagination ul li a {
+			color: #a7a7a7;
+		}
+
+		.cafena-pagination ul li:has(a.current) {
+			background-color: #C7A17A !important;
+			color: #ffffff !important;
+			border-color: #C7A17A !important;
+		}
+
+		.citemFilter {
+			height: 5px;
+			cursor: pointer;
+		}
+
+		.citemFilter:hover {
+			text-decoration: underline;
+		}
+
+		.txCateSel {
+			color: black !important;
+			border-color: black !important;
+		}
+	</style>
+</head>
+
+
+<body class="">
+	<div th:include="_common/scriptClientHeader :: headerContent" th:remove="tag"></div>
+	<main>
+		<section class="breadcrumb-area pt-140 pb-140 bg_img" data-background="/images/bg/breadcrumb-bg-1.jpeg"
+			data-overlay="dark" data-opacity="5"
+			style="background-image: url(&quot;/images/bg/breadcrumb-bg-1.jpeg&quot;);">
+			<div class="shape shape__1"><img src="/images/shape/breadcrumb-shape-1.png" alt=""></div>
+			<div class="shape shape__2"><img src="/images/shape/breadcrumb-shape-2.png" alt=""></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12 text-center">
+						<h2 class="page-title" th:text="${supplierName}"></h2>
+						<div class="cafena-breadcrumb breadcrumbs">
+							<ul class="list-unstyled d-flex align-items-center justify-content-center">
+								<li class="cafenabcrumb-item duxinbcrumb-begin">
+									<a href="/Home"><span>Home</span></a>
+								</li>
+								<li class="cafenabcrumb-item duxinbcrumb-end">
+									<span>Products of Supplier</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<div class="blog-area pt-120 pb-105">
+			<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+				<div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="toastBorder">
+					<div class="d-flex">
+						<div class="toast-body" style="color: #ffff;" id="toastText">
+							No Products Found,Please Try Back !
+						</div>
+						<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+							aria-label="Close"></button>
+					</div>
+				</div>
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12">
+						<div class="shop-filter-wrapper d-flex justify-content-between align-items-center mb-30">
+							<div class="sf-left">
+								<div class="show-text">
+									<span>Showing All Products</span>
+								</div>
+							</div>
+							<div class="sf-right d-flex justify-content-end align-items-center">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xl-8 col-lg-8">
+						<div class="tab-content" id="shop-tabContent">
+							<div class="tab-pane fade show mt-none-30 active" id="shop-tab-1" role="tabpanel"
+								aria-labelledby="shop-tab-1-tab">
+								<div class="row" id="productDisplay">
+									<th:block th:if="${!lsProducts.empty}">
+										<th:block th:each="item,index : ${lsProducts}">
+											<div class="col-xl-4 col-lg-6 col-md-6 mt-30 line-content" id="itemProduct">
+												<div class="pp__item pp__item--2 text-center pt-20 pb-20 active">
+													<div
+														class="pp__action pp__action--2 d-flex align-items-center justify-content-center">
+														<div
+															class="cart d-flex align-items-center justify-content-center">
+															<a href="#0"><i class="fal fa-shopping-basket"
+																	id="btnAddCart" th:data-price="${item.finalPrice}"
+																	th:data-id="${item.id}"></i></a>
+														</div>
+														<div
+															class="wishlist d-flex align-items-center justify-content-center">
+															<a href="#0"><i class="fal fa-heart" id="btnAddWishList"
+																	th:data-idu="${idUsers}"
+																	th:data-id="${item.id}"></i></a>
+														</div>
+														<div
+															class="view d-flex align-items-center justify-content-center">
+															<a href="#0"><i class="fal fa-eye" id="popupProduct"
+																	th:data-id="${item.id}"></i></a>
+														</div>
+													</div>
+													<div class="pp__thumb pp__thumb--2 mt-35">
+														<img class="default" th:src="${item.image}" alt=""
+															style="max-width: 100%;margin-top: -28px;max-height: 128%;"  onerror="this.onerror=null;this.src='/error/blogImage.jpg'">
+														<img class="on-hover" th:src="${item.image}" alt=""
+															style="max-width: 100%;margin-top: -28px;max-height: 128%;"  onerror="this.onerror=null;this.src='/error/blogImage.jpg'">
+													</div>
+													<div class="pp__content pp__content--2 mt-25">
+														<div
+															class="pp__c-top d-flex align-items-center justify-content-center">
+															<div class="pp__cat pp__cat--2">
+																<a href="#0" th:text="${item.cateName}"></a>
+															</div>
+														</div>
+														<h4 class="pp__title pp__title--2">
+															<a th:href="${'/Products/ViewProductDetails/?idProduct='+item.id}"
+																th:text="${item.title}"></a>
+														</h4>
+														<div
+															class="pp__price pp__price--2 d-flex align-items-center justify-content-center">
+															<h6 class="label">Price - </h6>
+															<th:block th:if="${item.finalPrice - item.price == 0}">
+																<span class="price">$<th:block th:text="${item.price}">
+																	</th:block></span>
+															</th:block>
+															<th:block th:if="${item.finalPrice - item.price != 0}">
+																<span class="price">
+																	$<th:block th:text="${item.finalPrice}"></th:block>
+																	/
+																	<span class="regular">
+																		<del>$<th:block th:text="${item.price}">
+																			</th:block></del>
+																	</span>
+																</span>
+															</th:block>
+														</div>
+													</div>
+												</div>
+											</div>
+										</th:block>
+									</th:block>
+								</div>
+							</div>
+
+						</div>
+						<div class="cafena-pagination mt-60" id="paginationProduct">
+							<ul id="pagin">
+
+							</ul>
+						</div>
+					</div>
+					<div class="col-xl-4 col-lg-4">
+						<div class="blog__sidebar blog__sidebar--shop mt-none-30">
+							<div class="widget mt-30">
+								<div class="d-flex flex-row">
+									<div class="col-9">
+										<h2 class="title">Search Here</h2>
+									</div>
+									<div class="col-3 citemFilter" id="btnFilter">
+										Clear Filter
+									</div>
+								</div>
+								<form action="#" class="search-widget">
+									<input type="search" name="search" id="inpSearch" placeholder="Search Product"
+										autocomplete="off">
+									<!-- <button type="submit"><i class="fal fa-search"></i></button> -->
+								</form>
+							</div>
+							<div class="widget slider-range mt-30">
+								<div class="d-flex flex-row">
+									<div class="col-9">
+										<h2 class="title">Price Filter</h2>
+									</div>
+									<div class="col-3 citemFilter" id="btnFilter">
+										Clear Filter
+									</div>
+								</div>
+								<div id="slider-range" class="ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content">
+									<div class="ui-slider-range ui-corner-all ui-widget-header" id ="rangePrice"></div>
+									<span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 41.58%;" id="leftRPrice"></span>
+									<span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="left: 58.49%;" id="rightRPrice"></span>
+								</div>
+								<p class="d-flex justify-content-between align-items-center">
+									<input type="text" id="amount" readonly="">
+									<label for="amount" id="lbFilter">Filter</label>
+								</p>
+							</div>
+							<div class="widget mt-30">
+								<div class="d-flex flex-row">
+									<div class="col-9">
+										<h2 class="title">Categories</h2>
+									</div>
+									<div class="col-3 citemFilter" id="btnFilter">
+										Clear Filter
+									</div>
+								</div>
+								<ul>
+									<th:block th:if="${not #lists.isEmpty(lsCate)}">
+										<th:block th:each="item,index : ${lsCate}">
+											<li class="cat-item"><a href="" id="menuCate" th:data-id="${item.id}"
+													th:text="${item.title}"></a> </li>
+										</th:block>
+									</th:block>
+
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="myProductPopUp" class="product-popup product-popup-1">
+
+		</div>
+	</main>
+
+	<div th:include="_common/scriptClientFooter :: scriptClientFooter" th:remove="tag"></div>
+
+	<script src="https://code.jquery.com/jquery-3.7.0.js"
+		integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+	<script src="/js/productpagination.js"></script>
+	<script>
+		var getUrlParameter = function getUrlParameter(sParam) {
+			var sPageURL = window.location.search.substring(1),
+				sURLVariables = sPageURL.split('&'),
+				sParameterName,
+				i;
+
+			for (i = 0; i < sURLVariables.length; i++) {
+				sParameterName = sURLVariables[i].split('=');
+
+				if (sParameterName[0] === sParam) {
+					return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+				}
+			}
+			return false;
+		};
+
+		var idSupplier = getUrlParameter('idSupplier');
+		$(document).ready(function () {
+			$('a[id="menuCate"]').on('click', function (event) {
+				event.preventDefault();
+				var id = $(this).attr('data-id');
+				clearCateSelFilter();
+				$(this).addClass('txCateSel');
+				$(this).parent().addClass('txCateSel');
+				//
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Products/ajax/viewProductbyCateSupplier/",
+					data: {
+						idCate: id,
+						idSupplier: idSupplier
+					}
+				}).done(function (data) {
+					$('#productDisplay').html(data);
+					myPaginationProduct();
+				})
+			});
+
+			$('#lbFilter').on('click', function () {
+				var normalFilter = $("#amount").val();
+				var removeChar = normalFilter.replaceAll("$", "");
+				var removeSpace = removeChar.replace(/\s/g, '');
+				var filterPrice = removeSpace.split("-");
+				//
+				var startPrice = filterPrice[0];
+				var endPrice = filterPrice[1];
+				//
+				$.ajax({
+					url: "/Products/ajax/viewProductbyPriceSupplier/",
+					async: false,
+					cache: false,
+					data: {
+						minPrice: startPrice,
+						maxPrice: endPrice,
+						idSupplier: idSupplier
+					}
+				}).done(function (data) {
+					if (data == "false") {
+						displayToastMessage(true, "No Products Found,Please Try Back !")
+					} else {
+						clearCateSelFilter();
+						$('#productDisplay').html(data);
+						myPaginationProduct();
+					}
+				});
+			});
+
+			$('#inpSearch').on('input', function () {
+				clearTimeout(this.delay);
+				this.delay = setTimeout(function () {
+					$(this).trigger('search');
+				}.bind(this), 800);
+			}).on('search', function () {
+				clearCateSelFilter();
+				if (this.value) {
+					var dataSearch = this.value;
+					ajSearchData(dataSearch);
+				} else {
+					ajDefaultData();
+				}
+			});
+			//
+			$('div#btnFilter').on('click', function (e) {
+				e.preventDefault();
+				ajDefaultData();
+				clearCateSelFilter();
+			})
+
+			function clearCateSelFilter() {
+				$('li.cat-item').each(function (e) {
+					$(this).removeClass('txCateSel');
+					$(this).children('a#menuCate').removeClass('txCateSel');
+				});
+				document.getElementById('rangePrice').style.width='100%';
+				document.getElementById('leftRPrice').style.left='0%';
+				document.getElementById('rightRPrice').style.left='100%';
+				$("#amount").val("$" + 0 + " - $" + 500);
+			}
+
+			//
+			function ajDefaultData() {
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Products/ajax/viewNormalDataSupplier/",
+					data: {
+						idSupplier: idSupplier
+					}
+				}).done(function (data) {
+					$('#productDisplay').html(data);
+					myPaginationProduct();
+				})
+			}
+
+			function ajSearchData(sendSearch) {
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Products/ajax/viewProductbyNameSupplier/",
+					data: {
+						textSearch: sendSearch,
+						idSupplier: idSupplier
+					}
+				}).done(function (data) {
+					$('#productDisplay').html(data);
+					myPaginationProduct();
+				});
+			}
+			//
+
+			$(document).on('click', function (e) {
+				if (e.target.id == "popupProduct") {
+					e.preventDefault();
+					var idProduct = e.target.getAttribute('data-id');
+					$.ajax({
+						async: false,
+						cache: false,
+						url: "/Products/ajax/viewPopupProduct",
+						data: {
+							idProduct: idProduct,
+						}
+					}).done(function (data) {
+						$('#myProductPopUp').html(data);
+						$('.overlay,#myProductPopUp').addClass('show-popup');
+					});
+				} else if (e.target.id == "btnAddCart") {
+					e.preventDefault();
+					checkUsersLogin();
+					if (checkStatusOfAccount() == false) {
+						displayToastMessage(true,"Your Account Has Been Restricted");
+						return "";
+					}
+					var idProduct = e.target.getAttribute('data-id');
+					//
+					$.ajax({
+						async: false,
+						cache: false,
+						url: "/Carts/ajaxAddProductIntoCart",
+						data: {
+							idProduct: idProduct,
+							Amount: 1
+						}
+					}).done(function (data) {
+						//$('.toast').toast('hide');
+						$('#toastText').toast('hide');
+						$('#toastText').text(data.message);
+						if (data.flagMessage == true) {
+							$('#toastBorder').addClass('bg-success');
+							$('#toastBorder').removeClass('bg-danger');
+						} else {
+							$('#toastBorder').addClass('bg-danger');
+							$('#toastBorder').removeClass('bg-success');
+						}
+						$('.toast').toast('show');
+					});
+				} else if (e.target.id == "btnAddWishList") {
+					e.preventDefault();
+					var idU = parseInt(e.target.getAttribute('data-idu'));
+					var idProduct = parseInt(e.target.getAttribute('data-id'));
+					if (idU == 0) {
+						usersNotLoginWatchList(idProduct);
+					} else {
+						if (checkStatusOfAccount() == false) {
+							displayToastMessage(true, "Your Account Has Been Restricted");
+							return "";
+						}
+						usersLoginWatchList(idProduct);
+					}
+				}
+			});
+			
+			function usersNotLoginWatchList(idProduct) {
+				let strWPKey = localStorage.getItem("wProduct");
+				//
+				if (strWPKey != null) {
+					var arrWProduct = strWPKey.split(',');
+					for (let index = 0; index < arrWProduct.length; index++) {
+						if (arrWProduct[index] == idProduct) {
+							displayToastMessage(true, "This Product Already Exists In Your WatchList");
+							return "";
+						}
+					}
+					//
+					strWPKey += idProduct + ","; //Format : 1,2
+					localStorage.setItem("wProduct", strWPKey);
+					displayToastMessage(false, "Success Add Product Into WatchList");
+				} else {
+					var newLocalItem = idProduct + ",";
+					localStorage.setItem("wProduct", newLocalItem);
+					displayToastMessage(false, "Success Add Product Into WatchList");
+				}
+			}
+
+			function usersLoginWatchList(idProduct) {
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/WatchList/usersAddWatchList",
+					data: {
+						idProduct: idProduct
+					}
+				}).done(function (data) {
+					displayToastMessage(!data.flagMessage, data.message);
+				});
+			}
+
+			function displayToastMessage(flagDanger, msgDisplay) {
+				$('#toastText').toast('hide');
+				$('#toastText').text(msgDisplay);
+				//
+				if (flagDanger == true) {
+					$('#toastBorder').addClass('bg-danger');
+					$('#toastBorder').removeClass('bg-success');
+				} else if (flagDanger == false) {
+					$('#toastBorder').addClass('bg-success');
+					$('#toastBorder').removeClass('bg-danger');
+				}
+				//
+				$('.toast').toast('show');
+			}
+			
+			function checkUsersLogin(){
+				$.ajax({
+					url: "/Login/checkExCookieUserLogin"
+				})
+				.done(function (data) {
+					if (data == false) {
+						window.location.assign("http://localhost:8080/UsersLogin");
+					}
+				});
+      		}
+      		
+      		function checkStatusOfAccount(){
+	            var flagReturn = true;
+	            $.ajax({
+	                async: false,
+	                cache: false,
+	                url: "/Login/checkStatusOfAccount"
+	            }).done(function (data) {
+	                if (data == false) {
+	                    flagReturn = false;
+	                }
+	            });
+            return flagReturn;
+		}
+			
+		});
+
+
+	</script>
+
+	<script>
+		$(document).ready(function () {
+			myPaginationProduct();
+		});
+
+		function myPaginationProduct() {
+			$('#paginationProduct').html('');
+			$('#productDisplay').easyPaginate({
+				paginateElement: 'div#itemProduct',
+				elementsPerPage: 9,
+				effect: 'climb'
+			});
+		}
+	</script>
+
+
+</body>
+
+</html>

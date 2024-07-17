@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Admin/Layout/admin_layout :: cssAdmin">
+
+</head>
+<link rel="stylesheet" href="/admin/vendors/simple-datatables/style.css">
+
+<body>
+	<div th:replace="Admin/Layout/admin_layout :: sidebarAdmin"></div>
+	<div id="main">
+		<nav th:replace="Admin/Layout/admin_layout :: navbarAdmin"></nav>
+
+
+		<div class="modal text-left" id="animation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myModalLabelBtn"></h4>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="alert bg-rgba-success" role="alert">
+							<span class="text-bold-600" id="messBtn"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Close</span>
+						</button>
+						<form id="form-update-supplier">
+							<input hidden id="id" name="id">
+							<input hidden id="isActive" name="isActive">
+							<input hidden id="email" name="email">
+							<button type="button" id="submitUpdate" class="btn btn-primary ml-1"
+								data-bs-dismiss="modal">
+								<i class="bx bx-check d-block d-sm-none"></i>
+								<span class="d-none d-sm-block" id="btnSubmit">Deactive</span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="main-content container-fluid">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Supplier Management</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/Admin/dashboard">Dashboard</a></li>
+								<li class="breadcrumb-item">User Management</li>
+								<li class="breadcrumb-item active" aria-current="page">Supplier Management</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<section class="section">
+
+				<div class="card">
+					<div class="card-body">
+						<div class="col-md-6 mb-4">
+							<div class="input-group mb-3">
+								<label class="input-group-text" for="inputGroupSelect01">Sort Supplier</label>
+								<select class="form-select" id="isActiveFilter">
+									<option value="allSupp" select>All Supplier</option>
+									<option value="0">Unapproved supplier</option>
+									<option value="1">Approved supplier</option>
+									<option value="2">Supplier refused</option>
+								</select>
+							</div>
+						</div>
+						<div id="tableSupplier">
+							<table class='table table-striped' id="table1">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Email</th>
+										<th>Phone</th>
+										<th>Request Date</th>
+										<!--<th>Reply Date</th>-->
+										<th>Option</th>
+										<th>Products Of Supplier</th>
+										<th>Orders Of Supplier</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="item : ${listSupplier}">
+										<tr>
+											<td hidden th:text="${item.id}"></td>
+											<td th:text="${item.title}"></td>
+											<td th:id="'tdEmail'+${item.id}" th:text="${item.email}"></td>
+											<td th:text="${item.phone}"></td>
+											<td th:text="${item.requestDate}"></td>
+											<!--<td th:text="${item.createDate}"></td>-->
+											<td th:switch="${item.isActive}">
+												<th:block th:case="'0'">
+													<button type="button" id="btnAccept" class="btn btn-outline-success"
+														data-bs-toggle="modal" data-bs-target="#animation">
+														Accept
+													</button>
+													<button type="button" id="btnRefuse" class="btn btn-outline-danger"
+														data-bs-toggle="modal" data-bs-target="#animation">
+														Refuse
+													</button>
+												</th:block>
+
+												<button th:case="'1'" id="btnDeac" type="button"
+													class="btn btn-outline-danger" data-bs-toggle="modal"
+													data-bs-target="#animation">
+													Deactive
+												</button>
+												<span th:case="2" style="color: red;">Refused</span>
+											</td>
+											<td>
+												<a th:href="'/Admin/supplier-management/prodOfSupp?idSupplier='+${item.id}+'&nameSupp='+${item.title}"
+													class="btn btn-primary" id="btnProdOfSupp">Detail</a>
+											</td>
+											<th>
+												<a th:href="'/Admin/supplier-management/ordersOfSupp?idSupplier='+${item.id}+'&nameSupp='+${item.title}"
+													class="btn btn-primary" id="btnOrderOfSupp">Orders</a>
+											</th>
+										</tr>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+
+			</section>
+		</div>
+		<footer th:replace="Admin/Layout/admin_layout :: footerAdmin"></footer>
+	</div>
+
+	<div th:replace="Admin/Layout/admin_layout :: scriptAdmin"></div>
+
+	<script src="/admin/vendors/simple-datatables/simple-datatables.js"></script>
+	<script src="/admin/js/vendors.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script th:inline="javascript">
+		$(document).ready(function () {
+			$("#table1").on('click', '#btnAccept', function () {
+				// get the current row
+				var currentRow = $(this).closest("tr");
+
+				var idSupp = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+				var emailSupp = currentRow.find("td:eq(2)").text();
+				$("#id").val(idSupp);
+				$("#isActive").val(1);
+				$("#email").val(emailSupp);
+
+				$("#myModalLabelBtn").text("Accept Supplier");
+				$("#messBtn").text("Are you sure you want to accept this supplier?");
+				$("#btnSubmit").text("Accept");
+
+			});
+			$("#table1").on('click', '#btnRefuse', function () {
+				// get the current row
+				var currentRow = $(this).closest("tr");
+
+				var idSupp = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+				var emailSupp = currentRow.find("td:eq(2)").text();
+				$("#id").val(idSupp);
+				$("#isActive").val(2);
+				$("#email").val(emailSupp);
+
+				$("#myModalLabelBtn").text("Refuse Supplier");
+				$("#messBtn").text("Are you sure you want to refuse this supplier?");
+				$("#btnSubmit").text("Refuse");
+
+			});
+			$("#table1").on('click', '#btnDeac', function () {
+				// get the current row
+				var currentRow = $(this).closest("tr");
+
+				var idSupp = currentRow.find("td:eq(0)").text(); // get current row 1st TD value
+				var emailSupp = currentRow.find("td:eq(2)").text();
+				$("#id").val(idSupp);
+				$("#isActive").val(2);
+				$("#email").val(emailSupp);
+
+				$("#myModalLabelBtn").text("Deactive Supplier");
+				$("#messBtn").text("Are you sure you want to deactive this supplier?");
+				$("#btnSubmit").text("Deactive");
+
+			});
+			$("#submitUpdate").click(function () {
+				$.ajax({
+					type: "Post",
+					url: "/Admin/update-supplier",
+					data: {
+						id: $("#id").val(),
+						isActive: $("#isActive").val(),
+						email: $("#email").val(),
+						isActiveFilter: $('#isActiveFilter').val(),
+					},
+					success: function (res) {
+						$("#tableSupplier").html("");
+						$("#tableSupplier").html(res);
+						let tableSupp = document.querySelector('#table1');
+						let dataTableSupp = new simpleDatatables.DataTable(tableSupp);
+					},
+					error: function (response) {
+						console.log(response.responseText);
+					}
+				});
+			});
+			$("#isActiveFilter").on('change', function () {
+				if ($('#isActiveFilter').val() != "allSupp") {
+					var isActive = $('#isActiveFilter').val(); // get selected value
+					$.ajax({
+						type: "Get",
+						url: "/Admin/supplier-management/filterSupp?isActive=" + isActive,  //remember change the controller to your owns.
+						success: function (data) {
+							$("#tableSupplier").html("");
+							$("#tableSupplier").html(data);
+							let tableSupp = document.querySelector('#table1');
+							let dataTableSupp = new simpleDatatables.DataTable(tableSupp);
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				} else {
+					//window.location = 'http://localhost:8080/supplier-management';
+					location.reload();
+				}
+
+			});
+		});
+	</script>
+
+</body>
+
+</html>

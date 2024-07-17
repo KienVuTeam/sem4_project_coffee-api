@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<head>
+    <title>Cafena - WatchList</title>
+    <header th:replace="_common/scriptClientHeader :: scriptClientHeader">...</header>
+    <link rel="stylesheet" href="/css/cssWatchList.css" />
+    <link rel="stylesheet" href="/css/invoice.css" />
+    <script src="https://kit.fontawesome.com/99a0617376.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div th:include="_common/scriptClientHeader :: headerContent" th:remove="tag"></div>
+    <main>
+        <!-- breadcrumb area start -->
+        <section class="breadcrumb-area pt-140 pb-140 bg_img" data-background="/images/bg/breadcrumb-bg-1.jpeg"
+            data-overlay="dark" data-opacity="5"
+            style="background-image: url(&quot;/images/bg/breadcrumb-bg-1.jpeg&quot;);">
+            <div class="shape shape__1"><img src="/images/shape/breadcrumb-shape-1.png" alt=""></div>
+            <div class="shape shape__2"><img src="/images/shape/breadcrumb-shape-2.png" alt=""></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 text-center">
+                        <h2 class="page-title">Watch List</h2>
+                        <div class="cafena-breadcrumb breadcrumbs">
+                            <ul class="list-unstyled d-flex align-items-center justify-content-center">
+                                <li class="cafenabcrumb-item duxinbcrumb-begin">
+                                    <a href="/"><span>Home</span></a>
+                                </li>
+                                <li class="cafenabcrumb-item duxinbcrumb-end">
+                                    <span>Faq</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- breadcrumb area end -->
+        <!-- cart area start -->
+        <div class="cart-area pt-120 pb-120 col-12">
+            <div class="container">
+                <div class="d-flex flex-column">
+                    <!-- Box Search -->
+                    <div>
+                        <input type="search" id="searchW" class="selList searchBox" placeholder="Search Products ">
+                        <input type="hidden" th:data-idu="${idUsers}" id="idUsers">
+                    </div>
+                    <!-- Box Filter -->
+                    <div class="d-flex flex-row">
+                        <!-- Discount -->
+                        <div class="itemDiscount" style="margin-right: 20px;">
+                            <label class="selectItem" for="slct">
+                                <select id="selD" class="selList" required="required">
+                                    <option value="0" disabled="disabled" selected="selected">Discount</option>
+                                    <option value="1">Have Discount</option>
+                                    <option value="2">None Discount</option>
+                                </select><svg class="svgSelect">
+                                    <use xlink:href="#select-arrow-down"></use>
+                                </svg></label>
+                            <!-- SVG Sprites--><svg class="sprites">
+                                <symbol id="select-arrow-down" viewbox="0 0 10 6">
+                                    <polyline points="1 1 5 5 9 1"></polyline>
+                                </symbol>
+                            </svg>
+                        </div>
+                        <!-- Price Sort -->
+                        <div class="itemPrice">
+                            <label class="selectItem" for="slct">
+                                <select id="selP" class="selList" required="required">
+                                    <option value="0" disabled="disabled" selected="selected">Sort Price</option>
+                                    <option value="1">Accessding</option>
+                                    <option value="2">DeAccessing</option>
+                                </select><svg class="svgSelect">
+                                    <use xlink:href="#select-arrow-down"></use>
+                                </svg></label>
+                            <!-- SVG Sprites--><svg class="sprites">
+                                <symbol id="select-arrow-down" viewbox="0 0 10 6">
+                                    <polyline points="1 1 5 5 9 1"></polyline>
+                                </symbol>
+                            </svg>
+                        </div>
+                        <!-- Clear Button -->
+                        <div class="itemClear">
+                            <button class="selList buttonCFilter" id="btnClearF">Clear Filter</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Body-->
+                <div class="d-flex flex-column bodyWatchList selList">
+                    <!-- Header Column -->
+                    <div class="d-flex flex-row headerWatchList">
+                        <div class="itemWH" style="width: 5%;display: block;padding-left:4px">ID</div>
+                        <div class="itemWH" style="width: 22%;display: block;">Product Names</div>
+                        <div class="itemWH" style="width: 15%;display: block;">Image</div>
+                        <div class="itemWH" style="width: 10%;display: block;text-align: center;">Sale Numbers</div>
+                        <div class="itemWH" style="width: 15%;display: block;text-align: center;">Price</div>
+                        <div class="itemWH" style="width: 10%;display: block;text-align: center;">Discount</div>
+                        <div class="itemWH" style="width: 12%;display: block;text-align: center;">Action</div>
+                        <div class="itemWH" style="width: 10%;display: block;text-align: center;">Action</div>
+                    </div>
+                    <!-- DataBody -->
+                    <div id="dataBodyWatchList" class="d-flex flex-column">
+
+                    </div>
+                </div>
+                <div class="paginationInvoice" style="display: flex;justify-content: end;margin-top: 21px;">
+
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+    <div th:include="_common/scriptClientFooter :: scriptClientFooter" th:remove="tag"></div>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="/js/invoicePagination.js"></script>
+    <script>
+        $(document).ready(function () {
+            usersOnLoadWatchList();
+            //
+            function usersOnLoadWatchList() {
+                checkConfligWatchList();
+            }
+            //
+            function checkConfligWatchList() {
+                var idUser;
+                var lsWatchW;
+                var searchProductN;
+                var sortDFlag;
+                var sortPFlag;
+                //StartGet
+                idUser = parseInt($('#idUsers').attr('data-idu'));
+                if (idUser == 0) {
+                    lsWatchW = localStorage.getItem("wProduct");
+                } else {
+                    lsWatchW = "";
+                }
+                //
+                searchProductN = $('#searchW').val();
+                //
+                sortDFlag = $('#selD').find(":selected").val();
+                sortPFlag = $('#selP').find(":selected").val();
+                //Calling-API
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    data: {
+                        idUser: idUser,
+                        lsWatchW: lsWatchW,
+                        searchProductN: searchProductN,
+                        sortDFlag: sortDFlag,
+                        sortPFlag: sortPFlag
+                    },
+                    url: "/WatchList/loadUsersWatchList",
+                }).done(function (data) {
+                    $(".paginationInvoice").html('');
+                    $('#dataBodyWatchList').html(data);
+                    onLoadPagination();
+                });
+            };
+
+            $('#selD').on('change', function (e) {
+                checkConfligWatchList();
+            });
+
+            $('#selP').on('change', function (e) {
+                checkConfligWatchList();
+            });
+
+            $('#searchW').on('input', function () {
+                clearTimeout(this.delay);
+                this.delay = setTimeout(function () {
+                    $(this).trigger('search');
+                }.bind(this), 800);
+            }).on('search', function () {
+                checkConfligWatchList();
+            });
+
+            $(document).on('click', function (e) {
+                if (e.target.id == "clickViewP") {
+                    e.preventDefault();
+                    var idProduct = e.target.getAttribute('data-idp');
+                    var urlProductD = `/Products/ViewProductDetails/?idProduct=${idProduct}`;
+                    window.location.assign(urlProductD);
+                } else if (e.target.id == "clickRemoveW") {
+                    removeWatchList(e);
+                    e.target.parentElement.remove();
+                    onLoadPagination();
+                }
+            });
+
+            $('#btnClearF').on('click', function (e) {
+                e.preventDefault();
+                $("#selD").val("0");
+                $("#selP").val("0");
+                $('#searchW').val("");
+                //
+                checkConfligWatchList();
+            });
+
+            function removeWatchList(cItem) {
+                cItem.preventDefault();
+                var idUser = parseInt($('#idUsers').attr('data-idu'));
+                var idProduct = cItem.target.getAttribute('data-idp');
+                if (idUser == 0) {
+                    var newString = "";
+                    //
+                    var lsWatchID = localStorage.getItem("wProduct");
+                    var arrSpltWatch = lsWatchID.split(',');
+                    for (let index = 0; index < arrSpltWatch.length; index++) {
+                        if (arrSpltWatch[index] != idProduct && arrSpltWatch[index] != "") {
+                            newString += arrSpltWatch[index] + ",";
+                        }
+                    }
+                    //
+                    localStorage.setItem("wProduct", newString);
+                } else {
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        data: {
+                            idProduct : idProduct
+                        },
+                        url: "/WatchList/usersDeleteWatchList",
+                    }).done(function (data) {
+                        $(".paginationInvoice").html('');
+                        onLoadPagination();
+                    });
+                }
+            }
+
+            function onLoadPagination() {
+                $('#dataBodyWatchList').easyPaginate({
+                    paginateElement: 'div#itemWatchList',
+                    elementsPerPage: 10,
+                    effect: 'climb'
+                });
+            }
+        })
+    </script>
+</body>
+
+</html>

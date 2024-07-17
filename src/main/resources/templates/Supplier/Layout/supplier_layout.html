@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymleaf.org">
+
+<head th:fragment="cssSupplier">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="title_supplier">Supplier - Dashboard </title>
+	
+	<link rel="stylesheet" href="/supplier/vendors/simple-datatables/style.css">
+    <link rel="stylesheet" href="/supplier/css/bootstrap.css">
+    <link rel="stylesheet" href="/supplier/css/app.css">
+    <link id="icon_supplier" rel="shortcut icon" href="/supplier/images/coffee3.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+    
+    <link rel="stylesheet" href="/supplier/vendors/quill/quillBubble.css">
+    <link rel="stylesheet" href="/supplier/vendors/quill/quillSnow.css">
+    <style >
+    	body{
+    		line-height: 29px;
+    	}
+        .sidebar-header{
+            margin-bottom: -27px;
+            }
+    	.sidebar-header img {
+    	    width: 80% !important;
+            height: 55px !important;
+    }
+    /**/
+    
+    /**/
+    </style>
+</head>
+
+<body>
+    <div id="sidebar" class='active' th:fragment="sidebarSupplier">
+        <div class="sidebar-wrapper active">
+            <div class="sidebar-header">
+            <a href="/Supplier/Dashboard">
+                <img   src="/supplier/images/coffee-logo01-removebg.png" alt="" srcset="">
+            </a>
+            </div>
+            <div class="sidebar-menu">
+            
+                <ul class="menu" th:fragment="pageSupplier">
+                	
+                    <li class='sidebar-title'>Main Menu</li>
+
+                    <li class="sidebar-item dashboard">
+                        <a href="/Supplier/Dashboard" class='sidebar-link'>
+                            <i data-feather="home" width="20"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <li class="sidebar-item blog">
+                        <a th:href="@{/Supplier/getAll-blog}" class='sidebar-link'>
+                            <i data-feather="edit-3" width="20"></i>
+                            <span>Blog Management</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item product">
+                        <a href="/Supplier/ManagerProduct" class='sidebar-link'>
+                            <i data-feather="coffee" width="20"></i>
+                            <span>Product Management</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item discount">
+                        <a href="/Supplier/ManagerDiscount" class='sidebar-link'>
+                            <i data-feather="dollar-sign" width="20"></i>
+                            <span>Discount Management</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item voucher">
+                        <a href="/Supplier/ManagerVoucher" class='sidebar-link'>
+                            <i data-feather="layers" width="20"></i>
+                            <span>Voucher Management</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item order">
+                        <a th:href="@{/Supplier/index-invoice-management}" class='sidebar-link'>
+                            <i data-feather="shopping-cart" width="20"></i>
+                            <span>Order Management</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item revenue">
+                        <a href="/Supplier/ManagerRevenue" class='sidebar-link'>
+                            <i data-feather="trending-up" width="20"></i>
+                            <span>Revenue Management</span>
+                        </a>
+                    </li>
+                </ul>
+                
+            </div>
+            <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+        </div>
+    </div>
+    <div id="main" >
+        <nav th:fragment="navbarSupplier" class="navbar navbar-header navbar-expand navbar-light">
+            <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
+            <button class="btn navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav d-flex align-items-center navbar-light ms-auto">
+                    <li class="dropdown nav-icon">
+                        <a href="#" data-bs-toggle="dropdown"
+                            class="nav-link  dropdown-toggle nav-link-lg nav-link-user">
+                            <div class="d-lg-inline-block">
+                                <i data-feather="bell"></i>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-large">
+                            <h6 class='py-2 px-4'>Notifications</h6>
+                            <ul class="list-group rounded-none">
+                                <li class="list-group-item border-0 align-items-start">
+                                    <div class="avatar bg-success me-3">
+                                        <span class="avatar-content"><i data-feather="shopping-cart"></i></span>
+                                    </div>
+                                    <div>
+                                        <h6 class='text-bold'>New Order</h6>
+                                        <p class='text-xs'>
+                                            An order made by Ahmad Saugi for product Samsung Galaxy S69
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-icon me-2">
+                        <!--  <a href="#" data-bs-toggle="dropdown"
+                            class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                            <div class="d-lg-inline-block">
+                                <i data-feather="settings"></i>
+                            </div>
+                        </a>
+                       <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="/Supplier/Profile"><i data-feather="user"></i> Account</a>
+                            <a class="dropdown-item" href="#"><i data-feather="settings"></i> Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"><i data-feather="log-out"></i> Logout</a>
+                        </div>
+                        -->
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" data-bs-toggle="dropdown"
+                            class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                            <div class="avatar me-1">
+                                <img src="" onerror="this.onerror=null;this.src='/supplier/images/avatar1.png';" id="avtSuppCookie" alt="avatar" srcset="">
+                            </div>
+                            <div class="d-none d-md-block d-lg-inline-block">Hi, </div>
+                            <div class="d-none d-md-block d-lg-inline-block" id="nameSuppCookie"></div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="/Supplier/Profile"><i data-feather="user"></i> Account</a>
+                            <!-- <a class="dropdown-item" href="#"><i data-feather="settings"></i> Settings</a> -->
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" th:href="@{/Supplier/LogOutAccount}"><i data-feather="log-out"></i> Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <footer th:fragment="footerSupplier">
+            <div class="footer clearfix mb-0 text-muted">
+                <div class="float-start">
+                    <p>2024 &copy; ILA Coffee</p>
+                </div>
+                <div class="float-end">
+                    <p>Crafted with <span class='text-danger'><i data-feather="heart"></i></span> by <a
+                            href="/Supplier/Dashboard">ILA Team</a></p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div th:fragment="scriptSupplier">
+    
+    	<script src="/supplier/vendors/quill/quill_min.js"></script>
+    	<!-- New  -->
+    	<script src="/supplier/js/feather-icons/feather.min.js"></script>
+        <script src="/supplier/js/app.js"></script>
+        <script src="/supplier/js/main.js"></script>
+        <script src="/supplier/vendors/simple-datatables/simple-datatables.js"></script>
+		<script type="text/javascript" th:inline="javascript">
+            /*<![CDATA[*/
+                var nameSuppCookie = /*[[${nameSuppCookie}]]*/ "";
+                var suppCookie = /*[[${suppCookie}]]*/ "";
+            /*]]>*/
+	        checkIsActive();
+            
+            let currentLocation = window.location.pathname.split("/Supplier/")[1];
+            switch (currentLocation) {
+                case "Dashboard": document.querySelector(".menu .dashboard").classList.add("active");break;
+                case "getAll-blog": document.querySelector(".menu .blog").classList.add("active");break;
+                case "ManagerProduct": document.querySelector(".menu .product").classList.add("active");break;
+                case "ManagerDiscount": document.querySelector(".menu .discount").classList.add("active");break;
+                case "ManagerVoucher": document.querySelector(".menu .voucher").classList.add("active");break;
+                case "index-invoice-management": document.querySelector(".menu .order").classList.add("active");break;
+                case "ManagerRevenue": document.querySelector(".menu .revenue").classList.add("active");break;
+            }
+	
+	        function checkIsActive(){
+	            let btns = document.querySelectorAll(".checkIsActive");
+	            if(suppCookie.isActive != 1){
+	                btns.forEach(btn => {
+	                    btn.setAttribute("disabled", true);
+	                    btn.setAttribute("title", "Your account has been restricted");
+	                });
+	            }
+	        }
+
+			function getCookie(name) {
+			  let cookie = {};
+			  document.cookie.split(';').forEach(function(el) {
+			    let split = el.split('=');
+			    cookie[split[0].trim()] = split.slice(1).join("=");
+			  })
+			  return cookie[name];
+			}
+
+            // set profile by cookie
+            let avt = suppCookie.avatar;
+            if(avt === null || avt === "No Image" || avt === "NoImage") {
+                avt = "/supplier/images/avatar1.png";
+            }
+			document.querySelector("#avtSuppCookie").src = avt;
+			document.querySelector("#avtSuppCookie").onerror = function() {
+                this.src = "/supplier/images/avatar1.png";
+            };
+            
+			document.querySelector("#nameSuppCookie").innerHTML = suppCookie.title;
+		</script>
+		
+    </div>
+</body>
+
+</html>

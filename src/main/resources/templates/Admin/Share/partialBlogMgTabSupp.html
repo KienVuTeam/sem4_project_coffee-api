@@ -1,0 +1,136 @@
+								<table class="table table-hover dataTable" id="tableBlogOfSupp">
+									<thead>
+										<tr>
+											<th>No.</th>
+											<th>Supplier</th>
+											<th>Blog Name</th>
+											<th>Blog Thumbnail</th>
+											<th>Date Created</th>
+											<th>Action</th>
+											<th>View Details</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="item, key: ${lstBlogSupp}">
+											<td hidden th:text="${item.id}"></td>
+											<td th:text="${key.index+1}"></td>
+											<td th:text="${item.nameSupp}"></td>
+											<td th:text="${item.title}"></td>
+											<td>
+												<div class="wrapImg">
+													<!-- <img src="/supplier/images/blogpost1.jpg" alt="" srcset=""> -->
+													<!--  <p  th:text="${item.blogImage}"></p> -->
+													<img alt="err"
+														onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';"
+														th:src="${item.image}">
+												</div>
+											</td>
+											<td hidden th:text="${item.description}"></td>
+											<td hidden th:text="${item.image}"></td>
+											<td th:text="${item.createDate}"></td>
+											<td>
+												<th:block th:if="${item.isStatus==0}">
+													<div style="width: 181px;">
+														<button class="btn btn-success" id="acceptBlog">Accept</button>
+														<button class="btn btn-warning" id="ignoreBlog">Ignore</button>
+													</div>
+												</th:block>
+												<th:block th:if="${item.isStatus==1}">
+													<button class="btn btn-warning" id="ignoreBlog">Ignore</button>
+												</th:block>
+												<th:block th:if="${item.isStatus==2}">
+													<span style="color: red;">Ignored</span>
+												</th:block>
+												<th:block th:if="${item.isStatus==3}">
+													<span style="color: rgb(64, 0, 64);">Inactived</span>
+												</th:block>
+											</td>
+											<td>
+												<button type="button" class="btn btn-info" id="btnDetailSupp"
+													data-bs-toggle="modal" data-bs-target="#exampleModalLongSupp">
+													Detail</button>
+												<!--scrollbar Modal -->
+												<div class="modal fade" id="exampleModalLongSupp" tabindex="-1"
+													role="dialog" aria-labelledby="exampleModalLongSuppTitle"
+													aria-hidden="true">
+													<div class="modal-dialog" style="max-width: 1000px;" role="document"
+														id="componentDetailSupp">
+
+													</div>
+												</div>
+											</td>
+											<td hidden th:text="${item.isStatus}"></td>
+											<!-- data-bs-toggle="modal"
+											data-bs-target="#EditBlog" -->
+										</tr>
+									</tbody>
+								</table>
+<script>
+	$("#tableBlogOfSupp").on('click', '#btnDetailSupp', function () {
+			var currentRow = $(this).closest("tr");
+
+			var id = currentRow.find("td:eq(0)").text();
+			var sttBlog = currentRow.find("td:eq(10)").text();
+			$.ajax({
+				type: "Get",
+				url: "/Admin/blog-management/detailBlogSupp?id=" + id,  //remember change the controller to your owns.
+				data: {
+					sttBlog:sttBlog,
+				},
+				success: function (res) {
+					$("#componentDetail").html("");
+					$("#componentDetailSupp").html("");
+					$("#componentDetailSupp").html(res);
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+		$("#tableBlogOfSupp").on('click', '#acceptBlog', function () {
+			var currentRow = $(this).closest("tr");
+
+			var id = currentRow.find("td:eq(0)").text();
+			$.ajax({
+				type: "Post",
+				url: "/Admin/blog-management/updateBlogSupp",  //remember change the controller to your owns.
+				data: {
+					id: id,
+					isStatus: 1,
+				},
+				success: function (data) {
+					alert("Success");
+					$("#tbodyBlogMgOfSupp").html("");
+					$("#tbodyBlogMgOfSupp").html(data);
+					let tableSupp = document.querySelector("#tableBlogOfSupp");
+					let dataTableSupp = new simpleDatatables.DataTable(tableSupp);
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+		$("#tableBlogOfSupp").on('click', '#ignoreBlog', function () {
+			var currentRow = $(this).closest("tr");
+
+			var id = currentRow.find("td:eq(0)").text();
+			$.ajax({
+				type: "Post",
+				url: "/Admin/blog-management/updateBlogSupp?id=" + id,  //remember change the controller to your owns.
+				data: {
+					id: id,
+					isStatus: 2,
+				},
+				success: function (data) {
+					alert("Success");
+					$("#tbodyBlogMgOfSupp").html("");
+					$("#tbodyBlogMgOfSupp").html(data);
+					let tableSupp = document.querySelector("#tableBlogOfSupp");
+					let dataTableSupp = new simpleDatatables.DataTable(tableSupp);
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+</script>

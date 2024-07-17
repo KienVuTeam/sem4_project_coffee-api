@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Admin/Layout/admin_layout :: cssAdmin">
+
+</head>
+<link rel="stylesheet" href="/admin/vendors/simple-datatables/style.css">
+
+<body>
+	<div th:replace="Admin/Layout/admin_layout :: sidebarAdmin"></div>
+	<div id="main">
+		<nav th:replace="Admin/Layout/admin_layout :: navbarAdmin"></nav>
+		<!-- edit -->
+		<div class="modal fade text-left" id="defaultEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="myModalLabel1">Edit Category</h5>
+						<button type="button" class="close rounded-pill" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<form id="formEditCate">
+						<input hidden type="text" class="form-control" id="idEdit" name="idEdit" required>
+						<input hidden id="createDateEdit" name="createDateEdit">
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="basicInput">Title</label>
+								<input type="text" class="form-control validateSpecialChar" id="titleEdit"
+									name="titleEdit" maxlength="49" autocomplete="off" required>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="reset" class="btn" data-bs-dismiss="modal">
+								<i class="bx bx-x d-block d-sm-none"></i>
+								<span class="d-none d-sm-block">Close</span>
+							</button>
+							<button type="button" id="submitEdit" class="btn btn-primary ml-1">
+								<i class="bx bx-check d-block d-sm-none"></i>
+								<span class="d-none d-sm-block">Update</span>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!-- active -->
+		<div class="modal text-left" id="animation" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myModalLabelBtn"></h4>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="alert bg-rgba-success" role="alert">
+							<span class="text-bold-600" id="messBtn"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Close</span>
+						</button>
+						<form method="post" action="/Admin/categories-management/activeCate">
+							<input hidden id="idActive" name="idActive">
+							<input hidden id="isActive" name="isActive">
+							<button type="submit" class="btn btn-primary ml-1" data-bs-dismiss="modal">
+								<i class="bx bx-check d-block d-sm-none"></i>
+								<span class="d-none d-sm-block" id="btnSubmit"></span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- modal prod of cate-->
+		<div class="modal fade" id="modalProdOfCate" tabindex="-1" aria-labelledby="modalProdOfCateTitle"
+			style="display: none;" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable" role="document" style="max-width: 1150px;">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalProdOfCateTitle">
+							Products Of Category (<span id="nameCate">Name Category</span>)</h5>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+								fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+								stroke-linejoin="round" class="feather feather-x">
+								<line x1="18" y1="6" x2="6" y2="18"></line>
+								<line x1="6" y1="6" x2="18" y2="18"></line>
+							</svg>
+						</button>
+					</div>
+					<div class="modal-body" id="componentProdOfCate">
+
+					</div>
+					<div class="modal-footer">
+						<button type="reset" id="btnResetModalProdOfCate" name="btnResetModalProdOfCate"
+							class="btn btn-light-secondary" data-bs-dismiss="modal">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Close</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal text-left" id="animationProd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel6Prod"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" id="myModalLabelBtnProd"></h4>
+						<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+							<i data-feather="x"></i>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="alert bg-rgba-success" role="alert">
+							<span class="text-bold-600" id="messBtnProd"></span>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+							<i class="bx bx-x d-block d-sm-none"></i>
+							<span class="d-none d-sm-block">Close</span>
+						</button>
+						<form id="form-update-prod">
+							<input hidden id="idProd" name="idProd">
+							<input hidden id="isActiveProd" name="isActiveProd">
+							<button type="button" id="submitUpdateProd" class="btn btn-primary ml-1"
+								data-bs-dismiss="modal">
+								<i class="bx bx-check d-block d-sm-none"></i>
+								<span class="d-none d-sm-block" id="btnSubmitProd">Deactive</span>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="main-content container-fluid">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Categories Management</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+								<li class="breadcrumb-item">Product Management</li>
+								<li class="breadcrumb-item active" aria-current="page">Categories</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<form id="formAddCate">
+					<div class="card">
+						<div class="card-header">
+							<h4 class="card-title">New Category</h4>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<input type="text" class="form-control validateSpecialChar" id="title"
+											name="title" maxlength="49" placeholder="Title category" autocomplete="off"
+											required>
+									</div>
+									<button type="button" id="addCate" class="btn btn-primary">Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<section class="section">
+				<div class="card">
+					<div class="card-body">
+						<div id="componentCate">
+							<table class='table table-striped' id="table1">
+								<thead>
+									<tr>
+										<th>No.</th>
+										<th>Title</th>
+										<th>Create Date</th>
+										<th>Status</th>
+										<th>Products Of Category</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="item,iter : ${listCate}">
+										<tr>
+											<td th:text="${iter.index+1}"></td>
+											<td hidden th:text="${item.id}"></td>
+											<td th:text="${item.title}"></td>
+											<td th:text="${item.createDate}"></td>
+											<td th:switch="${item.isActive}">
+												<th:block th:case="true">
+													<button type="button" class="btn btn-outline-success"
+														data-bs-toggle="modal" id="btnEdit"
+														data-bs-target="#defaultEdit">
+														Edit
+													</button>
+													<button type="button" id="btnDeac" class="btn btn-outline-danger"
+														data-bs-toggle="modal" data-bs-target="#animation">
+														Disactive
+													</button>
+													<div class="modal fade text-left" id="warning" tabindex="-1"
+														aria-labelledby="myModalLabel140" aria-hidden="true"
+														style="display: none;">
+														<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+															role="document">
+															<div class="modal-content">
+																<div class="modal-header bg-warning">
+																	<h5 class="modal-title white" id="myModalLabel140">
+																		Cannot be deactivated</h5>
+																	<button type="button" class="close"
+																		data-bs-dismiss="modal" aria-label="Close">
+																		<svg xmlns="http://www.w3.org/2000/svg"
+																			width="24" height="24" viewBox="0 0 24 24"
+																			fill="none" stroke="currentColor"
+																			stroke-width="2" stroke-linecap="round"
+																			stroke-linejoin="round"
+																			class="feather feather-x">
+																			<line x1="18" y1="6" x2="6" y2="18"></line>
+																			<line x1="6" y1="6" x2="18" y2="18"></line>
+																		</svg>
+																	</button>
+																</div>
+																<div class="modal-body">
+																	There are products related to this category.
+																	Currently
+																	cannot be deactivated!
+																</div>
+																<div class="modal-footer">
+																	<button type="button"
+																		class="btn btn-light-secondary"
+																		data-bs-dismiss="modal">
+																		<i class="bx bx-x d-block d-sm-none"></i>
+																		<span class="d-none d-sm-block">Close</span>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</th:block>
+												<button th:case="false" id="btnAct" type="button"
+													class="btn btn-outline-primary" data-bs-toggle="modal"
+													data-bs-target="#animation">
+													Active
+												</button>
+											</td>
+											<td>
+												<button type="button" class="btn btn-primary" id="prodOfCate"
+													data-bs-toggle="modal" data-bs-target="#modalProdOfCate">
+													Details
+												</button>
+											</td>
+										</tr>
+									</th:block>
+								</tbody>
+							</table>
+						</div>
+
+					</div>
+				</div>
+			</section>
+		</div>
+		<footer th:replace="Admin/Layout/admin_layout :: footerAdmin"></footer>
+	</div>
+
+	<div th:replace="Admin/Layout/admin_layout :: scriptAdmin"></div>
+
+	<script src="/admin/vendors/simple-datatables/simple-datatables.js"></script>
+	<script src="/admin/js/vendors.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script th:inline="javascript">
+
+		let validateSpecialChars;
+		try {
+			validateSpecialChars = document.querySelectorAll(".validateSpecialChar");
+		} catch (error) { }
+		if (validateSpecialChars !== undefined) {
+			validateSpecialChars.forEach(function (element) {
+
+
+				element.addEventListener("blur", function (e) {
+					element.value = element.value.trim();
+				});
+
+				element.addEventListener("paste", function (e) {
+					e.preventDefault();
+				});
+
+				element.addEventListener("drop", function (e) {
+					e.preventDefault();
+				});
+				element.addEventListener("input", function (e) {
+					element.value = element.value.replace(/[^a-zA-Z0-9 ]/gm, '');
+				}, false);
+
+				element.addEventListener("paste", function (e) {
+					element.value = element.value.replace(/[^a-zA-Z0-9 ]/gm, '');
+				}, false);
+			});
+		}
+
+		$("#submitUpdateProd").click(function () {
+			document.querySelector("button[name='btnResetModalProdOfCate']").click();
+			$.ajax({
+				type: "Post",
+				url: "/Admin/categories-management/update-product",  //remember change the controller to your owns.
+				data: {
+					id: $("#idProd").val(),
+					isActive: $("#isActiveProd").val(),
+					idCate: $("#pIdCate").text(),
+				},
+				success: function (res) {
+					$('#modalProdOfCate').modal("show");
+					$("#componentProdOfCate").html("");
+					$("#componentProdOfCate").html(res);
+					let tableProdOfCate = document.querySelector('#tableProdOfCate');
+					let dataTableProdOfCate = new simpleDatatables.DataTable(tableProdOfCate);
+					$(".dataTable-info").hide();
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+
+		$("#table1").on('click', '#prodOfCate', function () {
+			var currentRow = $(this).closest("tr");
+			var idCate = currentRow.find("td:eq(1)").text();
+			var nameCate = currentRow.find("td:eq(2)").text();
+			$.ajax({
+				type: "Get",
+				url: "/Admin/categories-management/prodOfCate",
+				data: {
+					idCate: idCate
+				},
+				success: function (res) {
+					$("#nameCate").text(nameCate);
+					$("#componentProdOfCate").html("");
+					$("#componentProdOfCate").html(res);
+					let tableProdOfCate = document.querySelector('#tableProdOfCate');
+					let dataTableProdOfCate = new simpleDatatables.DataTable(tableProdOfCate);
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+		});
+
+		/*<![CDATA[*/
+		$("#addCate").click(function () {
+			if ($('#title').val().trim() == "") {
+				alert("Please enter a title category with characters.");
+			} else {
+				$.ajax({
+					type: "Get",
+					url: "/Admin/ADcheckCate?titleCate=" + $('#title').val().trim(),
+					success: function (res) {
+						if (res) {
+							alert("The category already exists.");
+						} else {
+							$.ajax({
+								type: "Post",
+								url: "/Admin/insertCate",
+								data: {
+									title: $('#title').val().trim()
+								},
+								success: function (data) {
+									document.getElementById("formAddCate").reset();
+									$("#componentCate").html("");
+									$("#componentCate").html(data);
+									let table1 = document.querySelector('#table1');
+									let dataTableSupp = new simpleDatatables.DataTable(table1);
+
+								},
+								error: function (response) {
+									console.log(response.responseText);
+								}
+							});
+						}
+					},
+					error: function (response) {
+						console.log(response.responseText);
+					}
+				});
+
+			}
+		});
+
+		var titleCate = "";
+		$("#table1").on('click', '#btnEdit', function () {
+			var currentRow = $(this).closest("tr");
+
+			var idCate = currentRow.find("td:eq(1)").text();
+			titleCate = currentRow.find("td:eq(2)").text();
+			var createDate = currentRow.find("td:eq(3)").text();
+			$("#idEdit").val(idCate);
+			$("#titleEdit").val(titleCate);
+			$("#createDateEdit").val(createDate);
+
+		});
+		$("#submitEdit").click(function () {
+			if ($('#titleEdit').val().trim() == "") {
+				alert("Please fill in the characters.");
+			} else {
+				if ($('#titleEdit').val().trim() == titleCate) {
+					$.ajax({
+						type: "Post",
+						url: "/Admin/categories-management/updateCate",
+						data: {
+							idEdit: $("#idEdit").val(),
+							createDateEdit: $("#createDateEdit").val(),
+							titleEdit: $('#titleEdit').val().trim()
+						},
+						success: function (data) {
+							$('#defaultEdit').modal('hide');
+							document.getElementById("formEditCate").reset();
+							$("#componentCate").html("");
+							$("#componentCate").html(data);
+							let table1 = document.querySelector('#table1');
+							let dataTableSupp = new simpleDatatables.DataTable(table1);
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				} else {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/ADcheckCate?titleCate=" + $('#titleEdit').val().trim(),
+						success: function (res) {
+							if (res) {
+								alert("The category already exists.");
+							} else {
+								$.ajax({
+									type: "Post",
+									url: "/Admin/categories-management/updateCate",
+									data: {
+										idEdit: $("#idEdit").val(),
+										createDateEdit: $("#createDateEdit").val(),
+										titleEdit: $('#titleEdit').val().trim()
+									},
+									success: function (data) {
+										$('#defaultEdit').modal('hide');
+										document.getElementById("formEditCate").reset();
+										$("#componentCate").html("");
+										$("#componentCate").html(data);
+										let table1 = document.querySelector('#table1');
+										let dataTableSupp = new simpleDatatables.DataTable(table1);
+									},
+									error: function (response) {
+										console.log(response.responseText);
+									}
+								});
+							}
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				}
+
+			}
+		});
+
+		$("#table1").on('click', '#btnDeac', function () {
+			var currentRow = $(this).closest("tr");
+
+			var idCate = currentRow.find("td:eq(1)").text();
+
+			var listProduct = /*[[${listProduct}]]*/"";
+			const listChk = [];
+			for (i = 0; i < listProduct.length; i++) {
+				if (listProduct[i].isActive != 2) {
+					if (listProduct[i].idcate == idCate) {
+						listChk.push(listProduct[i].id);
+					}
+					//alert(listProduct[i].id + "-" + listProduct[i].idcate + ", " + idCate);
+				}
+
+			}
+			if (listChk.length > 0) {
+				//alert("Co product lien quan. Khong deactive duoc!");
+				$('#animation').modal('hide');
+				$('#warning').modal('show');
+			} else {
+				$("#idActive").val(idCate);
+				$("#isActive").val(0);
+				$("#myModalLabelBtn").text("Deactive Category");
+				$("#messBtn").text("Are you sure you want to deactive this category?");
+				$("#btnSubmit").text("Deactive");
+			}
+
+
+		});
+		$("#table1").on('click', '#btnAct', function () {
+			var currentRow = $(this).closest("tr");
+
+			var idCate = currentRow.find("td:eq(1)").text();
+			$("#idActive").val(idCate);
+			$("#isActive").val(1);
+
+			$("#myModalLabelBtn").text("Active Category");
+			$("#messBtn").text("Are you sure you want to active this category?");
+			$("#btnSubmit").text("Update");
+		});
+		/*]]>*/
+	</script>
+
+</body>
+
+</html>

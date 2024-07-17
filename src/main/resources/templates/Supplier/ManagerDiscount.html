@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+</head>
+    <link rel="stylesheet" href="/supplier/vendors/choicesjs/choices.min.css" />
+    <link rel="stylesheet" href="/supplier/css/detailBlog.css">
+    <link rel="stylesheet" href="/supplier/css/alert.css">
+
+<body>
+	<style> 
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        
+        .wrapImg{
+            width: 120px;
+        }
+
+        .wrapImg > img {
+            width: 100%;
+            max-height: 90%;
+        }
+        .alert{
+            width: 30%;
+            display: none;
+            left: 105%;
+            z-index: 1234;
+        }
+        .showAlert {
+            display: block;
+            animation: movein 0.5s ease forwards, moveout 0.5s 2.5s ease forwards;
+        }
+        .wrap-selectAll{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #selectAll{
+            margin-top: 7px;
+        }
+        .ctn-slide{
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+        .searchItems {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            grid-gap: 20px;
+        }
+        .searchItem{
+            width: 400px;
+        }
+
+        .ajaxDetailDiscount .card-content img{
+            width: 100%;
+            object-fit: cover;
+            max-height: 350px;
+        }
+
+        .ajaxDetailDiscount .card-content h5{
+            font-size: 2rem;
+        }
+
+        @keyframes movein {
+            from { 
+                left: 105%; 
+            }
+            to   { 
+                left: 70%; 
+            }
+        }
+
+        @keyframes moveout {
+            from { left: 65%; }
+            to   { left: 105%; }
+        }
+    </style>
+    
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+        
+        <div class="main-content container-fluid">
+                <!-- Manager Discount -->
+                <section class="section">
+                    <div class="card">
+                        <div class="card-header row page-title m-0">
+							<div class="col-12 col-md-6 order-md-1 order-last">
+                                <h3>Discount Management</h3>
+                            </div>
+                            <div class="col-12 col-md-6 order-md-2 order-first">
+                                <nav aria-label="breadcrumb" class="breadcrumb-header">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/Supplier/Dashboard">Dashboard</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Discount Management</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="col-12 d-flex">
+                                <button class="btn btn-primary m-2 checkIsActive" data-bs-toggle="modal"
+                                data-bs-target="#AddDiscount" onclick="beforeAddDiscount()">Create Discount</button>
+                                <div class="input-group w-25 ml-50" style="padding: 7px;">
+                                    <label class="input-group-text" for="FilterDiscount">Filter</label>
+                                    <select class="form-select" id="FilterDiscount" onchange="filterDiscount(this.value)">
+                                        <option value="All" selected="selected">All Discount</option>
+                                        <option value="1">Upcoming Discount</option>
+                                        <option value="2">In Use Discount</option>
+                                        <option value="3">Expired Discount</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div id="ajax-discount"> 
+                            	<table class="table table-hover dataTable1 tableEdit">
+	                                <thead>
+	                                    <tr>
+	                                        <th>No.</th>
+	                                        <th>Discount</th>
+	                                        <th>Date Begin</th>
+	                                        <th>Date End</th>
+	                                        <th>Status</th>
+	                                        <th>Detail</th>
+	                                        <th>Action</th>
+	                                    </tr>
+	                                </thead>
+	                                <tbody>
+	                                    <tr th:each="item : ${AllDiscount}">
+									        <td th:text="${itemStat.index + 1}"></td>
+									        <td th:text="${item.discount}"></td>
+									        <td th:text="${item.dateBegin}"></td>
+									        <td th:text="${item.dateEnd}"></td>
+									        
+									        <td th:switch="${item.isStatus}">
+	                                            <div th:case="0" class="text-warning">Upcoming</div>
+	                                            <div th:case="1" class="text-success">For Sale</div>
+	                                            <div th:case="2" class="text-danger">Expired</div>
+	                                        </td>
+                                            
+	                                        <td th:if="${item.isStatus == 0}">
+	                                            <button onclick="detailDiscount(this)" title="Detail" type="button" class="btn btn-info edit checkIsActive" data-bs-toggle="modal"
+	                                                data-bs-target="#DetailDiscount" 
+	                                                th:attr="data-indC=${item.indC}, data-idProduct=${item.idProduct}">
+	                                                Show
+	                                            </button>
+	                                        </td>
+	                                        <td th:if="${item.isStatus != 0}">
+	                                        </td>
+									        
+	                                        <td th:if="${item.isStatus == 0}">
+                                                <button onclick="editDiscount(this)" type="button" title="Edit" class="btn btn-info edit checkIsActive" data-bs-toggle="modal"
+                                                    data-bs-target="#EditDiscount" 
+                                                    th:attr="data-discount=${item.discount},data-dateBegin=${item.dateBegin},
+                                                    data-dateEnd=${item.dateEnd},data-indC=${item.indC}, data-price=${item.price}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                                </button>
+                                                <button type="button" class="btn btn-danger" th:attr="data-indC=${item.indC}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteDiscount" title="Delete" onclick="deleteDiscount(this)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                </button>
+											</td>
+	                                        <td th:if="${item.isStatus == 1}">
+	                                        </td>
+	                                        <td th:if="${item.isStatus == 2}">
+                                                <button type="button" class="btn btn-danger" th:attr="data-indC=${item.indC}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteDiscount" title="Delete" onclick="deleteDiscount(this)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                                </button>
+	                                        </td>
+	                                        
+									    </tr>
+	                                </tbody>
+	                            </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- End Manager Discount -->
+
+                <!-- Modal Edit Discount -->
+                <div class="modal fade" id="EditDiscount" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <form action="/Supplier/EditDiscount" method="post" class="form form-vertical">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Edit Discount</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <i data-feather="x"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-vertical">Discount</label>
+                                                    <input type="number" autocomplete="off" class="form-control editDiscount validateNumberValue" name="discount" placeholder="Product Discount" min="1" max="9999999999" required >
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date Begin</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control editDateBegin dateBegin" name="dateBegin"
+                                                        placeholder="Date Begin" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date End</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control editDateEnd dateEnd" name="dateEnd"
+                                                        placeholder="Date End" required onkeydown="return false">
+                                                </div>
+                                            </div>
+
+                                            <input type="hidden" class="editIdProduct" name="listIdProduct">
+                                            <input type="hidden" class="editIndC" name="indC">
+
+                                            <div class="col-12">
+                                                <div class="form-group m-0"><label>Select products for discount</label></div>
+                                                <div class='form-check mb-3 wrap-selectAll'>
+                                                    <div class="checkbox">
+                                                        <input onchange="toggleCheck('#EditDiscount')" type="checkbox" id="selectAll" class='form-check-input'>
+                                                        <label for="selectAll">Select All</label>
+                                                    </div>
+                                                    <input type="text" class="form-control w-25" id="search" placeholder="Search Product" autocomplete="off">
+                                                </div>
+                                                <div class="mb-30 ctn-slide">
+                                                    <div class="searchItems" id="ajaxProductNoDiscount_ED">
+                                                        <div class="searchItem" th:each="item : ${AllProductNotHaveDiscount}">
+                                                            <input type="hidden" th:value="${item.title}" name="searchValue">
+                                                            <div class="popular-menu__item">
+                                                                <input type="checkbox" th:value="${item.id}" onchange="checkedCheckbox(this, '#EditDiscount')" name="checkbox"  
+                                                                th:attr="data-price=${item.price}" id="checkbox1" class='form-check-input checkbox'>
+                                                                <div class="popular-menu__thumb">
+                                                                    <img th:src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="">
+                                                                </div>
+                                                                <div class="popular-menu__content text-center">
+                                                                    <h2 class="title" th:text="${item.title}"></h2>
+                                                                    <div class="pp__price d-flex align-items-center justify-content-center">
+                                                                        <h6 class="label">Price -</h6>
+                                                                        <span class="price">$</span> 
+                                                                        <span class="price" th:text="${item.price}"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="searchItemsNull d-none">
+                                                        <p class="text-center">No entries found</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="reset" class="btn btn-light-secondary">
+                                        <span class="d-none d-sm-block">Reset</span>
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary ml-1" onclick="confirmEditDiscount(this)">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Edit Discount -->
+
+                <!-- Modal Add Discount -->
+                <div class="modal fade" id="AddDiscount" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content">
+                            <form action="/Supplier/AddDiscount" method="get" class="form form-vertical">
+                                <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLongTitle">Add A New Discount</h5>
+                                    <button type="button" class="close" data-bs-dismiss="modal"
+                                        aria-label="Close">
+                                        <i data-feather="x"></i>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-body">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="first-name-vertical">Discount</label>
+                                                    <input type="number" autocomplete="off" class="form-control validateNumberValue" name="discount" placeholder="Product Discount" 
+                                                    min="1" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date Begin</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control dateBegin" name="dateBegin"
+                                                        placeholder="Date Begin" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="contact-info-vertical">Date End</label>
+                                                    <input type="date" id="contact-info-vertical"
+                                                        class="form-control dateEnd" name="dateEnd"
+                                                        placeholder="Date End" required onkeydown="return false">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group m-0"><label>Select products for discount</label></div>
+                                                <div class='form-check mb-3 wrap-selectAll'>
+                                                    <div class="checkbox">
+                                                        <input onchange="toggleCheck('#AddDiscount')" type="checkbox" id="selectAll" class='form-check-input'>
+                                                        <label for="selectAll">Select All</label>
+                                                    </div>
+                                                    <input type="text" class="form-control w-25" id="search" placeholder="Search Product" autocomplete="off">
+                                                </div>
+                                                <div class="mb-30 ctn-slide">
+                                                    <div class="searchItems" id="ajaxProductNoDiscount_AD">
+                                                        <div class="searchItem" th:each="item : ${AllProductNotHaveDiscount}">
+                                                            <input type="hidden" th:value="${item.title}" name="searchValue">
+                                                            <div class="popular-menu__item">
+                                                                <input type="checkbox" th:value="${item.id}" onchange="checkedCheckbox(this, '#AddDiscount')" name="checkbox"  
+                                                                th:attr="data-price=${item.price}" id="checkbox1" class='form-check-input checkbox'>
+                                                                <div class="popular-menu__thumb">
+                                                                    <img th:src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="">
+                                                                </div>
+                                                                <div class="popular-menu__content text-center">
+                                                                    <h2 class="title" th:text="${item.title}"></h2>
+                                                                    <div class="pp__price d-flex align-items-center justify-content-center">
+                                                                        <h6 class="label">Price -</h6>
+                                                                        <span class="price">$</span> 
+                                                                        <span class="price" th:text="${item.price}"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="searchItemsNull d-none">
+                                                        <p class="text-center">No entries found</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="listId" id="list">
+                                <div class="modal-footer">
+                                    <button type="reset" class="btn btn-light-secondary">
+                                        <span class="d-none d-sm-block">Reset</span>
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary ml-1 submitAddDiscount">
+                                        <i class="bx bx-check d-block d-sm-none"></i>
+                                        <span class="d-none d-sm-block">Submit</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Add Discount -->
+                
+                <!-- Modal Show Detail Discount -->   
+                <div class="modal fade text-left" id="DetailDiscount" tabindex="-1" role="dialog"
+                    aria-labelledby="myModalLabel1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="myModalLabel1">Detail Discount</h5>
+                                <button type="button" class="close rounded-pill"
+                                    data-bs-dismiss="modal" aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Ajax Return -->
+                                <div class="col-12" id="ajaxDetailDiscount">
+                                    <div class="form-group m-0"><label>You can remove discount of products</label></div>
+                                    <div class='form-check mb-3 mt-2 wrap-selectAll'>
+                                        <div class="checkbox">
+                                            <input onchange="toggleCheckDetailDis(this)" type="checkbox" id="selectAll" class='form-check-input'>
+                                            <label for="selectAll">Select All</label>
+                                            <button type="button" id="removeDisOfPro" class="btn btn-danger ml-30" title="Remove Discount Of Products">Remove</button>
+                                        </div>
+                                        <input type="text" class="form-control w-25" id="search" placeholder="Search Product" autocomplete="off">
+                                    </div>
+                                    <div class="mb-30 mt-20 ctn-slide">
+                                        <div class="searchItems">
+                                            <!-- foreach ajax return here -->
+                                        </div>
+                                        <div class="searchItemsNull d-none">
+                                            <p class="text-center">No entries found</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Ajax Return -->
+                            </div>
+                            <input type="hidden" name="listIdProDetailDis">
+                            <div class="modal-footer">
+                                <button type="button" class="btn" data-bs-dismiss="modal">
+                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                    <span class="d-none d-sm-block">Close</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Show Detail Discount -->  
+
+                <!-- Modal Confirm Delete Discount -->
+                <div class="modal fade text-left" id="ConfirmDeleteDiscount" tabindex="-1" role="dialog"
+                    aria-labelledby="myModalLabel19" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm"
+                        role="document">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger">
+                                <h4 class="modal-title text-white" id="myModalLabel19">Delete Discount ?</h4>
+                                <button type="button" class="close" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    <i data-feather="x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body" style="font-size: 1.1rem;">
+                                This action will make the discount disappear and this action cannot be undone. Do you still want to continue ?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light-secondary btn-sm"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                    <span class="d-sm-block d-none">Close</span>
+                                </button>
+                                <button type="button" class="btn btn-danger ml-1 btn-sm confirmDelete"
+                                    data-bs-dismiss="modal">
+                                    <i class="bx bx-check d-block d-sm-none"></i>
+                                    <span class="d-sm-block d-none">Delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End Modal Confirm Delete Discount -->
+
+                <!-- Alert Discount -->
+                <div class="toast">
+                    <div class="toast-content">
+                        <span class="wrap-check"></span>
+                        <div class="message">
+                        <span class="message-text text-1"></span>
+                        <span class="message-text text-2"></span>
+                        </div>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x toast-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <div class="progress"></div>
+                </div>
+                <!-- End Alert Discount -->
+            </div>
+        
+        <footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+	
+	<script src="/supplier/js/jquery.min.js"></script>
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+    <script src="/supplier/vendors/choicesjs/choices.min.js"></script>
+    <script src="/supplier/js/alert.js"></script>
+	<script type="text/javascript" th:inline="javascript">
+	document.getElementById("title_supplier").textContent="Supplier - Discount management ";
+		// Simple Datatable
+		let table2 = document.querySelector('.dataTable1');
+		let table3; 
+		
+		let dataTable1 = new simpleDatatables.DataTable(table2);
+		let dataTable2;
+        
+        // Declare Variable For Validation Date
+        let currentDate = new Date(new Date().toISOString().slice(0, -14));
+            currentDate.setFullYear(currentDate.getFullYear());
+            currentDate.setMonth(currentDate.getMonth());
+            currentDate.setDate(currentDate.getDate() + 1);
+        let tomorrowDate = new Date(new Date().toISOString().slice(0, -14));
+            tomorrowDate.setFullYear(tomorrowDate.getFullYear());
+            tomorrowDate.setMonth(tomorrowDate.getMonth());
+            tomorrowDate.setDate(tomorrowDate.getDate() + 2);
+        let maxYear = currentDate.getFullYear() + 1;
+
+        // input autocomplete off
+        $("input").attr("autocomplete", "off");
+
+        /*<![CDATA[*/
+			var idSupplier = /*[[${idSupplier}]]*/ "";
+		/*]]>*/
+	</script>
+
+    <!-- Script Vavidation Date -->
+    <script src="/supplier/js/Validation/dateDiscount.js"></script>
+    <!-- ================= Script Validate Fields ===================  -->
+    <script src="/supplier/js/Validation/validateFields.js"></script>
+
+	<script>
+	// Declare variable node element
+        let arr = [];
+        let arrDetailDis = [];
+		// Discount
+        let tableEdit = document.querySelector('.tableEdit');
+        let selectList = document.querySelectorAll('input[name="checkbox"]');
+        let list = document.querySelector("#DetailDiscount input[name='listIdProDetailDis']");
+    
+        let slider = document.querySelector('.ctn-slide')
+        
+// =====================================================================================  
+// =====================================================================================   
+		document.onload = checkIsActive();	
+        
+        function toggleCheck(modal){
+            let selectAll = document.querySelector( modal + ' #selectAll');
+            let selectList = document.querySelectorAll( modal + ' input[name="checkbox"]');
+            
+            if(selectAll.checked === true) {
+                selectList.forEach(function(select){
+                    select.checked = true;
+                    checkedCheckbox(select, modal);
+                })
+            }else{
+                selectList.forEach(function(select){
+                    select.checked = false; 
+                    checkedCheckbox(select, modal);
+                })
+            }
+        }
+
+        function checkedCheckbox(checkbox, modal){
+            let idproduct = checkbox.value;
+            let selectAll = document.querySelector( modal + ' #selectAll');
+            let selectList = document.querySelectorAll( modal + ' input[name="checkbox"]');
+            if(checkbox.checked === true){
+                let flag = true;
+
+                selectList.forEach(function(item){
+                    if(item.checked === false){
+                        flag = false;
+                    }
+                });
+                
+                if(flag){
+                    selectAll.checked = true;
+                }
+            }else{
+                selectAll.checked = false;
+            }
+        }
+
+        function toggleCheckDetailDis(t){
+            let selectAll = t;
+            let selectList = document.querySelectorAll('#DetailDiscount input[name="checkbox"]');
+            if(selectAll.checked === true) {
+                selectList.forEach(function(select){
+                    select.checked = true;
+                    checkedCheckboxDetailDis(select);
+                })
+            }else{
+                selectList.forEach(function(select){
+                    select.checked = false; 
+                    checkedCheckboxDetailDis(select);
+                })
+            }
+        }
+
+        function checkedCheckboxDetailDis(checkbox){
+            let idproduct = checkbox.dataset.idproduct;
+            let selectAll = document.querySelector('#DetailDiscount #selectAll');
+            let selectList = document.querySelectorAll('#DetailDiscount input[name="checkbox"]');
+            if(checkbox.checked === true){
+                let flag = true;
+
+                if(!arrDetailDis.includes(idproduct)) arrDetailDis.push(idproduct);
+
+                selectList.forEach(function(item){
+                    if(item.checked === false){
+                        flag = false;
+                    }
+                });
+                if(flag){
+                    selectAll.checked = true;
+                }
+            }else{
+                arrDetailDis.forEach(function(item){
+                    if(item == idproduct){
+                        arrDetailDis.splice(arrDetailDis.indexOf(idproduct),1);
+                    }
+                })
+                selectAll.checked = false;
+            }
+            list.value = arrDetailDis.join(',');
+        }
+
+        function editDiscount(t){
+            // insert new discount need: discount, dateBegin, dateEnd, idProduct, isStatus, indC
+            let discount = document.querySelector("#EditDiscount .editDiscount");
+            let dateBegin = document.querySelector("#EditDiscount .editDateBegin");
+            let dateEnd = document.querySelector("#EditDiscount .editDateEnd");
+            let indC = document.querySelector("#EditDiscount .editIndC");
+            let searchItems = document.querySelector("#EditDiscount .searchItems");
+            let selectAll = document.querySelector("#EditDiscount #selectAll");
+            let search = document.querySelector("#EditDiscount #search");
+
+            discount.value = t.dataset.discount;
+            discount.setAttribute("max",t.dataset.price);
+            
+            dateBegin.value = t.dataset.datebegin;
+            dateEnd.value = t.dataset.dateend;
+
+            indC.value = t.dataset.indc;
+
+            if(searchItems.children.length == 0) {
+                selectAll.setAttribute("disabled", true);
+                search.setAttribute("disabled", true);
+            }else{
+                selectAll.removeAttribute("disabled");
+                search.removeAttribute("disabled");
+            }
+
+            $.ajax({
+                type : "GET",
+                contentType : "application/json",
+                url : "/Supplier/DetailDiscount",
+                data: {
+                    indC: indC.value,
+                    idSupplier: Number(idSupplier),
+                },
+                dataType : 'json',
+                success : function(data) {
+                    if (data.length != 0) {
+                        let min = Math.min(...data.map(item => item.price));
+                        discount.setAttribute("max", Math.floor(min/2));
+                    }
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+
+            setTimeout(() => {
+                const slider = document.querySelector('#EditDiscount .ctn-slide');
+                const cards = document.querySelector('#EditDiscount .searchItems');
+                const searchItemsNull = document.querySelector('#EditDiscount .searchItemsNull');
+                let search = document.querySelector('#EditDiscount #search');
+                let listSearchItem = document.querySelectorAll('#EditDiscount .searchItem');
+                
+                sliderDiscountProduct(slider, cards, searchItemsNull);
+                searchDiscountProduct(slider, searchItemsNull, search, listSearchItem);
+            }, 200);
+        }
+
+        function confirmEditDiscount(t){
+            let inputs = document.querySelector("#EditDiscount form").getElementsByTagName("input");
+            //  inputs: 0: discount; 1: dateBegin; 2: dateEnd; 4: indC
+            let FilterDiscount = document.querySelector("#FilterDiscount");
+            let flag = true;
+
+            // insert discount product 
+            let selectList = document.querySelectorAll('#EditDiscount input[name="checkbox"]');
+            let flagSelect = false;
+            let listIdProduct = [];
+
+            let min = inputs[0].max;
+            selectList.forEach(function(select){
+                if(select.checked === true){
+                    listIdProduct.push(select.value);
+                    if(min > Math.floor(Number(select.dataset.price) / 2)){
+                        min = Math.floor(Number(select.dataset.price) / 2);
+                    }
+                }
+            });
+
+            // validate field to edit discount
+            if(Number(inputs[0].value) > min){
+                flag = false;
+                inputs[0].setCustomValidity("Value must be less than or equal to " + min);
+                inputs[0].reportValidity();
+                return false;
+            }
+
+            if(inputs[0].value == "" || Number(inputs[0].value) > Number(inputs[0].max)){
+                flag = false;
+                inputs[0].reportValidity();
+                return false;
+            }
+
+            if(!inputs[1].checkValidity()){
+                flag = false;
+                inputs[1].reportValidity();
+                return false;
+            }
+            if(!inputs[2].checkValidity()){
+                flag = false;
+                inputs[2].reportValidity();
+                return false;
+            }
+
+            if(flag){
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/EditDiscount",
+                    data: {
+                        discount: inputs[0].value,
+                        dateBegin: inputs[1].value,
+                        dateEnd: inputs[2].value,
+                        indC: inputs[4].value,
+                        idSupplier: Number(idSupplier),
+                        type: FilterDiscount.value,
+                        listIdProduct: listIdProduct.toString()
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        returnAjaxDiscount(data);
+                        // $("#EditDiscount").modal("hide");
+
+                        setTimeout(() => {
+                            const slider = document.querySelector('#EditDiscount .ctn-slide');
+                            const cards = document.querySelector('#EditDiscount .searchItems');
+                            const searchItemsNull = document.querySelectorAll('#EditDiscount .searchItemsNull');
+                            let search = document.querySelector('#EditDiscount #search');
+                            let listSearchItem = document.querySelectorAll('#EditDiscount .searchItem');
+                            
+                            sliderDiscountProduct(slider, cards, searchItemsNull);
+                            searchDiscountProduct(slider, searchItemsNull, search, listSearchItem);
+                        }, 500);
+                        location.reload();
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            }
+        }
+
+        function beforeAddDiscount(){
+            let selectAll = document.querySelector('#AddDiscount #selectAll');
+            let search = document.querySelector('#AddDiscount #search');
+            let selectList = document.querySelectorAll('#AddDiscount input[name="checkbox"]');
+            let searchItems= document.querySelector("#AddDiscount .searchItems")
+            let submitAddDiscount= document.querySelector("#AddDiscount .submitAddDiscount")
+            selectAll.checked = false;
+            selectList.forEach(function(checkbox) {
+                checkbox.checked = false;
+            })
+
+            if(searchItems.children.length == 0) {
+                selectAll.setAttribute("disabled", true);
+                search.setAttribute("disabled", true);
+                submitAddDiscount.setAttribute("disabled", true)
+            }else{
+                selectAll.removeAttribute("disabled");
+                search.removeAttribute("disabled");
+                submitAddDiscount.removeAttribute("disabled");
+            }
+
+            setTimeout(() => {
+                const slider = document.querySelector('#AddDiscount .ctn-slide');
+                const cards = document.querySelector('#AddDiscount .searchItems');
+                const searchItemsNull = document.querySelector('#AddDiscount .searchItemsNull');
+                let search = document.querySelector('#AddDiscount #search');
+                let listSearchItem = document.querySelectorAll('#AddDiscount .searchItem');
+                
+                sliderDiscountProduct(slider, cards, searchItemsNull);
+                searchDiscountProduct(slider, searchItemsNull, search, listSearchItem);
+            }, 200);
+        }
+
+        $(".submitAddDiscount").on("click", function (e) {
+            let flag = true;
+            let form = document.querySelector("#AddDiscount form");
+            let discount = document.querySelector("#AddDiscount input[name='discount']");
+            let dateBegin = document.querySelector("#AddDiscount input[name='dateBegin']");
+            let dateEnd = document.querySelector("#AddDiscount input[name='dateEnd']");
+            
+            let list = document.querySelector('#AddDiscount input[name="listId"]');
+            let arr = [];
+            let selectList = document.querySelectorAll('#AddDiscount input[name="checkbox"]');
+
+            if(discount.value == ""){
+                flag = false;
+                discount.reportValidity();
+                return false;
+            }
+
+            if(!dateBegin.checkValidity()){
+                flag = false;
+                dateBegin.reportValidity();
+                return false;
+            }
+            if(!dateEnd.checkValidity()){
+                flag = false;
+                dateEnd.reportValidity();
+                return false;
+            }
+            
+			if(selectList.length > 0){
+                let flagSelect = false;
+                let loopStop = false;
+                selectList.forEach(function(select){
+                    if(loopStop) return;
+                    if(select.checked == true){
+                        flagSelect = true;
+	                    if((parseInt(select.dataset.price)/2) < parseInt(discount.value)){
+                            discount.setCustomValidity("Product prices cannot be reduced by more than 50%");
+	                        discount.reportValidity();
+                            flag = false;
+                            loopStop = true;
+                            return false;
+	                    }
+                        arr.push(select.value);
+                        discount.setCustomValidity("");
+                    }
+                });
+                list.value = arr.toString();
+                if(!flagSelect){
+                    selectList[0].setCustomValidity("Please select at least one");
+                    selectList[0].reportValidity();
+                    flag = false;
+                    return false;
+                }
+            }else{
+                flag = false;
+            }
+            if(flag){
+                form.submit();
+            }
+		})
+
+        function filterDiscount(value) {
+            $.ajax({
+                type : "GET",
+                contentType : "application/json",
+                url : "/Supplier/FilterDiscount",
+                data: {
+                    idSupplier: Number(idSupplier),
+                    type: value
+                },
+                dataType : 'json',
+                success : function(data) {
+                    returnAjaxDiscount(data);
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        }
+
+        function detailDiscount(t) {
+            let indC = t.dataset.indc;
+            $.ajax({
+                type : "GET",
+                contentType : "application/json",
+                url : "/Supplier/DetailDiscount",
+                data: {
+                    indC: indC,
+                    idSupplier: Number(idSupplier),
+                },
+                dataType : 'json',
+                success : function(data) {
+                    if (data.length != 0) {
+                        var html = "";
+                        html+=`<div class="form-group m-0"><label>You can remove discount of products</label></div>
+                                <div class='form-check mb-3 mt-2 wrap-selectAll'>
+                                    <div class="checkbox">
+                                        <input onchange="toggleCheckDetailDis(this)" type="checkbox" id="selectAll" class='form-check-input'>
+                                        <label for="selectAll">Select All</label>
+                                        <button type="button" onclick="removeDisOfPro(this)" data-indC=${data[0].indC} id="removeDisOfPro" class="btn btn-danger ml-30" title="Remove Discount Of Products">Remove</button>
+                                    </div>
+                                    <input type="text" class="form-control w-25" id="search" placeholder="Search Product" autocomplete="off">
+                                </div>
+                                <div class="mb-30 mt-20 ctn-slide">
+                                    <div class="searchItems">`
+                        data.forEach(function(item) {
+                        html +=`        <div class="searchItem">
+                                            <input type="hidden" value="${item.title}" name="searchValue">
+                                            <div class="popular-menu__item">
+                                                <input type="checkbox" value="${item.id}" onchange="checkedCheckboxDetailDis(this)" name="checkbox"  
+                                                data-idProduct="${item.idProduct}" id="checkbox1" class='form-check-input checkbox'>
+                                                <div class="popular-menu__thumb">
+                                                    <img src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="">
+                                                </div>
+                                                <div class="popular-menu__content text-center">
+                                                    <h2 class="title">${item.title}</h2>
+                                                    <div class="pp__price d-flex align-items-center justify-content-center" style="font-size:16px">
+                                                        <h6 class="label">Price -</h6>
+                                                        <span class="price">$${item.price - item.discount}</span> 
+                                                        <span style="margin: 0 2px;">/</span>
+                                                        <del>$${item.price}</del>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`
+                        })
+                        html+=`     </div>
+                                    <div class="searchItemsNull d-none">
+                                        <p class="text-center">No entries found</p>
+                                    </div>
+                                </div>`
+                        $("#ajaxDetailDiscount").empty();
+                        $("#ajaxDetailDiscount").append(html);
+                    } 
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+            
+            setTimeout(() => {
+                const slider = document.querySelector('#DetailDiscount .ctn-slide');
+                const cards = document.querySelector('#DetailDiscount .searchItems');
+                const searchItemsNull = document.querySelector('#DetailDiscount .searchItemsNull');
+                let search = document.querySelector('#DetailDiscount #search');
+                let listSearchItem = document.querySelectorAll('#DetailDiscount .searchItem');
+                
+                sliderDiscountProduct(slider, cards, searchItemsNull);
+                searchDiscountProduct(slider, searchItemsNull, search, listSearchItem);
+            }, 1000);
+        }
+
+        function removeDisOfPro(t) {
+            let FilterDiscount = document.querySelector("#FilterDiscount");
+            let searchItems = document.querySelector("#DetailDiscount .searchItems");
+            let selectAll = document.querySelector("#DetailDiscount #selectAll");
+            let selectList = document.querySelectorAll('#DetailDiscount input[name="checkbox"]');
+            let confirmDelete = document.querySelector("#ConfirmDeleteDiscount .confirmDelete");
+            // function remove
+            function removeDisOfProFunc() {
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/RemoveDisOfPro",
+                    data: {
+                        indC: t.dataset.indc,
+                        idSupplier: Number(idSupplier),
+                        idProducts: list.value,
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                        if (data.length != 0) {
+                            var html = "";
+                            html+=`<div class="form-group m-0"><label>You can remove discount of products</label></div>
+                                    <div class='form-check mb-3 mt-2 wrap-selectAll'>
+                                        <div class="checkbox">
+                                            <input onchange="toggleCheckDetailDis(this)" type="checkbox" id="selectAll" class='form-check-input'>
+                                            <label for="selectAll">Select All</label>
+                                            <button type="button" onclick="removeDisOfPro(this)" data-indC=${data[0].indC} id="removeDisOfPro" class="btn btn-danger ml-30" title="Remove Discount Of Products">Remove</button>
+                                        </div>
+                                        <input type="text" class="form-control w-25" id="search" placeholder="Search Product" autocomplete="off">
+                                    </div>
+                                    <div class="mb-30 mt-20 ctn-slide">
+                                        <div class="searchItems">`
+                            data.forEach(function(item) {
+                            html +=`        <div class="searchItem">
+                                                <input type="hidden" value="${item.title}" name="searchValue">
+                                                <div class="popular-menu__item">
+                                                    <input type="checkbox" value="${item.id}" onchange="checkedCheckboxDetailDis(this)" name="checkbox"  
+                                                    data-idProduct="${item.idProduct}" id="checkbox1" class='form-check-input checkbox'>
+                                                    <div class="popular-menu__thumb">
+                                                        <img src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="">
+                                                    </div>
+                                                    <div class="popular-menu__content text-center">
+                                                        <h2 class="title">${item.title}</h2>
+                                                        <div class="pp__price d-flex align-items-center justify-content-center" style="font-size:16px">
+                                                            <h6 class="label">Price -</h6>
+                                                            <span class="price">$${item.price - item.discount}</span> 
+                                                            <span style="margin: 0 2px;">/</span>
+                                                            <del>$${item.price}</del>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>`
+                            })
+                            html+=`     </div>
+                                        <div class="searchItemsNull d-none">
+                                            <p class="text-center">No entries found</p>
+                                        </div>
+                                    </div>`
+                            $("#ajaxDetailDiscount").empty();
+                            $("#ajaxDetailDiscount").append(html); 
+
+                        } 
+                        showAlert("success", "Your changes has been successful");
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                        showAlert("danger", "Awww, Somthing went wrong!!!");
+                    }
+                });
+            }
+            
+            // validate 
+            let flagSelect = false;
+            let flag = true;
+            selectList.forEach(function(select){
+                if(select.checked === true){
+                    flagSelect = true;
+                }
+            });
+            if(!flagSelect){
+                selectList[0].setCustomValidity("Please select at least one");
+                selectList[0].reportValidity();
+                flag = false;
+                return false;
+            }else{selectList[0].setCustomValidity("");}
+
+            if(flag){
+                if(searchItems.children.length <= 1 || selectAll.checked === true){
+                    $("#ConfirmDeleteDiscount").modal("show");
+                    confirmDelete.addEventListener("click", function(){
+                        // call remove discount
+                        removeDisOfProFunc();
+                        // load ajax all discount after delete 
+                        setTimeout(() => {
+                            $.ajax({
+                                type : "GET",
+                                contentType : "application/json",
+                                url : "/Supplier/FilterDiscount",
+                                data: {
+                                    idSupplier: Number(idSupplier),
+                                    type: FilterDiscount.value
+                                },
+                                dataType : 'json',
+                                success : function(data) {
+                                   returnAjaxDiscount(data);
+                                },
+                                error : function(e) {
+                                    console.log("ERROR: ", e);
+                                }
+                            });
+                        }, 500);
+                        
+                        $("#DetailDiscount").modal('hide');
+                        // reload product not have discount after remove, delete discount of product
+                            ajaxProductNoDiscount_AD();
+                            ajaxProductNoDiscount_ED();
+                    })
+                }else{
+                    // call remove discount
+                    removeDisOfProFunc();
+                    // reload product not have discount after remove, delete discount of product
+                            ajaxProductNoDiscount_AD();
+                            ajaxProductNoDiscount_ED();
+                    setTimeout(() => {
+                        const slider = document.querySelector('#DetailDiscount .ctn-slide');
+                        const cards = document.querySelector('#DetailDiscount .searchItems');
+                        const searchItemsNull = document.querySelectorAll('#DetailDiscount .searchItemsNull');
+                        let search = document.querySelector('#DetailDiscount #search');
+                        let listSearchItem = document.querySelectorAll('#DetailDiscount .searchItem');
+                        
+                        $("#EditDiscount .searchItemsNull").addClass("d-none");
+                        sliderDiscountProduct(slider, cards, searchItemsNull);
+                        searchDiscountProduct(slider, searchItemsNull, search, listSearchItem);
+                    }, 1000);
+                }
+            }
+        };
+        
+        function deleteDiscount(t){
+            let confirmDelete = document.querySelector("#ConfirmDeleteDiscount .confirmDelete");
+            let indC = t.dataset.indc;
+            let FilterDiscount = document.querySelector("#FilterDiscount");
+            confirmDelete.addEventListener("click", function(){
+                $.ajax({
+                    type : "GET",
+                    contentType : "application/json",
+                    url : "/Supplier/DeleteDiscount",
+                    data: {
+                        idSupplier: Number(idSupplier),
+                        type: FilterDiscount.value,
+                        indC: indC
+                    },
+                    dataType : 'json',
+                    success : function(data) {
+                            returnAjaxDiscount(data);
+                            showAlert("success", "Your changes has been successful");
+
+                                ajaxProductNoDiscount_AD();
+                                ajaxProductNoDiscount_ED();
+                    },
+                    error : function(e) {
+                        console.log("ERROR: ", e);
+                    }
+                });
+            })
+        }
+        
+        function returnAjaxDiscount(data){
+            var html = "";
+            html += `<table class="table table-hover dataTable2 tableEdit">
+                            <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Discount</th>
+                                <th>Date Begin</th>
+                                <th>Date End</th>
+                                <th>Status</th>
+                                <th>Detail</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            data.forEach(function(item, index) {
+                html+= `<tr>
+                            <td>${index + 1}</td> 
+                            <td>${item.discount}</td>
+                            <td>${item.dateBegin}</td>
+                            <td>${item.dateEnd}</td>
+                            <td>`
+                            
+                switch (item.isStatus) {
+                    case 0: html+=`<div class="text-warning">Upcoming</div>`;break;
+                    case 1: html+=`<div class="text-success">For Sale</div>`;break;
+                    case 2: html+=`<div class="text-danger">Expired</div>`;break;
+                }
+                            
+                html+=     `</td>`
+
+                if(item.isStatus == 0) {
+                    html+=     `<td>
+                                    <button onclick="detailDiscount(this)" title="Detail" type="button" class="btn btn-info edit checkIsActive" data-bs-toggle="modal"
+                                        data-bs-target="#DetailDiscount" data-indC=${item.indC} data-id="${item.id}" data-idProduct="${item.idProduct}">
+                                        Show
+                                    </button>
+                                </td>
+                                <td>
+                                    <button onclick="editDiscount(this)" type="button" title="Edit" class="btn btn-info edit checkIsActive" data-bs-toggle="modal"
+                                        data-bs-target="#EditDiscount" 
+                                        data-discount="${item.discount}" data-dateBegin="${item.dateBegin}"
+                                        data-dateEnd="${item.dateEnd}" data-indC="${item.indC}" data-price="${item.price}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                    </button>
+                                    <button type="submit" class="btn btn-danger" data-indC="${item.indC}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteDiscount" title="Delete" onclick="deleteDiscount(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    </button>
+                                </td>`
+                }else if(item.isStatus == 1){
+                    html+=`<td></td>
+                        <td></td>`
+                }else{
+                    html+=     `<td></td>
+                                <td>
+                                    <button type="submit" class="btn btn-danger" data-indC="${item.indC}" data-bs-toggle="modal" data-bs-target="#ConfirmDeleteDiscount" title="Delete" onclick="deleteDiscount(this)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                                    </button>
+                                </td>`
+                }
+                    html+= `</tr>`;
+            })
+            html += `</tbody></table>`;
+            
+            $("#ajax-discount").empty();
+            $("#ajax-discount").append(html);
+            
+            table3 = document.querySelector('.dataTable2');
+            dataTable2 = new simpleDatatables.DataTable(table3);
+            
+            checkIsActive();
+        }
+
+        function ajaxProductNoDiscount_AD(){
+            $.ajax({
+                type : "GET",
+                contentType : "application/json",
+                url : "/Supplier/AjaxProductNoDiscount",
+                data: {
+                    idSupplier: Number(idSupplier),
+                },
+                dataType : 'json',
+                success : function(data) {
+                    if (data.length != 0) {
+                        var html = "";
+                        data.forEach(function(item) {
+                            html +=`<div class="searchItem">
+                                        <input type="hidden" value="${item.title}" name="searchValue">
+                                        <div class="popular-menu__item">
+                                            <input type="checkbox" value="${item.id}" onchange="checkedCheckbox(this, '#AddDiscount')" name="checkbox"  
+                                            data-price="${item.price}" id="checkbox1" class='form-check-input checkbox'>
+                                            <div class="popular-menu__thumb">
+                                                <img src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="">
+                                            </div>
+                                            <div class="popular-menu__content text-center">
+                                                <h2 class="title">${item.title}</h2>
+                                                <div class="pp__price d-flex align-items-center justify-content-center">
+                                                    <h6 class="label">Price -</h6>
+                                                    <span class="price">$</span> 
+                                                    <span class="price">${item.price}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`
+                        })
+                        $("#ajaxProductNoDiscount_AD").empty();
+                        $("#ajaxProductNoDiscount_AD").append(html);
+
+                        slider.style.height = '250px';
+                        slider.style.pointerEvents = "auto";
+                    }
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        }
+
+        function ajaxProductNoDiscount_ED(){
+            $.ajax({
+                type : "GET",
+                contentType : "application/json",
+                url : "/Supplier/AjaxProductNoDiscount",
+                data: {
+                    idSupplier: Number(idSupplier),
+                },
+                dataType : 'json',
+                success : function(data) {
+                    if (data.length != 0) {
+                        var html = "";
+                        data.forEach(function(item) {
+                            html +=`<div class="searchItem">
+                                        <input type="hidden" value="${item.title}" name="searchValue">
+                                        <div class="popular-menu__item">
+                                            <input type="checkbox" value="${item.id}" onchange="checkedCheckbox(this, '#EditDiscount')" name="checkbox"  
+                                            data-price="${item.price}" id="checkbox1" class='form-check-input checkbox'>
+                                            <div class="popular-menu__thumb">
+                                                <img src="${item.image}" onerror="this.onerror=null;this.src='/supplier/images/defaultImageProduct.png';" alt="">
+                                            </div>
+                                            <div class="popular-menu__content text-center">
+                                                <h2 class="title">${item.title}</h2>
+                                                <div class="pp__price d-flex align-items-center justify-content-center">
+                                                    <h6 class="label">Price -</h6>
+                                                    <span class="price">$</span> 
+                                                    <span class="price">${item.price}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`
+                        })
+                        $("#ajaxProductNoDiscount_ED").empty();
+                        $("#ajaxProductNoDiscount_ED").append(html);
+
+                        slider.style.height = '250px';
+                        slider.style.pointerEvents = "auto";
+                    }
+                },
+                error : function(e) {
+                    console.log("ERROR: ", e);
+                }
+            });
+        }
+    </script>
+<!-- ==================================================================================================================================== -->
+
+<!-- ==================================================================================================================================== -->
+
+<!-- ==================================================================================================================================== -->
+
+    <script>
+        function sliderDiscountProduct(slider, cards, searchItemsNull){
+            let isPressed = false;
+
+            let cursorX;
+
+            slider.addEventListener("mousedown", (e) => {
+                isPressed = true;
+                cursorX = e.offsetX - cards.offsetLeft;
+                slider.style.cursor = "grabbing";
+            });
+            
+            slider.addEventListener("mouseup", (e) => {
+                cards.style.pointerEvents = "auto";
+                slider.style.cursor = "grab";
+            });
+            
+            window.addEventListener("mouseup", () => {
+                cards.style.pointerEvents = "auto";
+                isPressed = false;
+            });
+            
+            slider.addEventListener("mousemove", (e) => {
+                if (!isPressed){
+                    cards.style.pointerEvents = "auto";
+                    return
+                }else{
+                    cards.style.pointerEvents = "none";
+                    e.preventDefault();
+                    
+                    let visibleChild = Array.from(cards.children).filter(function(card){
+                        return getComputedStyle(card).display == "block";
+                    })
+                    if(visibleChild.length > 2){
+                        cards.style.left = `${e.offsetX - cursorX}px`;
+                        boundSlides();
+                    }else{
+                        return
+                    }
+                }
+            });
+
+            function boundSlides() {
+                const containerRect = slider.getBoundingClientRect();
+                const cardsRect = cards.getBoundingClientRect();
+                if (parseInt(cards.style.left) > 0) {
+                cards.style.left = 0;
+                } else if (cardsRect.right < containerRect.right) {
+                cards.style.left = `-${cardsRect.width - containerRect.width}px`;
+                }
+            }
+
+            if(cards.children.length == 0){
+                slider.style.height = 'auto';
+                slider.style.pointerEvents = "none";
+                searchItemsNull.classList.remove("d-none");
+            }
+        }
+        
+        function searchDiscountProduct(slider, searchItemsNull, search, listSearchItem) {
+            search.addEventListener("keyup", function(){
+                var value = this.value;
+                let max = 0;
+                listSearchItem.forEach(function(item){
+                    if(item.children[0].value.toLowerCase().indexOf(value.toLowerCase()) >= 0){
+                        item.style.display = "block"
+                    }else{
+                        item.style.display = "none";
+                        max++;
+                    }
+                })
+                slider.children[0].style.left = 0;
+                if(max == listSearchItem.length){
+                    slider.style.height = 'auto';
+                    slider.style.pointerEvents = "none";
+                    searchItemsNull.classList.remove("d-none");
+                }else{
+                    slider.style.height = "250px";
+                    slider.style.pointerEvents = "auto";
+                    searchItemsNull.classList.add("d-none");
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

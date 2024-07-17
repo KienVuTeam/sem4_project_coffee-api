@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<head>
+	<title>Cafena - Carts</title>
+	<header th:replace="_common/scriptClientHeader :: scriptClientHeader">...</header>
+	<link rel="stylesheet" href="/css/myCheckBox.css" />
+	<script src="https://kit.fontawesome.com/99a0617376.js" crossorigin="anonymous"></script>
+	<style>
+		.table>:not(caption)>*>* {
+			padding: .5rem .5rem !important;
+			background-color: var(--bs-table-bg) !important;
+			border-bottom-width: 0px !important;
+			box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg)
+		}
+
+		.extra-style {
+			margin-bottom: 8px;
+			border-bottom-width: 0px !important;
+		}
+
+		.wrapperVoucher {
+			border-radius: 30px;
+			line-height: 32px;
+			margin-bottom: 14px;
+			border: 1px solid #DEC7A9;
+			box-shadow: 0 0 5px 2px rgb(0 6 0 / 18%);
+			transition: all 200ms;
+		}
+
+		.wrapperVoucher:hover {
+			cursor: pointer;
+			box-shadow: 5px 5px 4px rgb(0 6 0 / 20%);
+			;
+		}
+
+		.view-background::-webkit-scrollbar {
+			display: none;
+		}
+
+		.disableVoucher {
+			opacity: 0.4;
+			pointer-events: none;
+		}
+
+		.s-btn-RemoveVoucher {
+			visibility: unset
+		}
+
+		.v-btn-RemoveVoucher {
+			visibility: hidden;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:include="_common/scriptClientHeader :: headerContent" th:remove="tag"></div>
+	<main>
+		<!-- breadcrumb area start -->
+		<section class="breadcrumb-area pt-140 pb-140 bg_img" data-background="/images/bg/breadcrumb-bg-1.jpeg"
+			data-overlay="dark" data-opacity="5"
+			style="background-image: url(&quot;/images/bg/breadcrumb-bg-1.jpeg&quot;);">
+			<div class="shape shape__1"><img src="/images/shape/breadcrumb-shape-1.png" alt=""></div>
+			<div class="shape shape__2"><img src="/images/shape/breadcrumb-shape-2.png" alt=""></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-xl-12 text-center">
+						<h2 class="page-title">Cafena Cart</h2>
+						<div class="cafena-breadcrumb breadcrumbs">
+							<ul class="list-unstyled d-flex align-items-center justify-content-center">
+								<li class="cafenabcrumb-item duxinbcrumb-begin">
+									<a href="/"><span>Home</span></a>
+								</li>
+								<li class="cafenabcrumb-item duxinbcrumb-end">
+									<span>Faq</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- breadcrumb area end -->
+		<!-- cart area start -->
+		<div class="cart-area pt-120 pb-120">
+			<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+				<div class="toast bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="toastBorder">
+					<div class="d-flex">
+						<div class="toast-body" style="color: #ffff;" id="toastText">
+							No Products Found,Please Try Back !
+						</div>
+						<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+							aria-label="Close"></button>
+					</div>
+				</div>
+			</div>
+			<div class="container">
+				<th:block th:if="${flagPayment != null}">
+					<th:block th:if="${flagPayment == true}">
+						<div class="alert alert-success alert-dismissible d-flex flex-row" role="alert">
+							<div style="width: 99%;">
+								<strong>Success Payment !</strong> Check Yours <a href="/Invoice/MyInvoice"
+									class="link-success">Invoices</a> Now
+							</div>
+							<div style="width: 1%;">
+								<span type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+										aria-hidden="true" id="btnCloseAlert">&times;</span></span>
+							</div>
+						</div>
+					</th:block>
+					<th:block th:if="${flagPayment == false}">
+						<div class="alert alert-danger alert-dismissible d-flex flex-row" role="alert">
+							<div style="width: 99%;">
+								<strong>Try Backs</strong> There Are Some Errors Please Try Back
+							</div>
+							<div style="width: 1%;">
+								<span type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+										aria-hidden="true" id="btnCloseAlert">&times;</span></span>
+							</div>
+						</div>
+					</th:block>
+				</th:block>
+				<div class="row">
+					<div class="col-xl-12">
+						<div class="cart-wrapper" style="padding: 0px;margin-bottom: 15px;height: 4rem;">
+							<div class="table-content">
+								<table class="table" style="margin-bottom: 0px;border-collapse:unset">
+									<thead>
+										<th style="left: 36px;
+										position: relative;
+										top: 5px;">
+											<div class="checkbox-wrapper-4">
+												<input class="inp-cbx ckCheckAll" id="morning" type="checkbox" />
+												<label class="cbx" for="morning"><span>
+														<svg width="12px" height="10px">
+															<use xlink:href="#check-4"></use>
+														</svg></span></label>
+												<svg class="inline-svg">
+													<symbol id="check-4" viewbox="0 0 12 10">
+														<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+													</symbol>
+												</svg>
+											</div>
+										</th>
+										<th style="top: -5px;position: relative;left:-18px">Product Image</th>
+										<th style="right: 44px;position: relative;top: -5px;">Product Name</th>
+										<th style="position: relative;top: -5px;left: 8px;">Price</th>
+										<th style="position: relative;top: -5px;left: 23px;">Quantity</th>
+										<th style="position: relative;top: -5px;left: 16px;">subTotal</th>
+									</thead>
+
+								</table>
+							</div>
+						</div>
+						<th:block th:if="${!lsSupplierCart.empty}">
+							<th:block th:each="supplierCart,i : ${lsSupplierCart}">
+								<div class="cart-wrapper" style="margin-bottom: 16px;padding-bottom: 5px;">
+									<div class="table-content">
+										<div style="margin-top: -5px;">
+											<div class="checkbox-wrapper-4" style="display: inline-block;">
+												<input class="inp-cbx ckHeaderSupp" th:id="${'supplierCkBox' + i.index}"
+													type="checkbox" th:data-msupplier="${supplierCart.id}" />
+												<label class="cbx" th:for="${'supplierCkBox' + i.index}"><span>
+														<svg width="12px" height="10px">
+															<use xlink:href="#check-4"></use>
+														</svg></span></label>
+												<svg class="inline-svg">
+													<symbol id="check-4" viewbox="0 0 12 10">
+														<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+													</symbol>
+												</svg>
+											</div>
+											<span style="
+												left: 22px;
+												position: relative;
+												color: orangered;
+												font-weight: 500;
+												font-size: 19px;
+												margin-bottom: 15px;
+												top: -9px;">
+												<th:block th:text="${supplierCart.nameSupplier}"></th:block>
+											</span>
+										</div>
+										<table class="table cartTable" id="tableSupplier"
+											th:data-supplier-id="${supplierCart.id}">
+											<thead>
+
+											</thead>
+											<tbody>
+												<th:block th:each="userCart,j : ${lsCart}">
+													<th:block th:if="${userCart.idSupplier == supplierCart.id }">
+														<tr style="margin-bottom: 8px;border-bottom-width:1px" class="">
+															<td
+																style="position: relative;top: 5px;width:30px;left:-8px">
+																<div class="checkbox-wrapper-4">
+																	<input class="inp-cbx subCheckBox"
+																		th:id="${'cartCheckBox' + j.index}"
+																		th:data-supplier="${userCart.idSupplier}"
+																		th:data-id="${userCart.id}" type="checkbox" />
+																	<label class="cbx"
+																		th:for="${'cartCheckBox' + j.index}"><span>
+																			<svg width="12px" height="10px">
+																				<use xlink:href="#check-4"></use>
+																			</svg></span></label>
+																	<svg class="inline-svg">
+																		<symbol id="check-4" viewbox="0 0 12 10">
+																			<polyline points="1.5 6 4.5 9 10.5 1">
+																			</polyline>
+																		</symbol>
+																	</svg>
+																</div>
+															</td>
+															<td class="product-thumbnail"
+																style="width: 158px;margin-left: 13px;">
+																<a href="#" class="img">
+																	<img th:src="${userCart.image}" alt=""
+																		style="width: 26px; height: 41px;"  onerror="this.onerror=null;this.src='/error/imgError00.jpg'"> </a>
+																<a href="#" class="product-remove" id="btnRemoveCart"
+																	th:data-id="${userCart.id}"
+																	th:data-supplier-id="${userCart.idSupplier}"><i
+																		class="fal fa-times"></i></a>
+															</td>
+															<td class="product-name"
+																style="position: relative;right: 35px;width: 300px;"><a
+																	href="#" th:text="${userCart.productName}"></a></td>
+															<td class="product-price"
+																style="position: relative;right: 20px;">
+																<span class="amount"
+																	th:text="${'$' + userCart.price / userCart.amount + '.00'}"
+																	th:data-id="${userCart.id}" id="itemCartPrice"
+																	th:data-price="${userCart.price / userCart.amount}"></span>
+															</td>
+															<td class="product-quantity" style="width: 165px;">
+																<input type="number" th:placeholder="${userCart.amount}"
+																	th:data-product-id="${userCart.idProduct}"
+																	id="amountChange" min="1" max="50" step="1"
+																	th:value="${userCart.amount}"
+																	th:data-id="${userCart.id}">
+															</td>
+															<td class="product-subtotal"
+																style="position: relative;left: 10px;width: 130px;">
+																<span id="cartSubTotal" class="amount"
+																	th:data-id="${userCart.id}"
+																	th:data-price="${userCart.price}"
+																	th:text="${'$' + userCart.price + '.00'}"></span>
+															</td>
+														</tr>
+													</th:block>
+												</th:block>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</th:block>
+						</th:block>
+
+
+						<div class="cart-bottom-wrapper d-flex align-items-center container" id="stickyCart"
+							style="border-radius: 10px;margin-top: 15px;background: #FFF6E0;bottom: 0;position: sticky;width: 100%;height: 150px;">
+							<div class="checkbox-wrapper-4 col" style="    position: relative;bottom: 14px;left: 30px;">
+								<input class="inp-cbx ckCheckAll" id="lbFooter" type="checkbox" />
+								<label class="cbx" for="lbFooter"><span>
+										<svg width="12px" height="10px">
+											<use xlink:href="#check-4"></use>
+										</svg></label>
+								<svg class="inline-svg">
+									<symbol id="check-4" viewbox="0 0 12 10">
+										<polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+									</symbol>
+								</svg>
+								<a href="#0" class="site-btn site-btn__bghide" id="btnSelectAll"
+									style="right: 32px;position: relative;bottom: 10px;">Select All</a>
+								<a href="#0" class="site-btn site-btn__bghide" id="btnRemoveAll"
+									style="right: 74px;position: relative;bottom: 10px;">Remove</a>
+							</div>
+							<div class="col d-flex flex-column  align-items-end"
+								style="position: relative;bottom: 20px;">
+								<div class="col-md-6">
+									<p id="msgCheckVoucher" class="hide"
+										style="font-weight: 500;font-family: 'Bebas Neue';color: red; position: relative; display: inline-block;">
+									</p>
+								</div>
+								<div class="col-md-6">
+									<button
+										style="position: relative;text-transform: capitalize;color: #05a;white-space: nowrap;cursor: pointer;background: none;border: 0; left: -4px;"
+										id="btnSelectVoucher">
+										<i class="fa-solid fa-ticket" style="color: #fe6c6c;"></i> <span
+											id="textVoucher" data-price="0" data-id=""
+											style="text-transform: capitalize;color: #05a;white-space: nowrap;cursor: pointer">Select
+											Voucher</span>
+									</button>
+									<a href="#"
+										style="text-decoration: underline;font-weight: 500;color: red;position: relative;display: inline-block;"
+										id="btnRemoveVoucher" class="v-btn-RemoveVoucher">
+										<i class="fal fa-times" aria-hidden="true"
+											style="top: 1px;font-size: 17px;position: relative;right: 7px;"></i>
+									</a>
+								</div>
+								<div class="ct-sub ct-sub__total col-md-6 d-flex flex-row" style="font-size: 20px;">
+									<span style="font-weight: 600;color: #272829;">Total:</span>
+									<span
+										style="padding-right: 5px;padding-left: 5px;font-weight: 600;color: #272829;">
+									</span>
+									<span id="sumTotal" data-price="0"
+										style=" padding-right: 8px;position: relative;font-weight: 600;color: #272829;display: inline-block;">$0.00</span>
+									<span style="font-weight: 600;color: black;display: math;position: relative;"
+										id="totalVoucher" data-price="0"> </span>
+								</div>
+								<div class="col-md-6">
+									<a href="" class="site-btn" id="btnCheckOut">Procced to checkout</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- cart area end -->
+			<div class="product-popup product-popup-1">
+				<div class="view-background" style="max-height: 72%;overflow-y: auto;width: 750px;">
+					<div class="col-md-12">
+						<div class="viewcontent">
+							<div class="viewcontent__header">
+								<a class="view_close product-p-close" href="javascript:void(0)"
+									style="top: 17px;right: 4px;"><i class="fal fa-times"></i></a>
+								<input type="hidden" name="" id="voucherRequire" value="0">
+							</div>
+
+							<div class="viewcontent__details">
+								<div class="voucherList" style="margin-top: 30px;">
+
+								</div>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</main>
+	<div th:include="_common/scriptClientFooter :: scriptClientFooter" th:remove="tag"></div>
+
+
+	<script src="https://code.jquery.com/jquery-3.7.0.js"
+		integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+	<script>
+		
+		window.addEventListener( "pageshow", function ( event ) {
+		  var historyTraversal = event.persisted || 
+		                         ( typeof window.performance != "undefined" && 
+		                              window.performance.navigation.type === 2 );
+		  if ( historyTraversal ) {
+		    window.location.reload();
+		  }
+		});
+		
+		$(document).ready(function () {
+			$('table.cartTable').each(function (index) {
+				$(this).find('tr').eq(-1).addClass('extra-style');
+			})
+			handleStickyCart();
+			//
+			$('input.ckCheckAll').change(function () {
+				if ($(this).is(':checked')) {
+					$('input:checkbox').prop('checked', true);
+				} else {
+					$('input:checkbox').prop('checked', false);
+				}
+				caculatorTotal();
+			});
+			//
+			$('.ckHeaderSupp').click(function () {
+				if ($(this).is(':checked')) {
+					$(`input[type='checkbox'][data-supplier=${$(this).attr("data-msupplier")}]`).prop('checked', true);
+				} else {
+					$(`input[type='checkbox'][data-supplier=${$(this).attr("data-msupplier")}]`).prop('checked', false);
+				}
+				subCheckBoxckAll();
+				caculatorTotal();
+			})
+			//
+			$("input[type='checkbox'].subCheckBox").change(function () {
+				var supplierCheck = $(`input[type='checkbox'][data-supplier=${$(this).attr("data-supplier")}]`);
+				//
+				if (supplierCheck.length == supplierCheck.filter(":checked").length) {
+					$(`input[type='checkbox'][data-msupplier=${$(this).attr("data-supplier")}]`).prop('checked', true)
+				} else {
+					$(`input[type='checkbox'][data-msupplier=${$(this).attr("data-supplier")}]`).prop('checked', false)
+				}
+				subCheckBoxckAll();
+				caculatorTotal();
+			});
+			//
+			$("input#amountChange").bind('change', function () {
+				var currentChange = $(this);
+				const maxAmount = 50;
+				const minAmount = 1;
+				if ($(this).val() > maxAmount || $(this).val() < minAmount) {
+					$(this).val($(this).data("previousValue"));
+				}
+				//
+				if (!$(this).data("previousValue") ||
+					$(this).data("previousValue") != $(this).val()
+				) {
+					$(this).data("previousValue", $(this).val());
+				}
+				//
+				const itemPrice = $(`span[id='itemCartPrice'][data-id=${$(this).attr('data-id')}]`).attr('data-price');
+				let newPrice = parseInt($(this).val()) * parseInt(itemPrice);
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Carts/ajax/updateCart",
+					data: {
+						Amount: $(this).val(),
+						Price: newPrice,
+						idProduct: $(this).attr('data-product-id')
+					}
+				}).done(function (data) {
+					var finalPrice = parseInt(data) / parseInt($(currentChange).val());
+					//					
+					$(`span[id='cartSubTotal'][data-id=${$(currentChange).attr('data-id')}]`).attr('data-price', data);
+					$(`span[id='cartSubTotal'][data-id=${$(currentChange).attr('data-id')}]`).text('$' + data + '.00');
+					// Price Cart
+					$(`span[id='itemCartPrice'][data-id=${$(currentChange).attr('data-id')}]`).attr('data-price', finalPrice);
+					$(`span[id='itemCartPrice'][data-id=${$(currentChange).attr('data-id')}]`).text('$' + finalPrice + '.00');
+					caculatorTotal();
+
+				});
+			})
+
+			$("input#amountChange").each(function () {
+				$(this).data("previousValue", $(this).val());
+			});
+
+			$("input:checkbox").on('click', function () {
+				$("#msgCheckVoucher").text(" ");
+			})
+
+			$('#btnSelectVoucher').on('click', function (e) {
+				e.preventDefault();
+				var sumTotal = $('span#sumTotal').attr('data-price');
+				if (parseInt(sumTotal) != 0) {
+					$.ajax({
+						async: false,
+						cache: false,
+						url: "/Products/ajax/getVoucherForUser/",
+						data: {
+							voucherType: "0"
+						}
+					}).done(function (data) {
+						if(data == "false") {
+							displayToastMessage(true, "There Are No Vouchers At This Time");
+						} else {
+							$('.voucherList').html(data);
+							$('.wrapperVoucher').each(function () {
+								if (parseInt($(this).attr("data-condition")) > parseInt(sumTotal)) {
+									$(this).addClass("disableVoucher");
+								}
+								$('.overlay, .product-popup-1').addClass('show-popup');
+							})
+							//Event After Generated
+							$('.wrapperVoucher').on('click', function () {
+								wrapperVoucherEvent($(this));
+							});
+						}
+					});
+				} else {
+					$("#msgCheckVoucher").text("Please Select Products In Cart !!");
+					$("#msgfail").fadeIn(500).hide(1);
+				}
+			})
+
+			//
+			$("#btnRemoveVoucher").on('click', function (e) {
+				e.preventDefault();
+				$("#btnRemoveVoucher").attr('class', '.v-btn-RemoveVoucher');
+				$('#textVoucher').text("Select Voucher");
+				$('#textVoucher').attr('data-price',0);
+				$('#textVoucher').attr('data-id'," ");
+				//TotalVoucher
+				$("#totalVoucher").text(" ");
+				$("#totalVoucher").attr('data-price',0);
+				//Css
+				$("#sumTotal").css('text-decoration', 'none');
+				$('#voucherRequire').val(0);
+			});
+
+			//Event Remove Cart
+			$("a[id='btnRemoveCart']").on('click', function (e) {
+				e.preventDefault();
+				var id = $(this).attr('data-id');
+				$(this).parent().parent().remove();
+				//
+				var currentRow = $(`table[id='tableSupplier'][data-supplier-id=${$(this).attr('data-supplier-id')}] tr`).length;
+				var tableSupplier = $(`table[id='tableSupplier'][data-supplier-id=${$(this).attr('data-supplier-id')}]`);
+				if (currentRow == 0) {
+					$(tableSupplier).parent().parent().remove();
+				}
+				//
+				$.ajax({
+					async: false,
+					cache: false,
+					url: "/Carts/ajax/removeCart/",
+					data: {
+						idCart: id
+					}
+				}).done(function (data) {
+
+				});
+				//
+				caculatorTotal();
+				handleStickyCart();
+				lineTableItem();
+			});
+
+			//
+			$("a[id='btnSelectAll']").on('click', function (e) {
+				e.preventDefault();
+				if ($('input.ckCheckAll').is(':checked')) {
+					$('input:checkbox').prop('checked', false);
+				} else {
+					$('input:checkbox').prop('checked', true);
+				}
+				caculatorTotal();
+			});
+			//
+			$("a[id='btnRemoveAll']").on('click', function (e) {
+				e.preventDefault();
+				var arrChk = [];
+				var finalLsChk = "";
+				//
+				$("input[type='checkbox'].subCheckBox").each(function () {
+					if ($(this).is(':checked')) {
+						arrChk.push($(this).attr('data-id'));
+					}
+				});
+				//
+				if (arrChk.length != 0) {
+					//
+					for (let index = 0; index < arrChk.length; index++) {
+						var currentCKBox = $(`input[type='checkbox'][data-id=${arrChk[index]}].subCheckBox`);
+						$(currentCKBox).parent().parent().parent().remove();
+						//
+						var currentRow = $(`table[id='tableSupplier'][data-supplier-id=${$(currentCKBox).attr('data-supplier')}] tr`).length;
+						var tableSupplier = $(`table[id='tableSupplier'][data-supplier-id=${$(currentCKBox).attr('data-supplier')}]`);
+						if (currentRow == 0) {
+							$(tableSupplier).parent().parent().remove();
+						}
+						//ADD TO LIST
+						if (index < arrChk.length - 1) {
+							finalLsChk += arrChk[index] + '-';
+						} else {
+							finalLsChk += arrChk[index];
+						}
+					}
+					//
+					$.ajax({
+						async: false,
+						cache: false,
+						url: "/Carts/ajax/multiRemoveCart/",
+						data: {
+							lsIdCart: finalLsChk
+						}
+					}).done(function (data) {
+
+					});
+					//
+					caculatorTotal();
+					handleStickyCart();
+					lineTableItem();
+				} else {
+					$("#msgCheckVoucher").text("Please Select Products In Cart !!");
+				}
+				//
+			});
+
+			//CheckOut
+			$("a[id='btnCheckOut']").on('click', function (e) {
+				e.preventDefault();
+				var arrChk = [];
+				var finalLsChk = "";
+				var strVoucher = " ";
+				//
+				$("input[type='checkbox'].subCheckBox").each(function () {
+					if ($(this).is(':checked')) {
+						arrChk.push($(this).attr('data-id'));
+					}
+				});
+				//
+				if (arrChk.length != 0) {
+					for (let index = 0; index < arrChk.length; index++) {
+						//ADD TO LIST
+						if (index < arrChk.length - 1) {
+							finalLsChk += arrChk[index] + '-';
+						} else {
+							finalLsChk += arrChk[index];
+						}
+					}
+					//VOUCHER
+					if ($('#voucherRequire').val() != 0) {
+						strVoucher = $('#textVoucher').attr('data-id');
+					} else {
+						strVoucher = "BLANK";
+					}
+					var urlCheckOut = "/Carts/CheckOut?lsCartSel=" + finalLsChk + "&idVoucher=" + strVoucher;
+					window.location.assign(urlCheckOut);
+				} else {
+					$("#msgCheckVoucher").text("Please Select Products In Cart !!");
+				}
+			});
+
+
+			function subCheckBoxckAll() {
+				var ckMatch = $("input[type='checkbox'].subCheckBox");
+				//    
+				if (ckMatch.length == ckMatch.filter(":checked").length) {
+					$('input.ckCheckAll').prop('checked', true);
+				}
+				else {
+					$('input.ckCheckAll').prop('checked', false);
+				}
+			}
+
+			function caculatorTotal() {
+				let sumTotal = 0;
+				$('input.subCheckBox').each(function () {
+					if ($(this).is(':checked')) {
+						var subTotal = $(`span[id='cartSubTotal'][data-id=${$(this).attr('data-id')}]`).attr("data-price");
+						sumTotal += parseInt(subTotal);
+					}
+				});
+				$("#sumTotal").attr('data-price',sumTotal);
+				//
+				if ((($('#totalVoucher').text()).trim()).length != 0) {
+					if (sumTotal > $('#voucherRequire').val()) {
+						var currentPriceVoucher = parseInt($("#sumTotal").attr('data-price')) - parseInt($("#textVoucher").attr('data-price'));
+						$("#totalVoucher").text('$' + currentPriceVoucher + '.00');
+						$("#totalVoucher").attr('data-price',currentPriceVoucher);
+					} else {
+						$("#sumTotal").css('text-decoration', 'none');
+						$("#totalVoucher").text(" ");
+						$("#totalVoucher").attr('data-price',0);
+						$('#textVoucher').text("Select Voucher");
+						$('#textVoucher').attr('data-id',"0");
+						$('#textVoucher').attr("data-price",0);
+					}
+				}
+				$("#sumTotal").attr('data-price',sumTotal);
+				$("#sumTotal").text("$" + sumTotal + ".00");
+			};
+
+			function wrapperVoucherEvent(current) {
+				var priceDiscount = $(current).attr('data-discount');
+				$("#sumTotal").css('text-decoration', 'line-through');
+				//TotalVoucher
+				var totalVoucher = parseInt($("#sumTotal").attr('data-price') - priceDiscount);
+				$('#totalVoucher').attr('data-price',totalVoucher);
+				$("#totalVoucher").text('$' + totalVoucher + '.00');
+				//VoucherText
+				$('#textVoucher').text("-$" + $(current).attr("data-discount") + ".00");
+				$('#textVoucher').attr('data-id',$(current).attr('data-id'));
+				$('#textVoucher').attr('data-price',$(current).attr('data-discount'));
+				//Show Button Voucher
+				$('.overlay, .popup-coffe-mechine, .product-popup').removeClass('show-popup');
+				$("#btnRemoveVoucher").attr('class', '.s-btn-RemoveVoucher');
+				$('#voucherRequire').val($(current).attr('data-condition'));
+			};
+
+			function handleStickyCart() {
+				if ($('table[id="tableSupplier"]').length == 0) {
+					$('#stickyCart').remove();
+					$('input.ckCheckAll').prop('checked', false);
+				}
+			};
+
+			function lineTableItem() {
+				$('table.cartTable').each(function (index) {
+					$(this).find('tr').eq(-1).addClass('extra-style');
+				})
+			};
+			
+			function displayToastMessage(flagDanger, msgDisplay) {
+				$('#toastText').toast('hide');
+				$('#toastText').text(msgDisplay);
+				//
+				if (flagDanger == true) {
+					$('#toastBorder').addClass('bg-danger');
+					$('#toastBorder').removeClass('bg-success');
+				} else if (flagDanger == false) {
+					$('#toastBorder').addClass('bg-success');
+					$('#toastBorder').removeClass('bg-danger');
+				}
+				//
+				$('.toast').toast('show');
+			}
+		});
+	</script>
+</body>
+
+</html>

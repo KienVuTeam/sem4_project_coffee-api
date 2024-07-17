@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Supplier/Layout/supplier_layout :: cssSupplier">
+</head>
+    <link rel="stylesheet" href="/vendors/chartjs/Chart.min.css">
+	<link rel="stylesheet" href="/supplier/vendors/apexchart/apexcharts.css">
+	<script type="text/javascript">
+    document.getElementById("title_supplier").textContent="Supplier - Revenue management ";
+    </script>
+
+<body>
+    <div th:replace="Supplier/Layout/supplier_layout :: sidebarSupplier"></div>
+    <div id="main">
+        <nav th:replace="Supplier/Layout/supplier_layout :: navbarSupplier"></nav>
+        
+        <div class="main-content container-fluid">            
+            <!-- Pending Order Table -->
+            <div class="row">
+                <div class="card p-4">
+                    <div class="card-header">
+                        <h4 class="card-title">Revenues</h4>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-12 col-md-4">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>REVENUE</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p>$</p><p th:text="${RevenueToday}"></p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas1" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>ORDERS</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p th:text="${CountOrder}"></p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas2" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="card card-statistic">
+                                <div class="card-body p-0">
+                                    <div class="d-flex flex-column">
+                                        <div class='px-3 py-3 d-flex justify-content-between'>
+                                            <h3 class='card-title'>Last Month</h3>
+                                            <div class="card-right d-flex align-items-center">
+                                                <p>$</p><p th:text="${RevenuePreMonth}"></p>
+                                            </div>
+                                        </div>
+                                        <div class="chart-wrapper">
+                                            <canvas id="canvas3" style="height:100px !important"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Other Revenue -->
+                    <hr>
+                    <div class="row" style="gap: 10px;padding-left: 1rem;">
+                            <!-- Select For Month -->
+                            <select class="choices form-select selectMonth" onchange="selectRevenue()" style="width: 15%;">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                            <!-- Sub Select For Month -->
+        
+                            <!-- Select For Year -->
+                            <select class="choices form-select selectYear" onchange="selectRevenue()" style="width: 15%;">
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025">2025</option>
+                            </select>
+                            <!-- Sub Select For Year -->
+                    </div>
+        <!-- ================================================================================================================== -->
+                    <!-- Chart Month -->
+                    <div class="listChartMonth">
+                        <!-- Chart -->
+                        <div class="row mt-4 mb-5 showChart"> 
+                            <div class="col-12">
+                                <div id="bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+            <!-- Year Revenue -->
+            <div class="row mb-4 YearsRevenue">
+                <div class="col-md-8" style="padding-left: 0;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class='card-heading p-1 pl-3'>Sales</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 col-12">
+                                    <div class="pl-3">
+                                        <h1 class='mt-5 totalYears'></h1>
+                                        <p class='text-xs'>
+                                        	<span class="difference">
+                                        		<i data-feather="bar-chart" width="15"></i> 
+                                        	</span> than last year</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-8 col-12">
+                                    <canvas id="barMonth"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-right: 0;">
+                    <div class="card ">
+                        <div class="card-header">
+                            <h4>Your Earnings</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="radialBars"></div>
+                            <div class="text-center mb-5">
+                                <h6>Enter Budget ($)</h6>
+                                <input type="number" class="validateNumberValue form-control budget" value="10000">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+        </div>
+        
+        <footer th:replace="Supplier/Layout/supplier_layout :: footerSupplier"></footer>
+    </div>
+
+    <script src="/supplier/js/jquery.min.js"></script>
+    
+    <script src="/vendors/chartjs/Chart.min.js"></script>
+	<script src="/supplier/vendors/apexchart/apexcharts.min.js"></script>
+	<script src="/supplier/vendors/apexchart/custom_ui_apexchart.js"></script>
+    <div th:replace="Supplier/Layout/supplier_layout :: scriptSupplier"></div>
+    
+	<script type="text/javascript" th:inline="javascript">
+			/*<![CDATA[*/
+				var RevenueDefault = /*[[${RevenueDefault}]]*/ "";
+				var RevenueToday = /*[[${RevenueToday}]]*/ "";
+				var RevenuePreMonth = /*[[${RevenuePreMonth}]]*/ "";
+				var TotalRevenueYear = /*[[${TotalRevenueYear}]]*/ "";
+				var idSupplier = /*[[${idSupplier}]]*/ "";
+			/*]]>*/
+	</script>
+	<script src="/supplier/js/revenueManagement.js"></script>
+	<script src="/supplier/js/revenueTemp.js"></script>
+	
+    <!-- ================= Script Validate Fields ===================  -->
+    <script src="/supplier/js/Validation/validateFields.js"></script>
+</body>
+
+</html>

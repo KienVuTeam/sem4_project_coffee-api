@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+
+<head th:replace="Admin/Layout/admin_layout :: cssAdmin">
+
+</head>
+<link rel="stylesheet" href="/admin/vendors/simple-datatables/style.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9">
+</script>
+
+<body>
+	<div th:replace="Admin/Layout/admin_layout :: sidebarAdmin"></div>
+	<div id="main">
+		<nav th:replace="Admin/Layout/admin_layout :: navbarAdmin"></nav>
+		<div class="main-content container-fluid">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12 col-md-6 order-md-1 order-last">
+						<h3>Order Management</h3>
+					</div>
+					<div class="col-12 col-md-6 order-md-2 order-first">
+						<nav aria-label="breadcrumb" class='breadcrumb-header'>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/Admin/dashboard">Dashboard</a></li>
+								<li class="breadcrumb-item active" aria-current="page">Order Management</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+			</div>
+			<section class="section">
+				<div class="card">
+					<div class="card-body">
+						<!-- Detail Invoice (All Supp)-->
+						<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+							aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-dialog-centered modal-dialog-scrollable"
+								style="max-width: 1400px;" role="document">
+								<div class="modal-content">
+									<div class="modal-header bg-info">
+										<button type="button" id="backOrder" class="close" aria-label="Close">
+											<i data-feather="arrow-left"></i>
+										</button>
+										<h5 class="modal-title white" id="exampleModalCenterTitle"
+											style="margin: auto;">Order Detail</h5>
+										<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+											<i data-feather="x"></i>
+										</button>
+									</div>
+									<div class="modal-body" id="componentDetail">
+										<!--<h3>No.Invoice: 1 - Amount received:
+			<span style="color: red;">100$</span>
+		</h3>-->
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-light-secondary" data-bs-dismiss="modal">
+											<i class="bx bx-x d-block d-sm-none"></i>
+											<span class="d-none d-sm-block">Close</span>
+										</button>
+										<button type="button" id="btnRefundFeeCus" class="btn btn-warning">
+											<i class="bx bx-x d-block d-sm-none"></i>
+											<span class="d-none d-sm-block">Refund service fees to customers</span>
+										</button>
+										<button type="button" id="btnRefundAllSupp" class="btn btn-warning">
+											<i class="bx bx-x d-block d-sm-none"></i>
+											<span class="d-none d-sm-block">Refund to all suppliers</span>
+										</button>
+										<button type="button" id="btnRefundSupp" class="btn btn-warning">
+											<i class="bx bx-x d-block d-sm-none"></i>
+											<span class="d-none d-sm-block">Refund to supplier</span>
+										</button>
+										<button type="button" id="btnRefundCus" class="btn btn-success">
+											<i class="bx bx-x d-block d-sm-none"></i>
+											<span class="d-none d-sm-block">Refund to customer</span>
+										</button>
+										<button type="button" id="btnPaymentSupp" class="btn btn-primary">
+											<i class="bx bx-x d-block d-sm-none"></i>
+											<span class="d-none d-sm-block">Payment for supplier</span>
+										</button>
+
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<table class='table table-striped' id="table1">
+							<thead>
+								<tr>
+									<th data-sortable="false">No.</th>
+									<th data-sortable="false">Customer</th>
+									<th data-sortable="false">Phone</th>
+									<th data-sortable="false">Date</th>
+									<th data-sortable="false">Voucher iLA (if any)</th>
+									<th data-sortable="false">Total</th>
+									<th data-sortable="false">Action</th>
+									<th data-sortable="false">Order Details</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item, iter:${lstViewMain}">
+									<td th:text="${iter.index+1}"></td>
+									<td hidden th:text="${item.id}">1</td>
+									<td th:text="${item.nameCus}">Tran Truong</td>
+									<td th:text="${item.phone}">0866153</td>
+									<td th:text="${item.createDate}">7-10-2023</td>
+									<td th:text="${item.priceVoucherA}">$ off</td>
+									<td><span th:text="${item.TotalPrice}"></span></td>
+									<td th:switch="${item.isStatus}">
+										<span th:case="0" style="color: blue">Processing</span>
+										<span th:case="1" style="color: green">The customer has received the goods</span>
+										<span th:case="2" style="color: seagreen"><strong>Success</strong></span>
+										<span th:case="9" style="color: red"><strong>Cancelled</strong></span>
+									</td>
+									<td>
+										<button type="button" id="btnDetail" class="btn btn-primary"
+											data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+											Detail
+										</button>
+									</td>
+									<td hidden th:text="${item.VoucherS}"></td>
+									<td hidden th:text="${item.isStatus}"></td>
+									<td hidden th:text="${item.idAccount}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+		</div>
+		<footer th:replace="Admin/Layout/admin_layout :: footerAdmin"></footer>
+
+	</div>
+	<div th:replace="Admin/Layout/admin_layout :: scriptAdmin"></div>
+	<script src="/admin/vendors/simple-datatables/simple-datatables.js"></script>
+	<script src="/admin/js/vendors.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			$("#table1").on('click', '#btnDetail', function () {
+				var currentRow = $(this).closest("tr");
+
+				var id = currentRow.find("td:eq(1)").text();
+				var priceVoucherA = currentRow.find("td:eq(5)").text();
+				var lstVoucherS = currentRow.find("td:eq(9)").text();
+				var sttInvoice = currentRow.find("td:eq(10)").text();
+				var idUser = currentRow.find("td:eq(11)").text();
+				$("#backOrder").hide();
+				$("#btnRefundCus").hide();
+				$("#btnPaymentSupp").hide();
+				$("#btnRefundAllSupp").hide();
+				$("#btnRefundSupp").hide();
+				$("#btnRefundFeeCus").hide();
+				$.ajax({
+					type: "Get",
+					url: "/Admin/order-management/detailOrder",  //remember change the controller to your owns.
+					data: {
+						idInv: id,
+						lstVoucherS: lstVoucherS,
+						priceVoucherA: priceVoucherA,
+						idUser: idUser,
+					},
+					success: function (res) {
+						$("#componentDetail").html("");
+						$("#componentDetail").html(res);
+						if (sttInvoice == 9) {
+							if ($("#totalPriceVR").text() != 0.00) {
+								$.ajax({
+									type: "Get",
+									url: "/Admin/order-management/checkRefundWhenInv9",  //remember change the controller to your owns.
+									data: {
+										idInv: id,
+									},
+									success: function (res) {
+										if (res.status == 0) {
+											$("#btnRefundAllSupp").show();
+											var list = document.querySelectorAll('[id^="priceRefundS"]');
+											for (let i = 0; i < list.length; i++) {
+												list[i].innerHTML = "(No refund yet)";
+											}
+										} else {
+											$("#btnRefundAllSupp").hide();
+											$("#priceRefundS" + res.idSupplier).text("(No refund yet)");
+
+											var list = document.querySelectorAll('[id^="priceRefundS"]');
+											for (let i = 0; i < list.length; i++) {
+												if (!list[i].innerHTML.includes("(No refund yet)")) {
+													list[i].innerHTML = "(Refunded)";
+												}
+											}
+										}
+									},
+									error: function (response) {
+										console.log(response.responseText);
+									}
+								});
+								$("#divRefundSuppV").show();
+							} else {
+								//$("#divRefundSuppV").hide();
+								$("#btnRefundAllSupp").hide();
+							}
+							// call ajax check fee Of InvoiceAdmin
+							$.ajax({
+								type: "Get",
+								url: "/Admin/order-management/checkRefundFee",  //remember change the controller to your owns.
+								data: {
+									idInvoice: id,
+								},
+								success: function (res) {
+									if (res) {
+										$("#feeRefund").text($("#feeRefund").text().concat(" (Refunded)"));
+									} else {
+										$("#feeRefund").text($("#feeRefund").text().concat(" (No refunded yet)"));
+										$("#btnRefundFeeCus").show();
+									}
+								},
+								error: function (response) {
+									console.log(response.responseText);
+								}
+							});
+						} else {
+							$("#divRefundSuppV").hide();
+						}
+					},
+					error: function (response) {
+						console.log(response.responseText);
+					}
+				});
+				document.getElementById('btnRefundAllSupp').onclick = function () {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/refundToAllSupp",
+						data: {
+							idInv: $("#textIdInv").text(),
+							lstVoucherS: $("#lstVoucherS").text(),
+							priceVoucherA: $("#priceVoucherA").text(),
+							idUser: $("#idUser").text(),
+						},
+						success: function (res) {
+							if (res) {
+								Swal.fire({
+									title: "Successfully!",
+									text: "Refund to all suppliers successfully!",
+									icon: "success"
+								});
+								$("#componentDetail").html("");
+								$("#componentDetail").html(res);
+								$("#btnRefundAllSupp").hide();
+								$("#btnRefundSupp").hide();
+								$.ajax({
+									type: "Get",
+									url: "/Admin/order-management/checkRefundWhenInv9",  //remember change the controller to your owns.
+									data: {
+										idInv: id,
+									},
+									success: function (res) {
+										if (res.status == 0) {
+											$("#btnRefundAllSupp").show();
+											var list = document.querySelectorAll('[id^="priceRefundS"]');
+											for (let i = 0; i < list.length; i++) {
+												list[i].innerHTML = "(No refund yet)";
+											}
+										} else {
+											$("#btnRefundAllSupp").hide();
+											$("#priceRefundS" + res.idSupplier).text("(No refund yet)");
+
+											var list = document.querySelectorAll('[id^="priceRefundS"]');
+											for (let i = 0; i < list.length; i++) {
+												if (!list[i].innerHTML.includes("(No refund yet)")) {
+													list[i].innerHTML = "(Refunded)";
+												}
+											}
+										}
+
+									},
+									error: function (response) {
+										console.log(response.responseText);
+									}
+								});
+								$.ajax({
+									type: "Get",
+									url: "/Admin/order-management/checkRefundFee",  //remember change the controller to your owns.
+									data: {
+										idInvoice: $("#textIdInv").text(),
+									},
+									success: function (res) {
+										if (res) {
+											$("#feeRefund").text($("#feeRefund").text().concat(" (Refunded)"));
+										} else {
+											$("#feeRefund").text($("#feeRefund").text().concat(" (No refunded yet)"));
+											$("#btnRefundFeeCus").show();
+										}
+									},
+									error: function (response) {
+										console.log(response.responseText);
+									}
+								});
+
+
+							} else {
+								Swal.fire({
+									icon: "error",
+									title: "Oops...",
+									text: "An error occurred while refunding all suppliers!"
+								});
+							}
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				};
+
+
+				document.getElementById('btnRefundFeeCus').onclick = function () {
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/refundFeeToCus",  //remember change the controller to your owns.
+						data: {
+							idInvoice: $("#textIdInv").text(),
+						},
+						success: function (res) {
+							if (res) {
+								Swal.fire({
+									title: "Successfully!",
+									text: "Refund service fees to customer successfully!",
+									icon: "success"
+								});
+								$("#feeRefund").text($("#feeRefund").text().replace(" (No refunded yet)", " (Refunded)"));
+								$("#btnRefundFeeCus").hide();
+							} else {
+								Swal.fire({
+									icon: "error",
+									title: "Oops...",
+									text: "An error occurred while refunding service fees the customer!"
+								});
+								$("#btnRefundFeeCus").show();
+							}
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				};
+
+				document.getElementById('backOrder').onclick = function () {
+					$("#btnRefundCus").hide();
+					$("#btnRefundSupp").hide();
+					var priceRefundVSupp = $("#priceRefundVSupp").text();
+
+					$.ajax({
+						type: "Get",
+						url: "/Admin/order-management/detailOrder",  //remember change the controller to your owns.
+						data: {
+							idInv: $("#textIdInv").text(),
+							lstVoucherS: lstVoucherS,
+							priceVoucherA: priceVoucherA,
+							idUser: idUser,
+						},
+						success: function (res) {
+							$("#btnPaymentSupp").hide();
+							$("#backOrder").hide();
+
+							$("#exampleModalCenterTitle").text("Order Detail");
+
+							$("#componentDetail").html("");
+							$("#componentDetail").html(res);
+							if (sttInvoice == 9) {
+								if ($("#totalPriceVR").text() != 0.00) {
+									$.ajax({
+										type: "Get",
+										url: "/Admin/order-management/checkRefundWhenInv9",  //remember change the controller to your owns.
+										data: {
+											idInv: id,
+										},
+										success: function (res) {
+											if (res.status == 0) {
+												$("#btnRefundAllSupp").show();
+												var list = document.querySelectorAll('[id^="priceRefundS"]');
+												for (let i = 0; i < list.length; i++) {
+													list[i].innerHTML = "(No refund yet)";
+												}
+											} else {
+												$("#btnRefundAllSupp").hide();
+												$("#priceRefundS" + res.idSupplier).text("(No refund yet)");
+
+												var list = document.querySelectorAll('[id^="priceRefundS"]');
+												for (let i = 0; i < list.length; i++) {
+													if (!list[i].innerHTML.includes("(No refund yet)")) {
+														list[i].innerHTML = "(Refunded)";
+													}
+												}
+											}
+										},
+										error: function (response) {
+											console.log(response.responseText);
+										}
+									});
+									$("#divRefundSuppV").show();
+								} else {
+									//$("#divRefundSuppV").hide();
+									$("#btnRefundAllSupp").hide();
+								}
+								// call ajax check fee Of InvoiceAdmin
+								$.ajax({
+									type: "Get",
+									url: "/Admin/order-management/checkRefundFee",  //remember change the controller to your owns.
+									data: {
+										idInvoice: id,
+									},
+									success: function (res) {
+										if (res) {
+											$("#feeRefund").text($("#feeRefund").text().concat(" (Refunded)"));
+										} else {
+											$("#feeRefund").text($("#feeRefund").text().concat(" (No refunded yet)"));
+											$("#btnRefundFeeCus").show();
+										}
+									},
+									error: function (response) {
+										console.log(response.responseText);
+									}
+								});
+							} else {
+								$("#divRefundSuppV").hide();
+							}
+
+						},
+						error: function (response) {
+							console.log(response.responseText);
+						}
+					});
+				};
+
+			});
+
+		});
+
+	</script>
+</body>
+
+</html>

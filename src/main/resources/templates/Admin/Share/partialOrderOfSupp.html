@@ -1,0 +1,264 @@
+<table class='table table-striped' id="table1">
+	<thead>
+		<tr>
+			<th data-sortable="false">No.</th>
+			<th data-sortable="false">Customer</th>
+			<th data-sortable="false">Order Date</th>
+			<th data-sortable="false">Total Order Amount</th>
+			<th data-sortable="false">Refund to customers (if any):</th>
+			<th data-sortable="false">Payment for supplier</th>
+			<th data-sortable="false">Status</th>
+			<th data-sortable="false">Details Order</th>
+		</tr>
+	</thead>
+	<tbody>
+		<th:block th:each="item,iter : ${listOrdersOfSupp}">
+			<tr>
+				<td th:text="${iter.index+1}"></td>
+				<td th:text="${item.nameCus}"></td>
+				<td>
+					<div style="min-width: 82px;" th:text="${item.createDate}">2023-10-21
+					</div>
+				</td>
+				<td><span th:text="${item.totalOrderAmount}"></span><span>.00</span></td>
+
+				<th:block th:switch="${item.isStatus}">
+					<td th:case="'2'">
+						<th:block th:if="${item.idSupplier}==${idSupp}">
+							<div style="
+															    min-width: 125px;
+															    display: flex;
+															    align-items: center;
+															    flex-wrap: nowrap;
+															    justify-content: space-between;
+															"></div>
+							<span th:text="${item.refundtoCustomers}"></span><span>.00</span>
+							<strong style="color: red;">(No refund yet to customer)</strong>
+							<!--<button type="button" id="btnRefund"
+																class="btn btn-success ml-1">
+																<i class="bx bx-x d-block d-sm-none"></i>
+																<span class="d-none d-sm-block">Refund</span>
+															</button>-->
+
+						</th:block>
+					</td>
+					<td th:case="'3'">
+						<th:block th:if="${item.idSupplier}==${idSupp}">
+							<div style="min-width: 101.5px;">
+								<span th:text="${item.refundtoCustomers}"></span><span>.00</span><strong
+									style="color: green;"> (Refunded)</strong>
+							</div>
+						</th:block>
+					</td>
+					<td th:case="*">
+						<span>0</span>
+					</td>
+				</th:block>
+				<!-- Status Inv Supp-->
+				<th:block th:switch="${item.status}">
+					<th:block th:case="'0'">
+						<td th:text="${item.TotalPrice}"></td>
+						<td style="color: darkorange;">Pending</td>
+					</th:block>
+					<th:block th:case="'1'">
+						<td th:text="${item.TotalPrice}"></td>
+						<td style="color: blue;">Delivering</td>
+					</th:block>
+					<th:block th:case="'2'">
+						<td>
+							<!--<div style="display: flex;
+								justify-content: space-around;
+								align-items: center;
+								width: 160px;"></div>-->
+							<span th:text="${item.TotalPrice}"></span>
+
+						</td>
+						<td><strong style="color: green;">Delivered</strong>/ Waiting to payment</td>
+					</th:block>
+
+					<th:block th:case="'3'">
+						<td th:text="${item.TotalPrice}"></td>
+						<td><strong style="color: green;">Delivered</strong>/ iLA has <strong
+								style="color: dodgerblue;">transferred money</strong>
+						</td>
+					</th:block>
+
+					<th:block th:case="'4'">
+						<td th:text="${item.TotalPrice}"></td>
+						<td>The order was <strong style="color: darkgreen;">completely successful</strong></td>
+					</th:block>
+					<th:block th:case="'9'">
+						<td th:text="${item.TotalPrice}"></td>
+						<td><strong style="color: red;">Cancelled</strong></td>
+					</th:block>
+				</th:block>
+
+				<td>
+					<button class="btn btn-primary" id="btnDetailOrder" data-bs-toggle="modal"
+						data-bs-target="#exampleModalScrollable">Detail</button>
+				</td>
+				<td hidden th:text="${item.idInvoiceSup}"></td>
+				<td hidden th:text="${item.VoucherS}"></td>
+				<td hidden th:text="${item.priceVoucherA}"></td>
+				<td hidden th:text="${item.idAccount}"></td>
+				<td hidden th:text="${item.idInvoice}"></td>
+				<td hidden th:text="${item.id}"></td>
+			</tr>
+		</th:block>
+	</tbody>
+</table>
+
+<script th:inline="javascript">
+	$(document).ready(function () {
+		$("#table1").on('click', '#btnDetailOrder', function () {
+			// get the current row
+			$("#btnPaymentForSupp").hide();
+			$("#btnRefundToCus").hide();
+			var currentRow = $(this).closest("tr");
+
+			var idInv = currentRow.find("td:eq(13)").text();
+			var totalPrice = currentRow.find("td:eq(3)").text();
+			var strRefundCus = currentRow.find("td:eq(4)").text();
+			var refundCus = strRefundCus.replace("Refund", "");
+			var sttInv = currentRow.find("td:eq(6)").text();
+			var strMoneyReceived = currentRow.find("td:eq(5)").text();
+			var priceVoucherA = currentRow.find("td:eq(10)").text();
+			var idUser = currentRow.find("td:eq(11)").text();
+			var sttInvoice = currentRow.find("td:eq(12)").text();
+
+			if (sttInv == "Pending") {
+				var moneyReceived = strMoneyReceived;
+				$("#btnPaymentForSupp").hide();
+			} else if (sttInv == "Delivering") {
+				var moneyReceived = strMoneyReceived + " (Waiting)";
+				$("#btnPaymentForSupp").hide();
+			} else if (sttInv == "Delivered/ Waiting to payment") {
+				var moneyReceived = strMoneyReceived + " (Waiting)";
+				$("#btnPaymentForSupp").show();
+			} else if (sttInv == "Cancelled") {
+				var moneyReceived = strMoneyReceived;
+				$("#btnPaymentForSupp").hide();
+				//if supp sau cancel thi display btn hoan tien cho supp
+			} else {
+				var moneyReceived = strMoneyReceived + " (Paid)";
+				$("#btnPaymentForSupp").hide();
+			}
+
+			if (strRefundCus.includes("(Refunded)") == true) {
+				var refundCus = strRefundCus.replace("(Refunded)", "");
+			} else if (strRefundCus.includes("(No refund yet to customer)") == true) {
+				var refundCus = strRefundCus.replace("(No refund yet to customer)", "");
+				$("#btnRefundToCus").show();
+			}
+			var idInvSupp = currentRow.find("td:eq(8)").text();
+			var priceVouS = currentRow.find("td:eq(9)").text();
+			var idSupp = $("#idSuppNow").text();
+			$("#exampleModalScrollableTitle").text("Detail Order (" + sttInv + ")");
+
+			$.ajax({
+				type: "Get",
+				url: "/Admin/supplier-management/detailOfOrder",  //remember change the controller to your owns.
+				data: {
+					idSupplier: $("#idSuppNow").text(),
+					idInv: idInv,
+					refundCus: refundCus,
+					priceVoucherA: priceVoucherA,
+					idUser: idUser,
+				},
+				success: function (res) {
+					$("#componentTable2").html("");
+					$("#componentTable2").html(res);
+					let table2 = document.querySelector('#table2');
+					let dataTable2 = new simpleDatatables.DataTable(table2);
+					$("#sttInv").text(sttInv);
+					$("#idInvSupp").text(idInvSupp);
+					$("#divRefundCus").hide();
+					$("#divPriceVoucherS").hide();
+					$("#totalPrice").text(totalPrice);
+					if (refundCus != 0) {
+						$("#divRefundCus").show();
+					}
+					if (priceVouS != 0) {
+						$("#divPriceVoucherS").show();
+					}
+					if (refundCus != 0 && priceVouS != 0) {
+						$("#divRefundCus").show();
+						$("#divPriceVoucherS").show();
+					}
+					if (strRefundCus.includes("(Refunded)") == true) {
+						$("#strRefundCus").text(refundCus.concat(" (Refunded)"));
+					} else {
+						$("#strRefundCus").text(refundCus.concat(" (No refund yet)"));
+					}
+
+					$("#priceVoucherS").text(priceVouS);
+
+					$("#moneyReceived").text(moneyReceived);
+
+					if (sttInvoice == 9) {
+						$.ajax({
+							type: "Get",
+							url: "/Admin/supplier-management/priceRefundWhenInv9",  //remember change the controller to your owns.
+							data: {
+								idInv: idInv,
+								idSupplier: idSupp,
+							},
+							success: function (res) {
+								if (res.priceRefund != 0) {
+									$("#divPriceRefundVSupp").show();
+									$("#divPriceVoucherAofSupp").hide();
+									$("#divPriceVoucherS").hide();
+									$("#divMoneyReceived").hide();
+									//
+									if (res.status == 0) {
+										if ($("#priceRefundVSupp").text() != 0) {
+											$("#btnRefundForSupp").show();
+										} else {
+											$("#btnRefundForSupp").hide();
+										}
+									} else {
+										$("#btnRefundForSupp").hide();
+									}
+
+									if (Number.isInteger(res.priceRefund)) {
+										if (res.status == 0) {
+											$("#priceRefundVSupp").text(res.priceRefund + ".00" + " (No refund yet)");
+										} else {
+											$("#priceRefundVSupp").text(res.priceRefund + ".00" + " (Refunded)");
+										}
+									} else {
+										if (res.status == 0) {
+											$("#priceRefundVSupp").text(roundToTwo(res.priceRefund) + " (No refund yet)");
+										} else {
+											$("#priceRefundVSupp").text(roundToTwo(res.priceRefund) + " (Refunded)");
+										}
+									}
+									$("#profitILA").text(0);
+
+									//$("#priceVoucherAofSupp").text("0.00");
+									//$("#priceFeeService").text("0.00");
+									//$("#profitReceive").text("0.00");
+								}
+							},
+							error: function (response) {
+								console.log(response.responseText);
+							}
+						});
+
+					} else {
+						$("#divPriceRefundVSupp").hide();
+						$("#btnRefundForSupp").hide();
+					}
+
+
+					//
+				},
+				error: function (response) {
+					console.log(response.responseText);
+				}
+			});
+
+		});
+	});
+
+</script>

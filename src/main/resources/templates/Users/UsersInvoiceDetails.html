@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html>
+
+<head>
+    <title>Cafena - Invoice Details</title>
+    <header th:replace="_common/scriptClientHeader :: scriptClientHeader">...</header>
+    <link rel="stylesheet" href="/css/myCheckBox.css" />
+    <link rel="stylesheet" href="/css/invoice.css" />
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/ratingstar.css" />
+    <script src="https://kit.fontawesome.com/99a0617376.js" crossorigin="anonymous"></script>
+    <style>
+        .marginItems {
+            margin-bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:include="_common/scriptClientHeader :: headerContent" th:remove="tag"></div>
+    <main>
+        <!-- breadcrumb area start -->
+        <section class="breadcrumb-area pt-140 pb-140 bg_img" data-background="/images/bg/breadcrumb-bg-1.jpeg"
+            data-overlay="dark" data-opacity="5"
+            style="background-image: url(&quot;/images/bg/breadcrumb-bg-1.jpeg&quot;);">
+            <div class="shape shape__1"><img src="/images/shape/breadcrumb-shape-1.png" alt=""></div>
+            <div class="shape shape__2"><img src="/images/shape/breadcrumb-shape-2.png" alt=""></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 text-center">
+                        <h2 class="page-title">Cafena Invoice</h2>
+                        <div class="cafena-breadcrumb breadcrumbs">
+                            <ul class="list-unstyled d-flex align-items-center justify-content-center">
+                                <li class="cafenabcrumb-item duxinbcrumb-begin">
+                                    <a href="/"><span>Home</span></a>
+                                </li>
+                                <li class="cafenabcrumb-item duxinbcrumb-end">
+                                    <span>Faq</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- breadcrumb area end -->
+        <!-- cart area start -->
+        <div class="cart-area pt-120 pb-120">
+            <div class="container">
+                <div class="invoiceDetails d-flex flex-column">
+                    <div class="invoiceHeader d-flex flex-row">
+                        <div class="col-6">
+                            <button class="yO9lYJ"><svg enable-background="new 0 0 11 11" viewBox="0 0 11 11" x="0"
+                                    y="0" class="shopee-svg-icon icon-arrow-left">
+                                    <g>
+                                        <path
+                                            d="m8.5 11c-.1 0-.2 0-.3-.1l-6-5c-.1-.1-.2-.3-.2-.4s.1-.3.2-.4l6-5c .2-.2.5-.1.7.1s.1.5-.1.7l-5.5 4.6 5.5 4.6c.2.2.2.5.1.7-.1.1-.3.2-.4.2z">
+                                        </path>
+                                    </g>
+                                </svg><a href="/Invoice/MyInvoice" class="link-underline-dark" style="color:#1C2321">Back</a></button>
+                        </div>
+                        <div class="col-6 d-flex justify-content-end"
+                            th:text="'Invoice ID : ' + ${userInfo.codeInvoice}"></div>
+                    </div>
+                    <div class="OX-2Lj"
+                        style="margin-left: -2px;width: 1180px;border-radius: 2%;border: 3px solid ghostwhite;">
+                        <div class="-p7ULT">
+                            <div class="vtrWey"></div>
+                            <div class="_8jJlG8">
+                                <div class="nU2ylc">
+                                    <div class="MqmqK4">
+                                        <div class="Iafoll"><svg height="16" viewBox="0 0 12 16" width="12"
+                                                class="shopee-svg-icon icon-location-marker">
+                                                <path style="color: #ee4d2d;"
+                                                    d="M6 3.2c1.506 0 2.727 1.195 2.727 2.667 0 1.473-1.22 2.666-2.727 2.666S3.273 7.34 3.273 5.867C3.273 4.395 4.493 3.2 6 3.2zM0 6c0-3.315 2.686-6 6-6s6 2.685 6 6c0 2.498-1.964 5.742-6 9.933C1.613 11.743 0 8.498 0 6z"
+                                                    fill-rule="evenodd"></path>
+                                            </svg></div>
+                                        <h2 style="color: #ee4d2d;">Address</h2>
+                                    </div>
+                                </div>
+                                <div class="Jw2Sc-">
+                                    <div>
+                                        <div class="NYnMjH">
+                                            <div class="FVWWQy"
+                                                th:text="${userInfo.userName} + ' ' +${userInfo.userPhone}"></div>
+                                            <div class="QsWYfx" id="ckAddress" th:text="${userInfo.address}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoiceItems d-flex flex-column">
+
+                        <th:block th:if="${!lsInvoiceDetails.empty}">
+                            <th:block th:each="supplierInvoice,i : ${lsSuppliers}">
+                                <div class="invoiceCart d-flex flex-column marginItems"
+                                    th:data-supp="${supplierInvoice.id}">
+                                    <!-- Header Invoice Cart -->
+                                    <div class="d-flex flex-row align-items-center"
+                                        style="height: 50px;background-color: #FAFDFF;box-shadow: 0 1px 1px 0 rgb(0 0 0 / 5%); border-top: 1px dotted rgba(0, 0, 0, .09);">
+                                        <div class="col-2 shopName d-flex justify-content-center"
+                                            style="color: #F63F2D;font-weight: 500;" th:text="${supplierInvoice.title}">
+                                        </div>
+                                        <div class="col-8">
+                                            <div class="stardust-button"><svg enable-background="new 0 0 15 15"
+                                                    viewBox="0 0 15 15" x="0" y="0"
+                                                    class="caffena-svg-icon icon-btn-shop">
+                                                    <path
+                                                        d="m15 4.8c-.1-1-.8-2-1.6-2.9-.4-.3-.7-.5-1-.8-.1-.1-.7-.5-.7-.5h-8.5s-1.4 1.4-1.6 1.6c-.4.4-.8 1-1.1 1.4-.1.4-.4.8-.4 1.1-.3 1.4 0 2.3.6 3.3l.3.3v3.5c0 1.5 1.1 2.6 2.6 2.6h8c1.5 0 2.5-1.1 2.5-2.6v-3.7c.1-.1.1-.3.3-.3.4-.8.7-1.7.6-3zm-3 7c0 .4-.1.5-.4.5h-8c-.3 0-.5-.1-.5-.5v-3.1c.3 0 .5-.1.8-.4.1 0 .3-.1.3-.1.4.4 1 .7 1.5.7.7 0 1.2-.1 1.6-.5.5.3 1.1.4 1.6.4.7 0 1.2-.3 1.8-.7.1.1.3.3.5.4.3.1.5.3.8.3zm.5-5.2c0 .1-.4.7-.3.5l-.1.1c-.1 0-.3 0-.4-.1s-.3-.3-.5-.5l-.5-1.1-.5 1.1c-.4.4-.8.7-1.4.7-.5 0-.7 0-1-.5l-.6-1.1-.5 1.1c-.3.5-.6.6-1.1.6-.3 0-.6-.2-.9-.8l-.5-1-.7 1c-.1.3-.3.4-.4.6-.1 0-.3.1-.3.1s-.4-.4-.4-.5c-.4-.5-.5-.9-.4-1.5 0-.1.1-.4.3-.5.3-.5.4-.8.8-1.2.7-.8.8-1 1-1h7s .3.1.8.7c.5.5 1.1 1.2 1.1 1.8-.1.7-.2 1.2-.5 1.5z">
+                                                    </path>
+                                                </svg><span th:data-id="${supplierInvoice.id}" id="btnGoToShop"
+                                                    style="position: relative;top: 2px;padding-left: 5px;color: black;">Go
+                                                    To Shop</span></div>
+                                        </div>
+                                    </div>
+                                    <!-- Body Item Invoice -->
+                                    <th:block th:each="itemInvoice,j : ${lsInvoiceDetails}">
+                                        <th:block th:if="${itemInvoice.idSupplier == supplierInvoice.id }">
+                                            <div class="d-flex flex-row"
+                                                style="box-shadow: 0 1px 1px 0 rgb(0 0 0 / 5%);background-color:#FAFDFF;height: auto;border-top: 1px dotted rgba(0,0,0,.09);">
+                                                <div class="col-1 d-flex justify-content-center"
+                                                    style="padding-top: 7px;">
+                                                    <img th:src="${itemInvoice.image}" alt=""  onerror="this.onerror=null;this.src='/error/imgError00.jpg'"
+                                                        style="width: 80px; height: 80px;">
+                                                </div>
+                                                <div class="col d-flex flex-column">
+                                                    <div class="d-flex flex-row" style="padding-top: 7px;">
+                                                        <div class="col-10">
+                                                            <div>
+                                                                <h5 th:text="${itemInvoice.productName}"></h5>
+                                                            </div>
+                                                            <div>Amount: <th:block th:text="${itemInvoice.amount}">
+                                                                </th:block>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2 d-flex flex-row">
+                                                            <div class="" style="width: 48%;">
+                                                                <th:block
+                                                                    th:if="${itemInvoice.productPrice != itemInvoice.cartPrice}">
+                                                                    <span
+                                                                        style="text-decoration: line-through;color:black"
+                                                                        th:text="'$' + ${itemInvoice.productPrice} + '.00' "></span>
+                                                                </th:block>
+                                                            </div>
+                                                            <div class="" style="width: 40%;">
+                                                                <span style="color: black;"
+                                                                    th:data-supp="${itemInvoice.idSupplier}"
+                                                                    th:data-price="${itemInvoice.cartPrice}"
+                                                                    th:text="'$' + ${itemInvoice.cartPrice} + '.00' "
+                                                                    id="totalItemInvoice"
+                                                                    th:data-status="${itemInvoice.isStatus}"
+                                                                    th:data-amount="${itemInvoice.amount}"></span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="d-flex justify-content-end flex-row"
+                                                        style="border-top: 1px dotted rgba(0,0,0,.09);padding-top: 4px;padding-bottom: 4px;">
+                                                        <div class="col-8" id="ratingContent"
+                                                            th:data-idv="${itemInvoice.id}">
+                                                            <th:block
+                                                                th:if="${itemInvoice.isStatus == 4} AND ${itemInvoice.ratingReview ==0}">
+                                                                <p class="rtingButton"
+                                                                    th:data-id-details="${itemInvoice.id}"
+                                                                    th:data-name="${itemInvoice.productName}"
+                                                                    th:data-idp="${itemInvoice.idProduct}">Ratings
+                                                                    Product</p>
+                                                            </th:block>
+                                                            <th:block th:if="${itemInvoice.ratingReview != 0}">
+                                                                <span
+                                                                    th:class=" 'stars-container '+'stars-' + ${itemInvoice.ratingReview}">★★★★★</span>
+                                                            </th:block>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="d-flex flex-row" id="contentStatus"
+                                                                th:data-ivd="${itemInvoice.id}">
+                                                                <th:block th:if="${itemInvoice.isStatus != 1}">
+                                                                    <div class="statusItemInv d-flex justify-content-end"
+                                                                        style="width: 95%;">
+                                                                        <th:block
+                                                                            th:if="${itemInvoice.isStatus == 3 OR itemInvoice.isStatus == 2}">
+                                                                            <span class="txFailed">Order Has Been
+                                                                                Canceled By The Seller</span>
+                                                                        </th:block>
+                                                                        <th:block th:if="${itemInvoice.isStatus == 0}">
+                                                                            <span class="txWaitingConfirm">Waiting
+                                                                                Supplier Confirm</span>
+                                                                        </th:block>
+                                                                        <th:block th:if="${itemInvoice.isStatus == 4}">
+                                                                            <span class="txSuccess">Order Has Been
+                                                                                Received</span>
+                                                                        </th:block>
+                                                                    </div>
+                                                                </th:block>
+
+                                                                <th:block th:if="${itemInvoice.isStatus == 1}">
+                                                                    <div class="statusItemInv d-flex justify-content-end"
+                                                                        style="width: 72%;">
+                                                                        <span class="txSuccess">Order Has Been
+                                                                            Delivered</span>
+                                                                    </div>
+                                                                    <div class="buttonConfirm d-flex justify-content-center"
+                                                                        style="width: 28%;">
+                                                                        <button class="btnConfirm"
+                                                                            th:data-id="${itemInvoice.idInvoice}"
+                                                                            th:data-ivd="${itemInvoice.id}"
+                                                                            th:data-idp="${itemInvoice.idProduct}"
+                                                                            th:data-supp="${supplierInvoice.id}"
+                                                                            th:data-name="${itemInvoice.productName}">Confirm</button>
+                                                                    </div>
+                                                                </th:block>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                    <!-- Footers Sum Items -->
+                                    <div class="footerSumItems d-flex flex-row">
+                                        <div style="width: 92%;" class="d-flex justify-content-end">
+                                            <p class="textTotal">Total:</p>
+                                        </div>
+                                        <div style="width: 8%;" class="d-flex">
+                                            <p style="color: darkblue;" th:data-supp="${supplierInvoice.id}"
+                                                data-price="0" id="totalSumSupp"></p>
+                                        </div>
+                                    </div>
+                                    <div class="footerRefundItems d-flex flex-row">
+                                        <div style="width: 92%;" class="d-flex justify-content-end">
+                                            <p class="textTotal" th:data-ids="${supplierInvoice.id}">Refund:</p>
+                                        </div>
+                                        <div style="width: 8%;" class="d-flex">
+                                            <p style="color: darkblue;" id="totalRefund"
+                                                th:data-supp="${supplierInvoice.id}" data-price="0">$0.00</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </div>
+
+                    <div class="checkOutSum d-flex flex-column border-ck-out">
+                        <div class="p-2 d-flex flex-row">
+                            <p class="col-8 text-sum" style="display: flex;justify-content: right;">Total :</p>
+                            <p class="col-4 text-sum left-tx-sum" id="totalConsume" data-price="0">$0.00</p>
+                        </div>
+                        <div class="p-2 d-flex flex-row">
+                            <p class="col-8 text-sum" style="display: flex;justify-content: right;">ILA
+                                Discount Vouchers:</p>
+                            <p class="col-4 text-sum left-tx-sum" id="totalDiscountV"
+                                th:data-price="${userInfo.totalDiscountV}"
+                                th:text=" '- $' +  ${userInfo.totalDiscountV} + '.00'"></p>
+                        </div>
+                        <div class="p-2 d-flex flex-row">
+                            <p class="col-8 text-sum" style="display: flex;justify-content: right;">Fee Service:</p>
+                            <p class="col-4 text-sum left-tx-sum" id="feeService"
+                                th:data-price="${feeService}"
+                                th:text=" '$' +  ${feeService}"></p>
+                        </div>
+                        <div class="p-2 d-flex flex-row ">
+                            <p class="col-8 text-sum" style="display: flex;justify-content: right;">Refund: </p>
+                            <p class="col-4 text-sum left-tx-sum" id="finalReturn" data-price="0">$0.00
+                            </p>
+                        </div>
+                        <div class="p-2 d-flex flex-row total-fn-ck">
+                            <p class="col-8 text-sum" style="display: flex;justify-content: right;">Total
+                                payment:</p>
+                            <p class="col-4 text-sum left-tx-sum" id="totalFinal" data-price="0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div th:include="_common/scriptClientFooter :: scriptClientFooter" th:remove="tag"></div>
+
+    <div class="product-popup product-popup-1">
+        <div id="contentPopup">
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+            $('.invoiceCart:last').removeClass('marginItems');
+
+            caculateInvoiceSupplier();
+            caculateInvoice();
+
+            function caculateInvoiceSupplier() {
+                $("div.invoiceCart").each(function () {
+                    caculateEachSupplier($(this).attr('data-supp'));
+                })
+            }
+
+            function caculateEachSupplier(idSupplier) {
+                var totalSupplier = 0;
+                var totalRefund = 0;
+                $(`span[id="totalItemInvoice"][data-supp=${idSupplier}]`).each(function () {
+                    var crrStatus = parseInt($(this).attr('data-status'));
+                    if (crrStatus == 2 || crrStatus == 3) {
+                        totalRefund += parseInt($(this).attr('data-price')) * parseInt($(this).attr('data-amount'));
+                    } else {
+                        totalSupplier += parseInt($(this).attr('data-price')) * parseInt($(this).attr('data-amount'));
+                    }
+                    //
+                })
+                //
+                $(`p[id="totalSumSupp"][data-supp=${idSupplier}]`).attr('data-price', parseInt(totalSupplier + totalRefund));
+                $(`p[id="totalSumSupp"][data-supp=${idSupplier}]`).text('$' + parseInt(totalSupplier + totalRefund) + '.00');
+                $(`p[id="totalRefund"][data-supp=${idSupplier}]`).attr('data-price', totalRefund);
+                $(`p[id="totalRefund"][data-supp=${idSupplier}]`).text('$' + totalRefund + '.00');
+            }
+
+            function caculateInvoice() {
+                var totalInvoice = 0;
+                var totalRefund = 0;
+                var totalFinal = 0;
+                var feeService = 0;
+                $('p[id="totalSumSupp"]').each(function () {
+                    totalInvoice += parseInt($(this).attr('data-price'));
+                })
+                $('p[id="totalRefund"]').each(function () {
+                    totalRefund += parseInt($(this).attr('data-price'));
+                })
+                //
+                $('#totalConsume').attr('data-price', totalInvoice);
+                $('#totalConsume').text('$' + totalInvoice + '.00');
+                //
+                $('#finalReturn').attr('data-price', totalRefund);
+                $('#finalReturn').text('$' + totalRefund + '.00');
+                if (parseInt($('#totalConsume').attr('data-price')) == parseInt($('#finalReturn').attr('data-price'))) {
+                    totalFinal = 0;
+                } else {
+                    totalFinal = parseInt($('#totalConsume').attr('data-price')) - parseInt($('#totalDiscountV').attr('data-price'))
+                        - parseInt($('#finalReturn').attr('data-price'));
+                }
+                feeService = $('#feeService').attr('data-price');
+                totalFinal = parseFloat(parseFloat(totalFinal) + parseFloat(feeService)).toFixed(2);
+                $('#totalFinal').text('$' + totalFinal);
+            }
+
+            $(document).on('click', function (e) {
+                if (e.target.className == "rtingButton") {
+                    e.preventDefault();
+                    var productName = e.target.getAttribute('data-name');
+                    var idInvoiceD = e.target.getAttribute('data-id-details');
+                    var productId = e.target.getAttribute('data-idp');
+                    //
+                    $.ajax({
+                        async: false,
+                        cache: false,
+                        url: "/Rating/ajax/ratingInvoiceView",
+                        data: {
+                            idInvoiceD: idInvoiceD,
+                            productName: productName,
+                            productId: productId
+                        }
+                    }).done(function (data) {
+                        $('#contentPopup').html(data);
+                        $('.overlay, .product-popup-1').addClass('show-popup');
+
+                    });
+                }
+            })
+
+            $('span#btnGoToShop').on('click', function (e) {
+                e.preventDefault();
+                var idSupplier = $(this).attr('data-id');
+                window.location.assign(`/Products/ProductsOfSupplier/?idSupplier=${idSupplier}`)
+            })
+
+            //Confirm
+            $('button.btnConfirm').on('click', function (e) {
+                e.preventDefault();
+                var idInvoice = $(this).attr('data-id');
+                var idInvoiceD = $(this).attr('data-ivd');
+                var idSupplier = $(this).attr('data-supp');
+                var currentItem = $(this);
+                //
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    url: "/Invoice/ajax/ConfirmInvoiceDetails",
+                    data: {
+                        idInvoiceD: idInvoiceD,
+                        idInvoice: idInvoice,
+                        idSupplier : idSupplier
+                    }
+                }).done(function (data) {
+                    showRatingsModal(currentItem);
+                });
+            })
+
+            //functionCall Ratings
+            function showRatingsModal(current) {
+                var productName = $(current).attr('data-name');
+                var productId = $(current).attr('data-idp');
+                var idInvoiceD = $(current).attr('data-ivd');
+                //
+                $(`div[id="contentStatus"][data-ivd=${idInvoiceD}]`).html(
+                    '<div class="statusItemInv d-flex justify-content-end"style="width: 95%;"><span class="txSuccess">Order Has Been Received</span></div>'
+                )
+                //
+                $.ajax({
+                    async: false,
+                    cache: false,
+                    url: "/Rating/ajax/ratingInvoiceView",
+                    data: {
+                        idInvoiceD: idInvoiceD,
+                        productName: productName,
+                        productId: productId
+                    }
+                }).done(function (data) {
+                    $('#contentPopup').html(data);
+                    $('.overlay, .product-popup-1').addClass('show-popup');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
